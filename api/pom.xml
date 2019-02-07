@@ -30,25 +30,19 @@
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+        </dependency>
          <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-binding</artifactId>
+            <artifactId>jersey-media-json-processing</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-netty</artifactId>
-            <version>5.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-client-java</artifactId>
-            <version>5.5.1</version>
         </dependency>
     </dependencies>
 
@@ -81,33 +75,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <plugin>
-        <groupId>org.mock-server</groupId>
-        <artifactId>mockserver-maven-plugin</artifactId>
-        <version>5.5.1</version>
-        <configuration>
-            <serverPort>1080</serverPort>
-            <logLevel>DEBUG</logLevel>
-            <initializationClass>org.mockserver.maven.ExampleInitializationClass</initializationClass>
-        </configuration>
-        <executions>
-            <execution>
-                <id>process-test-classes</id>
-                <phase>process-test-classes</phase>
-                <goals>
-                    <goal>start</goal>
-                </goals>
-            </execution>
-            <execution>
-                <id>verify</id>
-                <phase>verify</phase>
-                <goals>
-                    <goal>stop</goal>
-                </goals>
-            </execution>
-        </executions>
-    </plugin>
 
     <properties>
         <jersey.version>2.28</jersey.version>
