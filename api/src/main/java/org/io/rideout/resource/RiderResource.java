@@ -1,4 +1,4 @@
-package org.io.rideout;
+package org.io.rideout.resource;
 
 import org.io.rideout.model.Rider;
 import org.io.rideout.model.Vehicle;
@@ -21,7 +21,7 @@ public class RiderResource {
                 "jsmith",
                 "John",
                 "Smith",
-                new Date(),
+                 new Date(),
                 "07491012345",
                 "999",
                 true,
