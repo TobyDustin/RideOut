@@ -9,6 +9,8 @@ public class Vehicle {
     private String registration;
     private Boolean isChecked;
 
+    public Vehicle() {}
+
     public Vehicle(String id, String make, String model, Integer power, String registration) {
         this.id = id;
         this.make = make;
