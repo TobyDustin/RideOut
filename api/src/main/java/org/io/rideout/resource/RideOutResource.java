@@ -2,7 +2,9 @@ package org.io.rideout.resource;
 
 import org.io.rideout.model.RideOut;
 import org.io.rideout.model.Rider;
+import org.io.rideout.model.Staff;
 import org.io.rideout.model.Vehicle;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -44,6 +46,28 @@ public class RideOutResource {
 
         );
         return dummy;
+    }
+
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut addRideOut() {
+        throw new NotImplementedException();
+    }
+
+
+    @POST
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut updateRideOut(@PathParam("id") String id) {
+        throw new NotImplementedException();
+    }
+
+    @DELETE
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut deleteRideOut(@PathParam("id") String id) {
+        throw new NotImplementedException();
     }
 
 
