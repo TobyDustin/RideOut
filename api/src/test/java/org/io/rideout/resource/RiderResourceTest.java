@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static org.junit.Assert.*;
+
 public class RiderResourceTest {
 
     private HttpServer server;
@@ -40,8 +42,8 @@ public class RiderResourceTest {
 
         ArrayList result = response.readEntity(ArrayList.class);
 
-        assert response.getStatus() == 200;
-        assert result.size() == 1;
+        assertEquals(200, response.getStatus());
+        assertEquals(1, result.size());
 
         ObjectMapper mapper = new ObjectMapper();
         Rider rider = mapper.convertValue(result.get(0), Rider.class);
@@ -53,7 +55,7 @@ public class RiderResourceTest {
         Response response = target.path("/rider/12345").request().get();
 
         Rider rider = response.readEntity(Rider.class);
-        assert response.getStatus() == 200;
+        assertEquals(200, response.getStatus());
         testRider(rider);
     }
 
@@ -61,20 +63,20 @@ public class RiderResourceTest {
     public void testGetRiderNotFound() {
         Response response = target.path("rider/54321").request().get();
 
-        assert response.getStatus() == 404;
+        assertEquals(404, response.getStatus());
     }
 
     private void testRider(Rider rider) {
-        assert rider != null;
-        assert rider.getId().equals("12345");
-        assert rider.getUsername().equals("jsmith");
-        assert rider.getFirstName().equals("John");
-        assert rider.getLastName().equals("Smith");
-        assert rider.getDateOfBirth().equals(new Date(100));
-        assert rider.getContactNumber().equals("07491012345");
-        assert rider.getEmergencyContactNumber().equals("999");
-        assert rider.isInsured();
-        assert !rider.isLead();
-        assert rider.getLicense().equals("A");
+        assertNotNull(rider);
+        assertEquals("12345", rider.getId());
+        assertEquals("jsmith", rider.getUsername());
+        assertEquals("John",  rider.getFirstName());
+        assertEquals("Smith", rider.getLastName());
+        assertEquals(new Date(100), rider.getDateOfBirth());
+        assertEquals("07491012345", rider.getContactNumber());
+        assertEquals("999", rider.getEmergencyContactNumber());
+        assertTrue(rider.isInsured());
+        assertFalse(rider.isLead());
+        assertEquals("A", rider.getLicense());
     }
 }
