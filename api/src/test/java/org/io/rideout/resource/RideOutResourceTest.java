@@ -40,7 +40,7 @@ public class RideOutResourceTest {
 
     @Test
     public void testGetAllRideOut() throws IOException {
-        Response response = target.path("/event/rideout").request().get();
+        Response response = target.path("rideout").request().get();
         ArrayList result = response.readEntity(ArrayList.class);
         assertEquals(200, response.getStatus());
         assertEquals(1, result.size());
@@ -52,14 +52,14 @@ public class RideOutResourceTest {
 
     @Test
     public void testGetRideOutNotFound(){
-        Response response = target.path("rider/54321").request().get();
+        Response response = target.path("rideout/54321").request().get();
 
         assertEquals(404, response.getStatus());
     }
 
     @Test
     public void testGetRideOutSuccess() {
-        Response response = target.path("/event/rideout/123").request().get();
+        Response response = target.path("rideout/12345").request().get();
         RideOut rideOut = response.readEntity(RideOut.class);
         assertEquals(200, response.getStatus());
         testRideOut(rideOut);
@@ -76,6 +76,7 @@ public class RideOutResourceTest {
         assertEquals("54321", rideOut.getLeadRider());
         assertEquals("https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx", rideOut.getRoute());
         assertEquals(new Date(100), rideOut.getMinCancellationDate());
+        assertFalse(rideOut.isPublished());
 
     }
 

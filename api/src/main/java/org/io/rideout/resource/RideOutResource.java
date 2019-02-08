@@ -31,20 +31,18 @@ public class RideOutResource {
 
         throw new NotFoundException();
     }
-
     private RideOut getDummyRideOut() {
         RideOut dummy = new RideOut(
                 "12345",
                 "Ride around the candovers",
-                new Date(),
-                new Date(),
+                new Date(100),
+                new Date(100),
                 15,
                 "54321",
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
-                new Date()
+                new Date(100)
 
         );
-
         return dummy;
     }
 

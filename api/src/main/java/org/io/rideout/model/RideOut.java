@@ -19,7 +19,11 @@ public class RideOut {
     private ArrayList<Checkpoint> checkpoints;
     private ArrayList<Rider> riders;
 
-
+    public RideOut() {
+        super();
+        this.checkpoints = new ArrayList<>();
+        this.riders = new ArrayList<>();
+    }
     public RideOut(String id,String name,Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate){
         this.id = id;
         this.name = name;
@@ -27,8 +31,12 @@ public class RideOut {
         this.dateEnd = dateEnd;
         this.maxRiders = maxRiders;
         this.leadRider = leadRider;
+        this.route = route;
         this.isPublished = false;
         this.minCancellationDate = minCancellationDate;
+
+        this.checkpoints = new ArrayList<>();
+        this.riders = new ArrayList<>();
     }
 
     //***
@@ -122,4 +130,8 @@ public class RideOut {
     public void setRiders(ArrayList<Rider> riders) {
         this.riders = riders;
     }
+
+
+
+
 }
