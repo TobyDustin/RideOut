@@ -10,7 +10,9 @@ import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +62,47 @@ public class StaffResourceTest {
     @Test
     public void testGetStaffNotFound() {
         Response response = target.path("/staff/54321").request().get();
+
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testPutStaff() {
+        String body = "{\"modelType\":\"StaffModel\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        Response response = target.path("staff").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+
+        assertEquals(200, response.getStatus());
+        testStaff(response.readEntity(Staff.class));
+    }
+
+    @Test
+    public void testPostStaffSuccess() {
+        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        Response response = target.path("staff/54321").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+
+        assertEquals(200, response.getStatus());
+        testStaff(response.readEntity(Staff.class));
+    }
+
+    @Test
+    public void testPostStaffNotFound() {
+        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        Response response = target.path("staff/121212").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testDeleteStaffSuccess() {
+        Response response = target.path("staff/12345").request().delete();
+
+        assertEquals(200, response.getStatus());
+        testStaff(response.readEntity(Staff.class));
+    }
+
+    @Test
+    public void testDeleteStaffNotFound() {
+        Response response = target.path("staff/54321").request().delete();
 
         assertEquals(404, response.getStatus());
     }

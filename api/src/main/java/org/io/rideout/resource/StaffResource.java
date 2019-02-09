@@ -44,21 +44,32 @@ public class StaffResource {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    public Staff addStaff() {
-        throw new NotImplementedException();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Staff addStaff(Staff staff) {
+        staff.setId("12345");
+        return staff;
     }
 
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Staff updateStaff(@PathParam("id") String id) {
-        throw new NotImplementedException();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Staff updateStaff(@PathParam("id") String id, Staff staff) {
+        if (id.equals("54321")) {
+            return staff;
+        }
+
+        throw new NotFoundException();
     }
 
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Staff deleteStaff(@PathParam("id") String id) {
-        throw new NotImplementedException();
+        if (id.equals("12345")) {
+            return getDummyStaff();
+        }
+
+        throw new NotFoundException();
     }
 }
