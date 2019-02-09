@@ -4,6 +4,7 @@ import org.io.rideout.model.Rider;
 import org.io.rideout.model.Vehicle;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -51,21 +52,32 @@ public class RiderResource {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    public Rider addRider() {
-        throw new NotImplementedException();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Rider addRider(Rider rider) {
+        rider.setId("12345");
+        return rider;
     }
 
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Rider updateRider(@PathParam("id") String id) {
-        throw new NotImplementedException();
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Rider updateRider(@PathParam("id") String id, Rider rider) {
+        if (id.equals("54321")) {
+            return rider;
+        }
+
+        throw new NotFoundException();
     }
 
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Rider removeRider(@PathParam("id") String id) {
-        throw new NotImplementedException();
+        if (id.equals("12345")) {
+            return getDummyRider();
+        }
+
+        throw new NotFoundException();
     }
 }

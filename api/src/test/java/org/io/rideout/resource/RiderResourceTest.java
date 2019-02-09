@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.io.rideout.Main;
 import org.io.rideout.model.Rider;
+import org.io.rideout.model.Staff;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +67,40 @@ public class RiderResourceTest {
         Response response = target.path("rider/54321").request().get();
 
         assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testPutRider() {
+        String body = "{\"modelType\":\"RiderModel\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        Response response = target.path("rider").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+
+        assertEquals(200, response.getStatus());
+        testRider(response.readEntity(Rider.class));
+    }
+
+    @Test
+    public void testPostRiderSuccess() {
+        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        Response response = target.path("rider/54321").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+
+        assertEquals(200, response.getStatus());
+        testRider(response.readEntity(Rider.class));
+    }
+
+    @Test
+    public void testPostRiderNotFound() {
+        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        Response response = target.path("rider/121212").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testDeleteRiderSuccess() {
+        Response response = target.path("rider/12345").request().delete();
+
+        assertEquals(200, response.getStatus());
+        testRider(response.readEntity(Rider.class));
     }
 
     private void testRider(Rider rider) {
