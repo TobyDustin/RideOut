@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.io.rideout.Main;
 import org.io.rideout.model.RideOut;
-import org.io.rideout.model.Rider;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -22,19 +21,19 @@ import static org.junit.Assert.*;
 public class RideOutResourceTest {
 
 
-    private HttpServer server;
-    private WebTarget target;
+    private static HttpServer server;
+    private static WebTarget target;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         server = Main.startServer();
         Client c = ClientBuilder.newClient();
 
         target = c.target(Main.BASE_URI);
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         server.stop();
     }
 

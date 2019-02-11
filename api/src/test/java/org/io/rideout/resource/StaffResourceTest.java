@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.io.rideout.Main;
 import org.io.rideout.model.Staff;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -21,18 +19,18 @@ import static org.junit.Assert.*;
 
 public class StaffResourceTest {
 
-    private HttpServer server;
-    private WebTarget target;
+    private static HttpServer server;
+    private static WebTarget target;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() {
         server = Main.startServer();
         Client c = ClientBuilder.newClient();
         target = c.target(Main.BASE_URI);
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() {
         server.stop();
     }
 
