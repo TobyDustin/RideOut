@@ -91,8 +91,9 @@ public class RideOutResourceTest {
         testTourOut(tourOuts.get(0));
     }
 
+    @Test
     public void testPutRideOut(){
-        String body = "{\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
+        String body = "{\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
         Response response = target.path("rideout").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
@@ -115,6 +116,14 @@ public class RideOutResourceTest {
         Response response = target.path("rideout/5555").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveRideOut() {
+        Response response = target.path("rideout/12345").request().delete();
+        RideOut rideOut = response.readEntity(RideOut.class);
+
+        testRideOut(rideOut);
     }
 
     private void testRideOut(RideOut rideOut) {
