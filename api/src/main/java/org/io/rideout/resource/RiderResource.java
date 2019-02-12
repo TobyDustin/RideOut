@@ -109,6 +109,15 @@ public class RiderResource {
         return rider;
     }
 
+    // CREATE rider vehicle
+    @POST
+    @Path("{uid}/vehicle")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Vehicle addVehicle(@PathParam("uid") String uid, Vehicle vehicle) {
+        return getDummyRider().getVehicles().get(0);
+    }
+
     // DELETE rider
     @DELETE
     @Path("{id}")
@@ -116,6 +125,26 @@ public class RiderResource {
     public Rider removeRider(@PathParam("id") String id) {
         if (id.equals("12345")) {
             return getDummyRider();
+        }
+
+        throw new NotFoundException();
+    }
+
+    //DELETE rider vehicle
+    @DELETE
+    @Path("{uid}/vehicle/{vid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Vehicle removeVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid) {
+        if (uid.equals("12345")) {
+            Rider rider = getDummyRider();
+            switch (vid) {
+                case "9876":
+                    return rider.getVehicles().get(0);
+                case "1234":
+                    return rider.getVehicles().get(1);
+                default:
+                    throw new NotFoundException();
+            }
         }
 
         throw new NotFoundException();
