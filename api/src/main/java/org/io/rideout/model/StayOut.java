@@ -5,35 +5,43 @@ import java.util.Date;
 
 public class StayOut extends RideOut {
 
-    private ArrayList<Booking> accommodation;
-    private ArrayList<Booking> restaurant;
+    private ArrayList<Booking> accommodationList;
+    private ArrayList<Booking> restaurantList;
 
     public StayOut() {
         super();
 
-        this.accommodation = new ArrayList<>();
-        this.restaurant = new ArrayList<>();
+        this.accommodationList = new ArrayList<>();
+        this.restaurantList = new ArrayList<>();
     }
 
     public StayOut(String id,String name, Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate, ArrayList<Booking> accommodation, ArrayList<Booking> restaurant) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
-        this.accommodation = accommodation;
-        this.restaurant = restaurant;
+        this.accommodationList = accommodation;
+        this.restaurantList = restaurant;
     }
 
-    public ArrayList<Booking> getAccommodation() {
-        return accommodation;
+    public ArrayList<Booking> getAccommodationList() {
+        return accommodationList;
     }
 
-    public void setAccommodation(ArrayList<Booking> accommodation) {
-        this.accommodation = accommodation;
+    public void setAccommodationList(ArrayList<Booking> accommodationList) {
+        this.accommodationList = accommodationList;
     }
 
-    public ArrayList<Booking> getRestaurant() {
-        return restaurant;
+    public ArrayList<Booking> getRestaurantList() {
+        return restaurantList;
     }
 
-    public void setRestaurant(ArrayList<Booking> restaurant) {
-        this.restaurant = restaurant;
+    public void setRestaurantList(ArrayList<Booking> restaurantList) {
+        this.restaurantList = restaurantList;
+    }
+
+    public void addRestaurant(Booking restaurant) {
+        this.restaurantList.add(restaurant);
+    }
+
+    public void addAccommodation(Booking accommodation) {
+        this.accommodationList.add(accommodation);
     }
 }
