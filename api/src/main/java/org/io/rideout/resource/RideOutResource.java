@@ -23,6 +23,7 @@ public class RideOutResource {
     }
 
 
+
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -48,26 +49,37 @@ public class RideOutResource {
         return dummy;
     }
 
-
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    public RideOut addRideOut() {
-        throw new NotImplementedException();
+    @Consumes({MediaType.APPLICATION_JSON})
+    public RideOut addRideOut(RideOut rideOut) {
+        rideOut.setId("12345");
+        return rideOut;
+
     }
+
+
 
 
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public RideOut updateRideOut(@PathParam("id") String id) {
-        throw new NotImplementedException();
+    @Consumes({MediaType.APPLICATION_JSON})
+    public RideOut updateRideOut(@PathParam("id") String id,RideOut rideOut) {
+        if (id.equals("54321")){
+            return rideOut;
+        }
+        throw new NotFoundException();
     }
 
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public RideOut deleteRideOut(@PathParam("id") String id) {
-        throw new NotImplementedException();
+        if (id.equals("12345")){
+            return getDummyRideOut();
+        }
+        throw  new NotFoundException();
     }
 
 

@@ -10,7 +10,9 @@ import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +66,25 @@ public class RideOutResourceTest {
         testRideOut(rideOut);
     }
 
+//    @Test
+//    public void testPutRideOut(){
+//        String body = "{\"modelType\":\"RideOutModel\",\"name\":\"TestRideOut\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"12345\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
+//        Response response = target.path("rideout").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+//
+//        assertEquals(200, response.getStatus());
+//        testRideOut(response.readEntity(RideOut.class));
+//    }
+
+
+//    @Test
+//    public void testPostRideOutSuccess() {
+//        String body = "{\"modelType\":\"RideOutModel\",\"name\":\"TestRideOut\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"12345\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
+//        Response response = target.path("rideout/54321").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+//
+//        assertEquals(200, response.getStatus());
+//        testRideOut(response.readEntity(RideOut.class));
+//    }
+
 
     private void testRideOut(RideOut rideOut) {
         assertNotNull(rideOut);
@@ -78,6 +99,8 @@ public class RideOutResourceTest {
         assertFalse(rideOut.isPublished());
 
     }
+
+
 
 
 }
