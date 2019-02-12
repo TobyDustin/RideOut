@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.io.rideout.Main;
 import org.io.rideout.model.Rider;
+import org.io.rideout.model.Vehicle;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -69,6 +71,48 @@ public class RiderResourceTest {
     }
 
     @Test
+    public void testGetRiderVehicles() {
+        Response response = target.path("rider/12345/vehicle").request().get();
+        ArrayList<Vehicle> vehicles = response.readEntity(new GenericType<ArrayList<Vehicle>>() {});
+
+        testVehicle(vehicles.get(0));
+    }
+
+    @Test
+    public void testGetRiderVehicleById() {
+        Response response = target.path("rider/12345/vehicle/9876").request().get();
+        Vehicle vehicle = response.readEntity(Vehicle.class);
+
+        testVehicle(vehicle);
+    }
+
+    @Test
+    public void testUpdateVehicle() {
+        Response response = target.path("rider/12345/vehicle/9876").request()
+                .put(Entity.entity(new Vehicle(), MediaType.APPLICATION_JSON_TYPE));
+        Vehicle vehicle = response.readEntity(Vehicle.class);
+
+        testVehicle(vehicle);
+    }
+
+    @Test
+    public void testDeleteVehicle() {
+        Response response = target.path("rider/12345/vehicle/9876").request().delete();
+        Vehicle vehicle = response.readEntity(Vehicle.class);
+
+        testVehicle(vehicle);
+    }
+
+    @Test
+    public void testAddVehicle() {
+        Response response = target.path("rider/12345/vehicle/").request()
+                .post(Entity.entity(new Vehicle(), MediaType.APPLICATION_JSON_TYPE));
+        Vehicle vehicle = response.readEntity(Vehicle.class);
+
+        testVehicle(vehicle);
+    }
+
+    @Test
     public void testPutRider() {
         String body = "{\"modelType\":\"RiderModel\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
         Response response = target.path("rider").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
@@ -114,5 +158,14 @@ public class RiderResourceTest {
         assertTrue(rider.isInsured());
         assertFalse(rider.isLead());
         assertEquals("A", rider.getLicense());
+    }
+
+    static void testVehicle(Vehicle vehicle) {
+        assertNotNull(vehicle);
+        assertEquals("9876", vehicle.getId());
+        assertEquals("Honda", vehicle.getMake());
+        assertEquals("Monkey", vehicle.getMake());
+        assertEquals(Integer.valueOf(125), vehicle.getPower());
+        assertEquals("REG123", vehicle.getRegistration());
     }
 }
