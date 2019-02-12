@@ -1,7 +1,6 @@
 package org.io.rideout.resource;
 
 import org.io.rideout.model.Staff;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,6 +10,7 @@ import java.util.Date;
 @Path("staff")
 public class StaffResource {
 
+    // GET all staff
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Staff> getAllStaff() {
@@ -19,6 +19,7 @@ public class StaffResource {
         return result;
     }
 
+    // GET staff by id
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -30,27 +31,8 @@ public class StaffResource {
         throw new NotFoundException();
     }
 
-    private Staff getDummyStaff() {
-        return new Staff(
-                "12345",
-                "jsmith",
-                "John",
-                "Smith",
-                new Date(100),
-                "07491012345",
-                false
-        );
-    }
-
+    // UPDATE staff
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Staff addStaff(Staff staff) {
-        staff.setId("12345");
-        return staff;
-    }
-
-    @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +44,16 @@ public class StaffResource {
         throw new NotFoundException();
     }
 
+    // CREATE staff
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Staff addStaff(Staff staff) {
+        staff.setId("12345");
+        return staff;
+    }
+
+    // DELETE staff
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -71,5 +63,19 @@ public class StaffResource {
         }
 
         throw new NotFoundException();
+    }
+
+    // ======= DUMMY DATA ========
+
+    private Staff getDummyStaff() {
+        return new Staff(
+                "12345",
+                "jsmith",
+                "John",
+                "Smith",
+                new Date(100),
+                "07491012345",
+                false
+        );
     }
 }

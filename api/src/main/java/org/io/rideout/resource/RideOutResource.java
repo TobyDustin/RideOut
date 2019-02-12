@@ -12,6 +12,8 @@ import java.util.Date;
 
 @Path("rideout")
 public class RideOutResource {
+
+    // GET all ride outs
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<RideOut> getAllRideOuts() {
@@ -25,6 +27,7 @@ public class RideOutResource {
         return result;
     }
 
+    // GET ride out by id
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -37,6 +40,7 @@ public class RideOutResource {
         throw new NotFoundException();
     }
 
+    // GET ride outs with type ride
     @GET
     @Path("ride")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +50,7 @@ public class RideOutResource {
         return rideOuts;
     }
 
+    // GET ride outs with type stay
     @GET
     @Path("stay")
     @Produces(MediaType.APPLICATION_JSON)
@@ -55,6 +60,7 @@ public class RideOutResource {
         return stayOuts;
     }
 
+    // GET ride outs with type tour
     @GET
     @Path("tour")
     @Produces(MediaType.APPLICATION_JSON)
@@ -64,18 +70,8 @@ public class RideOutResource {
         return tourOuts;
     }
 
-
+    // UPDATE rideout
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes({MediaType.APPLICATION_JSON})
-    public RideOut addRideOut(RideOut rideOut) {
-        rideOut.setId("12345");
-        return rideOut;
-
-    }
-
-
-    @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
@@ -86,6 +82,17 @@ public class RideOutResource {
         throw new NotFoundException();
     }
 
+    // POST ride out
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_JSON})
+    public RideOut addRideOut(RideOut rideOut) {
+        rideOut.setId("12345");
+        return rideOut;
+
+    }
+
+    // DELETE ride out
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -96,6 +103,7 @@ public class RideOutResource {
         throw new NotFoundException();
     }
 
+    // ADD rider to ride out
     @PUT
     @Path("{rideOutId}/rider/{riderId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -112,6 +120,7 @@ public class RideOutResource {
         throw new NotFoundException("RideOut not found");
     }
 
+    // REMOVE rider from ride out
     @DELETE
     @Path("{rideOutId}/rider/{riderId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -124,7 +133,8 @@ public class RideOutResource {
 
         throw new NotFoundException("RideOut not found");
     }
-        // ======== DUMMY DATA ========
+
+    // ======== DUMMY DATA ========
 
     private RideOut getDummyRideOut() {
         RideOut dummy = new RideOut(
@@ -140,8 +150,7 @@ public class RideOutResource {
         );
         return dummy;
     }
-
-
+    
     private StayOut getDummyStayOut() {
         StayOut dummy = new StayOut(
                 "23456",

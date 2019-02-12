@@ -65,27 +65,27 @@ public class StaffResourceTest {
     }
 
     @Test
-    public void testPutStaff() {
+    public void testPostStaff() {
         String body = "{\"modelType\":\"StaffModel\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
-        Response response = target.path("staff").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("staff").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testStaff(response.readEntity(Staff.class));
     }
 
     @Test
-    public void testPostStaffSuccess() {
+    public void testPutStaffSuccess() {
         String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
-        Response response = target.path("staff/54321").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("staff/54321").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testStaff(response.readEntity(Staff.class));
     }
 
     @Test
-    public void testPostStaffNotFound() {
+    public void testPutStaffNotFound() {
         String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
-        Response response = target.path("staff/121212").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("staff/121212").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
     }

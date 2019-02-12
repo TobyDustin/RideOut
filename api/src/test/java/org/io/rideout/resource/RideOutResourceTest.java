@@ -119,8 +119,8 @@ public class RideOutResourceTest {
 
     @Test
     public void testPutRideOut(){
-        String body = "{\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
-        Response response = target.path("rideout").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String body = "{\"id\":\"12345\",\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
+        Response response = target.path("rideout/12345").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testRideOut(response.readEntity(RideOut.class));
@@ -139,18 +139,18 @@ public class RideOutResourceTest {
     }
 
     @Test
-    public void testPostRideOutSuccess() {
+    public void testPutRideOutSuccess() {
         String body = "{\"id\":\"12345\",\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
-        Response response = target.path("rideout/12345").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("rideout/12345").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testRideOut(response.readEntity(RideOut.class));
     }
 
     @Test
-    public void testPostRiderNotFound() {
+    public void testPutRiderNotFound() {
         String body = "{\"id\":\"54321\",\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
-        Response response = target.path("rideout/5555").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("rideout/5555").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
     }

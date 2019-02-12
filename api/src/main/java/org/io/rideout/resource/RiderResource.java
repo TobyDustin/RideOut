@@ -2,18 +2,16 @@ package org.io.rideout.resource;
 
 import org.io.rideout.model.Rider;
 import org.io.rideout.model.Vehicle;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
 @Path("rider")
 public class RiderResource {
 
+    // GET all riders
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Rider> getAllRiders() {
@@ -23,6 +21,7 @@ public class RiderResource {
         return result;
     }
 
+    // GET rider by ID
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -34,6 +33,7 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
+    // GET rider vehicles
     @GET
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +46,7 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
+    // GET rider vehicle by ID
     @GET
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -65,6 +66,7 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
+    // UPDATE rider
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -73,6 +75,7 @@ public class RiderResource {
         return rider;
     }
 
+    // CREATE rider
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -85,6 +88,7 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
+    // DELETE rider
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
