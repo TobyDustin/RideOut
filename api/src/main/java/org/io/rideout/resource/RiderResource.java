@@ -68,24 +68,45 @@ public class RiderResource {
 
     // UPDATE rider
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Rider addRider(Rider rider) {
-        rider.setId("12345");
-        return rider;
-    }
-
-    // CREATE rider
-    @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public Rider updateRider(@PathParam("id") String id, Rider rider) {
         if (id.equals("54321")) {
             return rider;
         }
 
         throw new NotFoundException();
+    }
+
+    // UPDATE rider vehicle
+    @PUT
+    @Path("{uid}/vehicle/{vid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Vehicle updateVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid, Vehicle vehicle) {
+        if (uid.equals("12345")) {
+            Rider rider = getDummyRider();
+            switch (vid) {
+                case "9876":
+                    return vehicle;
+                case "1234":
+                    return vehicle;
+                default:
+                    throw new NotFoundException();
+            }
+        }
+
+        throw new NotFoundException();
+    }
+
+    // CREATE rider
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Rider addRider(Rider rider) {
+        rider.setId("12345");
+        return rider;
     }
 
     // DELETE rider

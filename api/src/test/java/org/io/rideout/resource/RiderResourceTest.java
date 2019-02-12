@@ -89,7 +89,7 @@ public class RiderResourceTest {
     @Test
     public void testUpdateVehicle() {
         Response response = target.path("rider/12345/vehicle/9876").request()
-                .put(Entity.entity(new Vehicle(), MediaType.APPLICATION_JSON_TYPE));
+                .put(Entity.entity(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
         Vehicle vehicle = response.readEntity(Vehicle.class);
 
         testVehicle(vehicle);
@@ -106,7 +106,7 @@ public class RiderResourceTest {
     @Test
     public void testAddVehicle() {
         Response response = target.path("rider/12345/vehicle/").request()
-                .post(Entity.entity(new Vehicle(), MediaType.APPLICATION_JSON_TYPE));
+                .post(Entity.entity(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
         Vehicle vehicle = response.readEntity(Vehicle.class);
 
         testVehicle(vehicle);
@@ -114,8 +114,8 @@ public class RiderResourceTest {
 
     @Test
     public void testPutRider() {
-        String body = "{\"modelType\":\"RiderModel\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
-        Response response = target.path("rider").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        Response response = target.path("rider/54321").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testRider(response.readEntity(Rider.class));
@@ -124,16 +124,16 @@ public class RiderResourceTest {
     @Test
     public void testPostRiderSuccess() {
         String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
-        Response response = target.path("rider/54321").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("rider").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testRider(response.readEntity(Rider.class));
     }
 
     @Test
-    public void testPostRiderNotFound() {
+    public void testPutRiderNotFound() {
         String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
-        Response response = target.path("rider/121212").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        Response response = target.path("rider/121212").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
     }
