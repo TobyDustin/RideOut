@@ -1,9 +1,7 @@
 package org.io.rideout.resource;
 
 import org.io.rideout.model.RideOut;
-import org.io.rideout.model.Rider;
-import org.io.rideout.model.Staff;
-import org.io.rideout.model.Vehicle;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.*;
@@ -29,6 +27,7 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     public RideOut getRideOut(@PathParam("id") String id) {
         if (id.equals("12345")) {
+
             return getDummyRideOut();
         }
 
@@ -49,6 +48,9 @@ public class RideOutResource {
         return dummy;
     }
 
+
+
+
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
@@ -60,13 +62,12 @@ public class RideOutResource {
 
 
 
-
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut updateRideOut(@PathParam("id") String id,RideOut rideOut) {
-        if (id.equals("54321")){
+        if (id.equals("12345")){
             return rideOut;
         }
         throw new NotFoundException();
