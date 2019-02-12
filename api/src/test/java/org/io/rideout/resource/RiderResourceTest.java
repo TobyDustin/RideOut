@@ -102,7 +102,7 @@ public class RiderResourceTest {
         testRider(response.readEntity(Rider.class));
     }
 
-    private void testRider(Rider rider) {
+    static void testRider(Rider rider) {
         assertNotNull(rider);
         assertEquals("12345", rider.getId());
         assertEquals("jsmith", rider.getUsername());

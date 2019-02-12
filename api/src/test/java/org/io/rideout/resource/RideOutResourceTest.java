@@ -8,9 +8,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +65,46 @@ public class RideOutResourceTest {
         RideOut rideOut = response.readEntity(RideOut.class);
         assertEquals(200, response.getStatus());
         testRideOut(rideOut);
+    }
+
+    @Test
+    public void testAddUserSuccess() {
+        Response response = target.path("rideout/12345/rider/12345").request().put(Entity.text(""));
+        RideOut rideOut = response.readEntity(RideOut.class);
+        assertEquals(200, response.getStatus());
+        testRideOut(rideOut);
+        RiderResourceTest.testRider(rideOut.getRiders().get(0));
+    }
+
+    @Test
+    public void testAddUserRideOutNotFound() {
+        Response response = target.path("rideout/12121/rider/12345").request().put(Entity.text(""));
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserNotFound() {
+        Response response = target.path("rideout/12345/rider/54321").request().put(Entity.text(""));
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserSuccess() {
+        Response response = target.path("rideout/12345/rider/12345").request().delete();
+        assertEquals(200, response.getStatus());
+        testRideOut(response.readEntity(RideOut.class));
+    }
+
+    @Test
+    public void testRemoveUserRideOutNotFound() {
+        Response response = target.path("rideout/12121/rider/12345").request().delete();
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserNotFound() {
+        Response response = target.path("rideout/12345/rider/54321").request().delete();
+        assertEquals(404, response.getStatus());
     }
 
 

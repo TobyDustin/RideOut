@@ -70,7 +70,33 @@ public class RideOutResource {
         throw new NotImplementedException();
     }
 
+    @PUT
+    @Path("{rideOutId}/rider/{riderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut addRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
+        if (rideOutId.equals("12345")) {
+            RideOut rideOut = getDummyRideOut();
 
+            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
+            rideOut.getRiders().add(RiderResource.getDummyRider());
 
+            return rideOut;
+        }
+
+        throw new NotFoundException("RideOut not found");
+    }
+
+    @DELETE
+    @Path("{rideOutId}/rider/{riderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut removeRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
+        if (rideOutId.equals("12345")) {
+            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
+
+            return getDummyRideOut();
+        }
+
+        throw new NotFoundException("RideOut not found");
+    }
 
 }
