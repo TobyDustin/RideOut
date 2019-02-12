@@ -1,8 +1,15 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import java.util.ArrayList;
 import java.util.Date;
 
+@JsonTypeName("Stay")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "rideoutType")
+@JsonSubTypes({ @JsonSubTypes.Type(value = TourOut.class) })
 public class StayOut extends RideOut {
 
     private ArrayList<Booking> accommodationList;
@@ -15,10 +22,10 @@ public class StayOut extends RideOut {
         this.restaurantList = new ArrayList<>();
     }
 
-    public StayOut(String id,String name, Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate, ArrayList<Booking> accommodation, ArrayList<Booking> restaurant) {
+    public StayOut(String id,String name, Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
-        this.accommodationList = accommodation;
-        this.restaurantList = restaurant;
+        this.accommodationList = new ArrayList<>();
+        this.restaurantList = new ArrayList<>();
     }
 
     public ArrayList<Booking> getAccommodationList() {

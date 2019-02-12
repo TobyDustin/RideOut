@@ -1,10 +1,16 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
-
+@JsonTypeName("Ride")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "rideoutType")
+@JsonSubTypes({ @JsonSubTypes.Type(value = StayOut.class) })
 public class RideOut {
 
     private String id;
