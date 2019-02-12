@@ -46,6 +46,25 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
+    @GET
+    @Path("{uid}/vehicle/{vid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Vehicle getRiderVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid) {
+        if (uid.equals("12345")) {
+            Rider rider = getDummyRider();
+            switch (vid) {
+                case "9876":
+                    return rider.getVehicles().get(0);
+                case "1234":
+                    return rider.getVehicles().get(1);
+                default:
+                    throw new NotFoundException();
+            }
+        }
+
+        throw new NotFoundException();
+    }
+
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
