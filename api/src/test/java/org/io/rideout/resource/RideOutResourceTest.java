@@ -71,6 +71,32 @@ public class RideOutResourceTest {
     }
 
     @Test
+    public void testAddUserSuccess() {
+        Response response = target.path("rideout/12345/rider/12345").request().put(Entity.text(""));
+        RideOut rideOut = response.readEntity(RideOut.class);
+        assertEquals(200, response.getStatus());
+        testRideOut(rideOut);
+        RiderResourceTest.testRider(rideOut.getRiders().get(0));
+    }
+
+    @Test
+    public void testAddUserRideOutNotFound() {
+        Response response = target.path("rideout/12121/rider/12345").request().put(Entity.text(""));
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserNotFound() {
+        Response response = target.path("rideout/12345/rider/54321").request().put(Entity.text(""));
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserSuccess() {
+        Response response = target.path("rideout/12345/rider/12345").request().delete();
+    }
+
+    @Test
     public void testGetRideOuts() {
         Response response = target.path("rideout/ride").request().get();
         ArrayList<RideOut> rideOuts = response.readEntity(new GenericType<ArrayList<RideOut>>() {});
@@ -100,10 +126,21 @@ public class RideOutResourceTest {
         testRideOut(response.readEntity(RideOut.class));
     }
 
+    @Test
+    public void testRemoveUserRideOutNotFound() {
+        Response response = target.path("rideout/12121/rider/12345").request().delete();
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserNotFound() {
+        Response response = target.path("rideout/12345/rider/54321").request().delete();
+        assertEquals(404, response.getStatus());
+    }
 
     @Test
     public void testPostRideOutSuccess() {
-        String body = "{\"rideoutType\":\"Ride\",\"id\":\"12345\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
+        String body = "{\"id\":\"12345\",\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
         Response response = target.path("rideout/12345").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
@@ -112,7 +149,7 @@ public class RideOutResourceTest {
 
     @Test
     public void testPostRiderNotFound() {
-        String body = "{\"rideoutType\":\"Ride\",\"id\":\"12345\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
+        String body = "{\"id\":\"54321\",\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
         Response response = target.path("rideout/5555").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());

@@ -65,8 +65,6 @@ public class RideOutResource {
     }
 
 
-
-
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
@@ -77,13 +75,12 @@ public class RideOutResource {
     }
 
 
-
     @POST
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
-    public RideOut updateRideOut(@PathParam("id") String id,RideOut rideOut) {
-        if (id.equals("12345")){
+    public RideOut updateRideOut(@PathParam("id") String id, RideOut rideOut) {
+        if (id.equals("12345")) {
             return rideOut;
         }
         throw new NotFoundException();
@@ -93,13 +90,41 @@ public class RideOutResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public RideOut deleteRideOut(@PathParam("id") String id) {
-        if (id.equals("12345")){
+        if (id.equals("12345")) {
             return getDummyRideOut();
         }
-        throw  new NotFoundException();
+        throw new NotFoundException();
     }
 
-    // ======== DUMMY DATA ========
+    @PUT
+    @Path("{rideOutId}/rider/{riderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut addRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
+        if (rideOutId.equals("12345")) {
+            RideOut rideOut = getDummyRideOut();
+
+            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
+            rideOut.getRiders().add(RiderResource.getDummyRider());
+
+            return rideOut;
+        }
+
+        throw new NotFoundException("RideOut not found");
+    }
+
+    @DELETE
+    @Path("{rideOutId}/rider/{riderId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RideOut removeRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
+        if (rideOutId.equals("12345")) {
+            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
+
+            return getDummyRideOut();
+        }
+
+        throw new NotFoundException("RideOut not found");
+    }
+        // ======== DUMMY DATA ========
 
     private RideOut getDummyRideOut() {
         RideOut dummy = new RideOut(
@@ -154,5 +179,4 @@ public class RideOutResource {
         dummy.addTravelBooking(travel);
         return dummy;
     }
-
 }

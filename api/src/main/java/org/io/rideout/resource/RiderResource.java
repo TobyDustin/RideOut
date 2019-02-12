@@ -33,7 +33,7 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
-    private Rider getDummyRider() {
+    static Rider getDummyRider() {
         Rider dummy = new Rider(
                 "12345",
                 "jsmith",
