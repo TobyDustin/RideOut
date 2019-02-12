@@ -190,7 +190,7 @@ public class RideOutResourceTest {
         assertNotNull(tourOut);
         assertEquals("34567", tourOut.getId());
         assertEquals("Tour around the candovers", tourOut.getName());
-        assertEquals(new Date(300), tourOut.getDateStart());
+        assertEquals(new Date(300),  tourOut.getDateStart());
         assertEquals(new Date(300), tourOut.getDateEnd());
         assertEquals(5, tourOut.getMaxRiders());
         assertEquals("2345", tourOut.getLeadRider());
@@ -207,4 +207,7 @@ public class RideOutResourceTest {
         assertEquals("Condor Ferries", tourOut.getTravelBookings().get(0).getName());
         assertEquals("QWERTY", tourOut.getTravelBookings().get(0).getReference());
     }
+
+
+
 }
