@@ -7,6 +7,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,21 +34,16 @@ public class RiderResource {
         throw new NotFoundException();
     }
 
-    static Rider getDummyRider() {
-        Rider dummy = new Rider(
-                "12345",
-                "jsmith",
-                "John",
-                "Smith",
-                new Date(100),
-                "07491012345",
-                "999",
-                true,
-                false,
-                "A"
-        );
-        dummy.addVehicle(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"));
-        return dummy;
+    @GET
+    @Path("{id}/vehicle")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<Vehicle> getRiderVehicles(@PathParam("id") String id) {
+        if (id.equals("12345")) {
+            Rider rider = getDummyRider();
+            return rider.getVehicles();
+        }
+
+        throw new NotFoundException();
     }
 
     @PUT
@@ -80,4 +76,25 @@ public class RiderResource {
 
         throw new NotFoundException();
     }
+
+//    ======== DUMMY DATA =========
+
+    static Rider getDummyRider() {
+        Rider dummy = new Rider(
+                "12345",
+                "jsmith",
+                "John",
+                "Smith",
+                new Date(100),
+                "07491012345",
+                "999",
+                true,
+                false,
+                "A"
+        );
+        dummy.addVehicle(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"));
+        dummy.addVehicle(new Vehicle("1234", "Suzuki", "GSXR", 1000, "REG987"));
+        return dummy;
+    }
+
 }

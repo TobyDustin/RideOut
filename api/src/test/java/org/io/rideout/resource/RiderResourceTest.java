@@ -164,7 +164,7 @@ public class RiderResourceTest {
         assertNotNull(vehicle);
         assertEquals("9876", vehicle.getId());
         assertEquals("Honda", vehicle.getMake());
-        assertEquals("Monkey", vehicle.getMake());
+        assertEquals("Monkey", vehicle.getModel());
         assertEquals(Integer.valueOf(125), vehicle.getPower());
         assertEquals("REG123", vehicle.getRegistration());
     }
