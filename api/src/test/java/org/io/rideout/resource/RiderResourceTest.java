@@ -114,7 +114,7 @@ public class RiderResourceTest {
 
     @Test
     public void testPutRider() {
-        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
         Response response = target.path("rider/54321").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
@@ -123,7 +123,7 @@ public class RiderResourceTest {
 
     @Test
     public void testPostRiderSuccess() {
-        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
         Response response = target.path("rider").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
@@ -132,7 +132,7 @@ public class RiderResourceTest {
 
     @Test
     public void testPutRiderNotFound() {
-        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
+        String body = "{\"modelType\":\"RiderModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"emergencyContactNumber\":\"999\",\"vehicles\":[{\"id\":\"9876\",\"make\":\"Honda\",\"model\":\"Monkey\",\"power\":125,\"registration\":\"REG123\",\"checked\":false}],\"license\":\"A\",\"payments\":[],\"insured\":true,\"lead\":false}";
         Response response = target.path("rider/121212").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
@@ -150,6 +150,7 @@ public class RiderResourceTest {
         assertNotNull(rider);
         assertEquals("12345", rider.getId());
         assertEquals("jsmith", rider.getUsername());
+        assertEquals("john123", rider.getPassword());
         assertEquals("John",  rider.getFirstName());
         assertEquals("Smith", rider.getLastName());
         assertEquals(new Date(100), rider.getDateOfBirth());

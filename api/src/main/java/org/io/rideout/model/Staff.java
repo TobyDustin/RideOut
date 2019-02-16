@@ -15,8 +15,8 @@ public class Staff extends User {
         super();
     }
 
-    public Staff(String id, String username, String firstName, String lastName, Date dateOfBirth, String contactNumber, boolean isAdmin) {
-        super(id, username, firstName, lastName, dateOfBirth, contactNumber);
+    public Staff(String id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber, boolean isAdmin) {
+        super(id, username, password, firstName, lastName, dateOfBirth, contactNumber);
         this.isAdmin = isAdmin;
     }
 

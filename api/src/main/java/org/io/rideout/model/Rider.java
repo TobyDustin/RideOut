@@ -23,8 +23,8 @@ public class Rider extends User {
         this.payments = new ArrayList<>();
     }
 
-    public Rider(String id, String username, String firstName, String lastName, Date dateOfBirth, String contactNumber, String emergencyContactNumber, Boolean isInsured, Boolean isLead, String license) {
-        super(id, username, firstName, lastName, dateOfBirth, contactNumber);
+    public Rider(String id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber, String emergencyContactNumber, Boolean isInsured, Boolean isLead, String license) {
+        super(id, username, password, firstName, lastName, dateOfBirth, contactNumber);
         this.emergencyContactNumber = emergencyContactNumber;
         this.isInsured = isInsured;
         this.isLead = isLead;

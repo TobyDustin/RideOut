@@ -156,6 +156,7 @@ public class RiderResource {
         Rider dummy = new Rider(
                 "12345",
                 "jsmith",
+                "john123",
                 "John",
                 "Smith",
                 new Date(100),
