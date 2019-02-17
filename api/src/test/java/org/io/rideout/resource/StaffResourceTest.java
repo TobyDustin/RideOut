@@ -65,7 +65,7 @@ public class StaffResourceTest {
 
     @Test
     public void testPostStaff() {
-        String body = "{\"modelType\":\"StaffModel\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        String body = "{\"modelType\":\"StaffModel\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
         Response response = target.path("staff").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
@@ -74,7 +74,7 @@ public class StaffResourceTest {
 
     @Test
     public void testPutStaffSuccess() {
-        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
         Response response = target.path("staff/54321").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
@@ -83,7 +83,7 @@ public class StaffResourceTest {
 
     @Test
     public void testPutStaffNotFound() {
-        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
         Response response = target.path("staff/121212").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
@@ -108,6 +108,7 @@ public class StaffResourceTest {
         assertNotNull(staff);
         assertEquals("12345", staff.getId());
         assertEquals("jsmith", staff.getUsername());
+        assertEquals("john123", staff.getPassword());
         assertEquals("John", staff.getFirstName());
         assertEquals("Smith", staff.getLastName());
         assertEquals(new Date(100), staff.getDateOfBirth());

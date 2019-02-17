@@ -71,6 +71,7 @@ public class StaffResource {
         return new Staff(
                 "12345",
                 "jsmith",
+                "john123",
                 "John",
                 "Smith",
                 new Date(100),
