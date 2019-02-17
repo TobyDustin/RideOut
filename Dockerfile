@@ -8,6 +8,7 @@ WORKDIR /tmp/
 RUN mvn package -DskipTests
 
 FROM tomcat:9-jre8-alpine
-COPY --from=MAVEN_TOOL_CHAIN /tmp/api/target/rideout-api.war $CATALINA_HOME/webapps/rideout.war
+RUN rm -r $CATALINA_HOME/webapps/ROOT
+COPY --from=MAVEN_TOOL_CHAIN /tmp/api/target/rideout-api.war $CATALINA_HOME/webapps/ROOT.war
 
-HEALTHCHECK --interval=1m --timeout=3s CMD wget --quiet --tries=1 --spider http://localhost:8080/rideout/ || exit 1
+HEALTHCHECK --interval=1m --timeout=3s CMD wget --quiet --tries=1 --spider http://localhost:8080/ || exit 1
