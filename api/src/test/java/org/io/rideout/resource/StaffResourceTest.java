@@ -1,8 +1,7 @@
 package org.io.rideout.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.io.rideout.Main;
+import org.io.rideout.HttpTestServer;
 import org.io.rideout.model.Staff;
 import org.junit.*;
 
@@ -19,14 +18,14 @@ import static org.junit.Assert.*;
 
 public class StaffResourceTest {
 
-    private static HttpServer server;
+    private static org.glassfish.grizzly.http.server.HttpServer server;
     private static WebTarget target;
 
     @BeforeClass
     public static void setUp() {
-        server = Main.startServer();
+        server = HttpTestServer.startServer();
         Client c = ClientBuilder.newClient();
-        target = c.target(Main.BASE_URI);
+        target = c.target(HttpTestServer.BASE_URI);
     }
 
     @AfterClass
