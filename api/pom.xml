@@ -35,8 +35,7 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webResources>
                         <resource>
-                            <!-- this is relative to the pom.xml directory -->
-                            <directory>../frontend/dist/</directory>
+                            <directory>../frontend/dist/frontend</directory>
                         </resource>
                     </webResources>
                 </configuration>
