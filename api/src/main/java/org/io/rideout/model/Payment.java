@@ -1,9 +1,12 @@
 package org.io.rideout.model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+
 import java.util.Date;
 
 public class Payment {
 
+    @BsonId
     private String id;
     private Date date;
     private String rideOutId;

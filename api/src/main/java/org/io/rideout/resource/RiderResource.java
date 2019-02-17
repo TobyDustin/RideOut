@@ -1,5 +1,6 @@
 package org.io.rideout.resource;
 
+import org.io.rideout.database.Database;
 import org.io.rideout.model.Rider;
 import org.io.rideout.model.Vehicle;
 

@@ -1,12 +1,14 @@
 package org.io.rideout.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import org.bson.codecs.pojo.annotations.BsonId;
 
 import java.util.Date;
 
 @JsonSubTypes({ @JsonSubTypes.Type(value = Rider.class), @JsonSubTypes.Type(value = Staff.class) })
 public abstract class User {
 
+    @BsonId
     protected String id;
     protected String username;
     protected String password;

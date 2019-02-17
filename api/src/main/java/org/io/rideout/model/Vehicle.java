@@ -1,7 +1,10 @@
 package org.io.rideout.model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+
 public class Vehicle {
 
+    @BsonId
     private String id;
     private String make;
     private String model;

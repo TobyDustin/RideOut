@@ -3,6 +3,7 @@ package org.io.rideout.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.bson.codecs.pojo.annotations.BsonId;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Date;
 @JsonSubTypes({ @JsonSubTypes.Type(value = StayOut.class) })
 public class RideOut {
 
+    @BsonId
     private String id;
     private String name;
     private Date dateStart;

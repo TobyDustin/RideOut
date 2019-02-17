@@ -1,6 +1,10 @@
 package org.io.rideout.model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
+
 public class Checkpoint {
+
+    @BsonId
     private String id;
     private String name;
     private double lat;
