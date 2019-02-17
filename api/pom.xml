@@ -3,14 +3,19 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.io.rideout</groupId>
-    <artifactId>rideout</artifactId>
+    <parent>
+        <groupId>org.io.rideout</groupId>
+        <artifactId>rideout</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>rideout-api</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>rideout</name>
+    <name>rideout-api</name>
 
     <build>
-        <finalName>rideout</finalName>
+        <finalName>rideout-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -20,6 +25,20 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <!-- this is relative to the pom.xml directory -->
+                            <directory>../frontend/dist/</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>
