@@ -1,3 +1,8 @@
+# Prebuild Docker containers available by running:
+#   docker run -p 8080:8080 edjeffreys/rideout:[branch]
+# If a custom build is required (e.g. testing new feature branch) then run:
+#   docker build --tag="rideout:[branch]" ./
+
 FROM maven:3.6 AS MAVEN_TOOL_CHAIN
 COPY pom.xml /tmp/
 COPY api/ /tmp/api/
