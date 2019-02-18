@@ -1,6 +1,7 @@
 package org.io.rideout.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.types.ObjectId;
 import org.io.rideout.HttpTestServer;
 import org.io.rideout.model.Staff;
 import org.junit.*;
@@ -49,7 +50,9 @@ public class StaffResourceTest {
 
     @Test
     public void testGetStaffSuccess() {
-        Response response = target.path("/staff/12345").request().get();
+        String id = StaffResource.UID_12345.toHexString();
+
+        Response response = target.path("/staff/" + id).request().get();
 
         Staff staff = response.readEntity(Staff.class);
         assertEquals(200, response.getStatus());
@@ -58,7 +61,9 @@ public class StaffResourceTest {
 
     @Test
     public void testGetStaffNotFound() {
-        Response response = target.path("/staff/54321").request().get();
+        String id = StaffResource.UID_54321.toHexString();
+
+        Response response = target.path("/staff/" + id).request().get();
 
         assertEquals(404, response.getStatus());
     }
@@ -74,8 +79,11 @@ public class StaffResourceTest {
 
     @Test
     public void testPutStaffSuccess() {
-        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
-        Response response = target.path("staff/54321").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String id = StaffResource.UID_12345.toHexString();
+        String fid = new ObjectId("5c6a97fe3bd3d419a78de2c5").toHexString();
+
+        String body = "{\"modelType\":\"StaffModel\",\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        Response response = target.path("staff/" + fid).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         testStaff(response.readEntity(Staff.class));
@@ -83,15 +91,20 @@ public class StaffResourceTest {
 
     @Test
     public void testPutStaffNotFound() {
-        String body = "{\"modelType\":\"StaffModel\",\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
-        Response response = target.path("staff/121212").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String id = StaffResource.UID_12345.toHexString();
+        String fid = new ObjectId(new Date(121212)).toHexString();
+
+        String body = "{\"modelType\":\"StaffModel\",\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\"john123\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\",\"admin\":false}";
+        Response response = target.path("staff/" + fid).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
     }
 
     @Test
     public void testDeleteStaffSuccess() {
-        Response response = target.path("staff/12345").request().delete();
+        String id = StaffResource.UID_12345.toHexString();
+
+        Response response = target.path("staff/" + id).request().delete();
 
         assertEquals(200, response.getStatus());
         testStaff(response.readEntity(Staff.class));
@@ -99,14 +112,16 @@ public class StaffResourceTest {
 
     @Test
     public void testDeleteStaffNotFound() {
-        Response response = target.path("staff/54321").request().delete();
+        String id = StaffResource.UID_54321.toHexString();
+
+        Response response = target.path("staff/" + id).request().delete();
 
         assertEquals(404, response.getStatus());
     }
 
     private void testStaff(Staff staff) {
         assertNotNull(staff);
-        assertEquals("12345", staff.getId());
+        assertEquals(StaffResource.UID_12345, staff.getId());
         assertEquals("jsmith", staff.getUsername());
         assertEquals("john123", staff.getPassword());
         assertEquals("John", staff.getFirstName());

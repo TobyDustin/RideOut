@@ -1,29 +1,36 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
 import java.util.Date;
 
 public class Payment {
 
     @BsonId
-    private String id;
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
     private Date date;
     private String rideOutId;
     private Float amount;
 
-    public Payment(String id, Date date, String rideOutId, Float amount) {
+    public Payment(ObjectId id, Date date, String rideOutId, Float amount) {
         this.id = id;
         this.date = date;
         this.rideOutId = rideOutId;
         this.amount = amount;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

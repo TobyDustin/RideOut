@@ -1,11 +1,18 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
 public class Vehicle {
 
     @BsonId
-    private String id;
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
     private String make;
     private String model;
     private Integer power;
@@ -14,7 +21,7 @@ public class Vehicle {
 
     public Vehicle() {}
 
-    public Vehicle(String id, String make, String model, Integer power, String registration) {
+    public Vehicle(ObjectId id, String make, String model, Integer power, String registration) {
         this.id = id;
         this.make = make;
         this.model = model;
@@ -23,11 +30,11 @@ public class Vehicle {
         this.isChecked = false;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

@@ -1,10 +1,11 @@
-package org.io.rideout.database.daos;
+package org.io.rideout.database;
 
-import org.io.rideout.database.Database;
 import org.io.rideout.model.Staff;
-import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
 
 public class StaffDaoTest {
 
@@ -22,5 +23,11 @@ public class StaffDaoTest {
                 false
         );
         dao.insert(dummy);
+    }
+
+    //@Test
+    public void testGetAllStaff() {
+        ArrayList<Staff> result = StaffDao.getInstance().getAll();
+        assertEquals(1, result.size());
     }
 }

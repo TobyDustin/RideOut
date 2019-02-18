@@ -2,10 +2,13 @@ package org.io.rideout.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+@BsonDiscriminator
 @JsonTypeName("RiderModel")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "modelType")
 public class Rider extends User {
@@ -13,8 +16,10 @@ public class Rider extends User {
     private String emergencyContactNumber;
     private Boolean isInsured;
     private Boolean isLead;
+    //@BsonProperty(useDiscriminator = true)
     private ArrayList<Vehicle> vehicles;
     private String license;
+    //@BsonProperty(useDiscriminator = true)
     private ArrayList<Payment> payments;
 
     public Rider() {
@@ -23,7 +28,7 @@ public class Rider extends User {
         this.payments = new ArrayList<>();
     }
 
-    public Rider(String id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber, String emergencyContactNumber, Boolean isInsured, Boolean isLead, String license) {
+    public Rider(ObjectId id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber, String emergencyContactNumber, Boolean isInsured, Boolean isLead, String license) {
         super(id, username, password, firstName, lastName, dateOfBirth, contactNumber);
         this.emergencyContactNumber = emergencyContactNumber;
         this.isInsured = isInsured;

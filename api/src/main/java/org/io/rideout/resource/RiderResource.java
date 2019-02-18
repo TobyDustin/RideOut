@@ -1,8 +1,9 @@
 package org.io.rideout.resource;
 
-import org.io.rideout.database.Database;
+import org.bson.types.ObjectId;
 import org.io.rideout.model.Rider;
 import org.io.rideout.model.Vehicle;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,6 +12,11 @@ import java.util.Date;
 
 @Path("rider")
 public class RiderResource {
+
+    public static ObjectId UID_12345 = new ObjectId("5c6a96ba2ebe572fd56ce46f");
+    public static ObjectId UID_54321 = new ObjectId("5c6a9bd73b16145a50f1c4cc");
+    public static ObjectId VID_9876 = new ObjectId("5c6a96ba2ebe572fd56ce470");
+    public static ObjectId VID_1234 = new ObjectId("5c6a96ba2ebe572fd56ce471");
 
     // GET all riders
     @GET
@@ -26,8 +32,8 @@ public class RiderResource {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Rider getRider(@PathParam("id") String id) {
-        if (id.equals("12345")) {
+    public Rider getRider(@PathParam("id") ObjectId id) {
+        if (id.equals(UID_12345)) {
             return getDummyRider();
         }
 
@@ -38,8 +44,8 @@ public class RiderResource {
     @GET
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<Vehicle> getRiderVehicles(@PathParam("id") String id) {
-        if (id.equals("12345")) {
+    public ArrayList<Vehicle> getRiderVehicles(@PathParam("id") ObjectId id) {
+        if (id.equals(UID_12345)) {
             Rider rider = getDummyRider();
             return rider.getVehicles();
         }
@@ -51,16 +57,16 @@ public class RiderResource {
     @GET
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Vehicle getRiderVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid) {
-        if (uid.equals("12345")) {
+    public Vehicle getRiderVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
+        if (uid.equals(UID_12345)) {
             Rider rider = getDummyRider();
-            switch (vid) {
-                case "9876":
-                    return rider.getVehicles().get(0);
-                case "1234":
-                    return rider.getVehicles().get(1);
-                default:
-                    throw new NotFoundException();
+
+            if (vid.equals(VID_9876)) {
+                return rider.getVehicles().get(0);
+            } else if (vid.equals(VID_1234)) {
+                return rider.getVehicles().get(1);
+            } else {
+                throw new NotFoundException();
             }
         }
 
@@ -72,8 +78,8 @@ public class RiderResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Rider updateRider(@PathParam("id") String id, Rider rider) {
-        if (id.equals("54321")) {
+    public Rider updateRider(@PathParam("id") ObjectId id, Rider rider) {
+        if (id.equals(UID_54321)) {
             return rider;
         }
 
@@ -85,16 +91,12 @@ public class RiderResource {
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle updateVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid, Vehicle vehicle) {
-        if (uid.equals("12345")) {
-            Rider rider = getDummyRider();
-            switch (vid) {
-                case "9876":
-                    return vehicle;
-                case "1234":
-                    return vehicle;
-                default:
-                    throw new NotFoundException();
+    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid, Vehicle vehicle) {
+        if (uid.equals(UID_12345)) {
+            if (vid.equals(VID_9876) || vid.equals(VID_1234)) {
+                return  vehicle;
+            } else {
+                throw new NotImplementedException();
             }
         }
 
@@ -106,7 +108,7 @@ public class RiderResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Rider addRider(Rider rider) {
-        rider.setId("12345");
+        rider.setId(UID_12345);
         return rider;
     }
 
@@ -115,7 +117,7 @@ public class RiderResource {
     @Path("{uid}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle addVehicle(@PathParam("uid") String uid, Vehicle vehicle) {
+    public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
         return getDummyRider().getVehicles().get(0);
     }
 
@@ -123,8 +125,8 @@ public class RiderResource {
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Rider removeRider(@PathParam("id") String id) {
-        if (id.equals("12345")) {
+    public Rider removeRider(@PathParam("id") ObjectId id) {
+        if (id.equals(UID_12345)) {
             return getDummyRider();
         }
 
@@ -135,16 +137,14 @@ public class RiderResource {
     @DELETE
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Vehicle removeVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid) {
-        if (uid.equals("12345")) {
+    public Vehicle removeVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
+        if (uid.equals(UID_12345)) {
             Rider rider = getDummyRider();
-            switch (vid) {
-                case "9876":
-                    return rider.getVehicles().get(0);
-                case "1234":
-                    return rider.getVehicles().get(1);
-                default:
-                    throw new NotFoundException();
+
+            if (vid.equals(VID_9876)) {
+                return rider.getVehicles().get(0);
+            } else if (vid.equals(VID_1234)) {
+                return rider.getVehicles().get(1);
             }
         }
 
@@ -155,7 +155,7 @@ public class RiderResource {
 
     static Rider getDummyRider() {
         Rider dummy = new Rider(
-                "12345",
+                UID_12345,
                 "jsmith",
                 "john123",
                 "John",
@@ -167,8 +167,8 @@ public class RiderResource {
                 false,
                 "A"
         );
-        dummy.addVehicle(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"));
-        dummy.addVehicle(new Vehicle("1234", "Suzuki", "GSXR", 1000, "REG987"));
+        dummy.addVehicle(new Vehicle(VID_9876, "Honda", "Monkey", 125, "REG123"));
+        dummy.addVehicle(new Vehicle(VID_1234, "Suzuki", "GSXR", 1000, "REG987"));
         return dummy;
     }
 

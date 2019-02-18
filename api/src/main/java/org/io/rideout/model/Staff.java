@@ -2,9 +2,12 @@ package org.io.rideout.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 
+@BsonDiscriminator
 @JsonTypeName("StaffModel")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "modelType")
 public class Staff extends User {
@@ -15,7 +18,7 @@ public class Staff extends User {
         super();
     }
 
-    public Staff(String id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber, boolean isAdmin) {
+    public Staff(ObjectId id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber, boolean isAdmin) {
         super(id, username, password, firstName, lastName, dateOfBirth, contactNumber);
         this.isAdmin = isAdmin;
     }

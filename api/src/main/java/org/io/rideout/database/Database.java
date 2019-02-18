@@ -26,32 +26,6 @@ public class Database {
         return ourInstance;
     }
 
-    public static void main(String[] args) throws IOException {
-        Properties prop = new Properties();
-
-        String filename = "dbconfig.properties";
-        InputStream input = Database.class.getClassLoader().getResourceAsStream(filename);
-        if (input == null) {
-            System.out.println("Sorry, unable to find " + filename);
-            return;
-        }
-
-        prop.load(input);
-
-        String username = prop.getProperty("username");
-        String password = prop.getProperty("password");
-        String connString = prop.getProperty("connectionString")
-                .replaceFirst("USERNAME", Matcher.quoteReplacement(username))
-                .replaceFirst("PASSWORD", Matcher.quoteReplacement(password));
-
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
-        System.out.println("Conn String: " + connString);
-
-
-        input.close();
-    }
-
     private Database() {
         String connectionString = getConnectionString();
         if (connectionString == null) return;
@@ -100,7 +74,11 @@ public class Database {
         }
     }
 
-    public MongoDatabase getDatabase() {
+    MongoDatabase getDatabase() {
         return database;
+    }
+
+    void setDatabase(MongoDatabase database) {
+        this.database = database;
     }
 }
