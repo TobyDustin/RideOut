@@ -11,9 +11,10 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
-
 import java.io.IOException;
+import java.security.Principal;
 
 import static javax.ws.rs.Priorities.AUTHENTICATION;
 
@@ -36,8 +37,34 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         String token = authHeader.substring(AUTHENTICATION_SCHEMA.length()).trim();
 
-        if (!validateToken(token))
+        String userId = validateToken(token);
+
+        if (userId == null) {
             abortWithUnauthorized(requestContext);
+        } else {
+            final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
+            requestContext.setSecurityContext(new SecurityContext() {
+                @Override
+                public Principal getUserPrincipal() {
+                    return () -> userId;
+                }
+
+                @Override
+                public boolean isUserInRole(String s) {
+                    return true;
+                }
+
+                @Override
+                public boolean isSecure() {
+                    return currentSecurityContext.isSecure();
+                }
+
+                @Override
+                public String getAuthenticationScheme() {
+                    return AUTHENTICATION_SCHEMA;
+                }
+            });
+        }
     }
 
     private boolean isTokenBasedAuthentication(String authorizationHeader) {
@@ -54,16 +81,16 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         );
     }
 
-    private boolean validateToken(String token) {
+    private String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC512("rideout-secrete-21334243215");
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer("rideout")
                     .build();
             DecodedJWT jwt = verifier.verify(token);
-            return jwt != null;
+            return jwt.getSubject();
         } catch (JWTVerificationException e) {
-            return false;
+            return null;
         }
     }
 }
