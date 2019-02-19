@@ -9,8 +9,8 @@ import {HttpErrorResponse} from "@angular/common/http";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  private username: string = "";
-  private password: string = "";
+  public username: string = "";
+  public password: string = "";
 
   constructor(private service: UserService, private snackBar: MatSnackBar) { }
 
