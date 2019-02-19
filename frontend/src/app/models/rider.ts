@@ -1,13 +1,8 @@
 import {Vehicle} from "./vehicle";
 import {Payment} from "./payment";
+import {User} from "./user";
 
-export interface Rider {
-  id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  contactNumber: string;
+export class Rider extends User {
   emergencyContactNumber: string;
   isInsured: boolean;
   isLead: boolean;
