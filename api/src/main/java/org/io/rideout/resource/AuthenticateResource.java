@@ -19,7 +19,7 @@ public class AuthenticateResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response authenticate(UserCredentials credentials) {
         if (authenticate(credentials.getUsername(), credentials.getPassword())) {
-            String token = issueToken(credentials.getUsername());
+            String token = issueToken("12345", "jsmith");
             return Response.ok(token).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -30,10 +30,12 @@ public class AuthenticateResource {
         return username.equals("jsmith") && password.equals("john123");
     }
 
-    private String issueToken(String username) {
+    private String issueToken(String id, String username) {
         Algorithm algorithm = Algorithm.HMAC512("rideout-secrete-21334243215");
         return JWT.create()
                 .withIssuer("rideout")
+                .withSubject(id)
+                .withClaim("username", username)
                 .sign(algorithm);
     }
 }
