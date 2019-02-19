@@ -11,7 +11,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   login(username: string, password: string) {
-    return this.http.post<any>(`${environment.api}/user/login`,JSON.stringify({
+    return this.http.post<any>(`${environment.api}/authenticate`,JSON.stringify({
       username: username,
       password: password
     })).pipe(map((user) => {
