@@ -19,6 +19,16 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span> RideOut </span>
+      <span class="spacer"></span>
+      <div *ngIf="isLoggedIn()">
+        <span>Hello, {{ getUsername() }} </span>
+        <button
+          mat-icon-button
+          mat-raised-button
+          (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+        </button>
+      </div>
     </mat-toolbar>
     <!-- Add Content Here -->
     <ng-content></ng-content>

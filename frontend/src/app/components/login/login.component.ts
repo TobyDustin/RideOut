@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {UserService} from "../../services/user/user.service";
 import {MatSnackBar} from "@angular/material";
 import {HttpErrorResponse} from "@angular/common/http";
+import {first} from "rxjs/operators";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -12,18 +14,26 @@ export class LoginComponent implements OnInit {
   public username: string = "";
   public password: string = "";
 
-  constructor(private service: UserService, private snackBar: MatSnackBar) { }
+  constructor(
+    private router: Router,
+    private service: UserService,
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit() { }
 
   authenticateUser() {
     this.service.login(this.username, this.password)
       .subscribe(
-        (user) => {
-          alert(user.username);
+        () => {
+          this.router.navigate(['/dashboard']);
         },
         (err: HttpErrorResponse) => {
-          this.snackBar.open(err.statusText, "Dismiss");
+          if (err.status === 403) {
+            this.snackBar.open("Incorrect login!", "Dismiss")
+          } else {
+            this.snackBar.open(`An error occurred! ${err.statusText}`, "Dismiss")
+          }
         }
       );
   }

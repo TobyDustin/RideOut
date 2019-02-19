@@ -20,7 +20,6 @@ export class DashboardComponent implements OnInit {
   getRideOuts() {
     this.service.getAllRideOuts()
       .subscribe((rideOuts) => {
-        console.log(rideOuts);
         this.rideOuts = rideOuts;
       })
   }
