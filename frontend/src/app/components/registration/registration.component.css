@@ -1,0 +1,12 @@
+.register {
+  text-align: center;
+}
+
+.register-card {
+  width: fit-content;
+  margin: 2% auto;
+}
+
+.mat-snack-bar-container {
+  max-width: 800px;
+}

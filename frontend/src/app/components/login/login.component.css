@@ -1,0 +1,12 @@
+.login {
+  text-align: center;
+}
+
+.login-card {
+  width: fit-content;
+  margin: 10% auto;
+}
+
+.mat-snack-bar-container {
+  max-width: 800px;
+}
