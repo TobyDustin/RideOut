@@ -73,12 +73,12 @@ public class RideOutResourceTest {
     @Test
     public void testAddUserSuccess() {
         String id = RideOutResource.ID_12345.toHexString();
-        String rid = RiderResource.UID_12345.toHexString();
+        String rid = UserResource.UID_12345.toHexString();
         Response response = target.path("rideout/" + id + "/rider/" + rid).request().put(Entity.text(""));
         RideOut rideOut = response.readEntity(RideOut.class);
         assertEquals(200, response.getStatus());
         testRideOut(rideOut);
-        RiderResourceTest.testRider(rideOut.getRiders().get(0));
+        UserResourceTest.testRider(rideOut.getRiders().get(0));
     }
 
     @Test

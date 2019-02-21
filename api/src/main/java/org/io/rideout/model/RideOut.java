@@ -33,7 +33,7 @@ public class RideOut {
     private boolean isPublished;
     private Date minCancellationDate;
     private ArrayList<Checkpoint> checkpoints;
-    private ArrayList<Rider> riders;
+    private ArrayList<User> riders;
 
     public RideOut() {
         super();
@@ -139,11 +139,11 @@ public class RideOut {
         this.checkpoints = checkpoints;
     }
 
-    public ArrayList<Rider> getRiders() {
+    public ArrayList<User> getRiders() {
         return riders;
     }
 
-    public void setRiders(ArrayList<Rider> riders) {
+    public void setRiders(ArrayList<User> riders) {
         this.riders = riders;
     }
 

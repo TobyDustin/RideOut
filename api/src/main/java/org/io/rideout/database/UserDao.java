@@ -6,7 +6,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
-import org.io.rideout.model.Staff;
+import org.io.rideout.model.User;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -15,38 +15,38 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
-public class StaffDao {
-    private static StaffDao ourInstance = new StaffDao();
-    public static StaffDao getInstance() {
+public class UserDao {
+    private static UserDao ourInstance = new UserDao();
+    public static UserDao getInstance() {
         return ourInstance;
     }
 
-    private StaffDao() {
+    private UserDao() {
     }
 
-    public ArrayList<Staff> getAll() {
+    public ArrayList<User> getAll() {
         MongoDatabase database = Database.getInstance().getDatabase();
-        MongoCollection<Staff> collection = database.getCollection("users", Staff.class);
+        MongoCollection<User> collection = database.getCollection("users", User.class);
 
-        ArrayList<Staff> result = new ArrayList<>();
-        collection.find(eq("_t", Staff.class.getName()), Staff.class).forEach((Consumer<Staff>) result::add);
+        ArrayList<User> result = new ArrayList<>();
+        collection.find(eq("_t", User.class.getName()), User.class).forEach((Consumer<User>) result::add);
         return result;
     }
 
-    public Staff getById(ObjectId id) {
-        MongoCollection<Staff> collection = Database.getInstance().getDatabase().getCollection("users", Staff.class);
+    public User getById(ObjectId id) {
+        MongoCollection<User> collection = Database.getInstance().getDatabase().getCollection("users", User.class);
 
         return collection.find(eq("_id", id)).first();
     }
 
-    public void insert(Staff staff) {
+    public void insert(User staff) {
         MongoDatabase database = Database.getInstance().getDatabase();
-        MongoCollection<Staff> collection = database.getCollection("users", Staff.class);
+        MongoCollection<User> collection = database.getCollection("users", User.class);
         collection.insertOne(staff);
     }
 
-    public Staff update(ObjectId id, Staff staff) {
-        MongoCollection<Staff> collection = Database.getInstance().getDatabase().getCollection("users", Staff.class);
+    public User update(ObjectId id, User staff) {
+        MongoCollection<User> collection = Database.getInstance().getDatabase().getCollection("users", User.class);
 
         UpdateResult result = collection.updateOne(eq("_id", id), combine(
                 set("username", staff.getUsername()),
@@ -54,17 +54,16 @@ public class StaffDao {
                 set("firstName", staff.getFirstName()),
                 set("lastName", staff.getLastName()),
                 set("dateOfBirth", staff.getDateOfBirth()),
-                set("contactNumber", staff.getContactNumber()),
-                set("admin", staff.isAdmin())
+                set("contactNumber", staff.getContactNumber())
         ));
 
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
 
-    public Staff delete(ObjectId id) {
-        MongoCollection<Staff> collection = Database.getInstance().getDatabase().getCollection("users", Staff.class);
+    public User delete(ObjectId id) {
+        MongoCollection<User> collection = Database.getInstance().getDatabase().getCollection("users", User.class);
 
-        Staff staff = getById(id);
+        User staff = getById(id);
 
         if (staff != null) {
             DeleteResult result = collection.deleteOne(eq("_id", id));

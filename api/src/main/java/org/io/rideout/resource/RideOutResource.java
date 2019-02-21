@@ -119,8 +119,8 @@ public class RideOutResource {
         if (rideOutId.equals(ID_12345)) {
             RideOut rideOut = getDummyRideOut();
 
-            if (!riderId.equals(RiderResource.UID_12345)) throw new NotFoundException("Rider not found");
-            rideOut.getRiders().add(RiderResource.getDummyRider());
+            if (!riderId.equals(UserResource.UID_12345)) throw new NotFoundException("Rider not found");
+            rideOut.getRiders().add(UserResource.getDummyRider());
 
             return rideOut;
         }
@@ -134,7 +134,7 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     public RideOut removeRider(@PathParam("rideOutId") ObjectId rideOutId, @PathParam("riderId") ObjectId riderId) {
         if (rideOutId.equals(ID_12345)) {
-            if (!riderId.equals(RiderResource.UID_12345)) throw new NotFoundException("Rider not found");
+            if (!riderId.equals(UserResource.UID_12345)) throw new NotFoundException("Rider not found");
 
             return getDummyRideOut();
         }
@@ -145,7 +145,7 @@ public class RideOutResource {
     // ======== DUMMY DATA ========
 
     private RideOut getDummyRideOut() {
-        RideOut dummy = new RideOut(
+        return new RideOut(
                 ID_12345,
                 "Ride around the candovers",
                 new Date(100),
@@ -156,7 +156,6 @@ public class RideOutResource {
                 new Date(100)
 
         );
-        return dummy;
     }
     
     private StayOut getDummyStayOut() {
