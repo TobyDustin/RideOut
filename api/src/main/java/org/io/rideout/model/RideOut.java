@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -23,7 +22,7 @@ public class RideOut {
     private boolean isPublished;
     private Date minCancellationDate;
     private ArrayList<Checkpoint> checkpoints;
-    private ArrayList<Rider> riders;
+    private ArrayList<User> riders;
 
     public RideOut() {
         super();
@@ -129,11 +128,11 @@ public class RideOut {
         this.checkpoints = checkpoints;
     }
 
-    public ArrayList<Rider> getRiders() {
+    public ArrayList<User> getRiders() {
         return riders;
     }
 
-    public void setRiders(ArrayList<Rider> riders) {
+    public void setRiders(ArrayList<User> riders) {
         this.riders = riders;
     }
 
