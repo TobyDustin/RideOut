@@ -147,7 +147,9 @@ public class UserResourceTest {
         Response response = target.path("user/" + id).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
-        testStaff(response.readEntity(User.class), TestDatabase.PUT_STAFF);
+        User result = response.readEntity(User.class);
+        System.out.println(result.getPassword());
+        testStaff(result, TestDatabase.PUT_STAFF);
     }
 
     @Test

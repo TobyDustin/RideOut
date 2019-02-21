@@ -57,7 +57,7 @@ public class TestDatabase {
                 .build();
 
         MongoClient client = MongoClients.create(settings);
-        MongoDatabase database = client.getDatabase("test");
+        MongoDatabase database = client.getDatabase(Database.TEST_DATABASE);
 
         // Force the system to use test database
         Database.getInstance().setDatabase(database);
@@ -65,14 +65,13 @@ public class TestDatabase {
     }
 
     public static void tearDown() {
-        MongoDatabase database = Database.getInstance().getDatabase();
-        database.getCollection("rideouts").drop();
-        database.getCollection("users").drop();
+        Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION).drop();
+        Database.getInstance().getCollection(Database.USER_COLLECTION).drop();
     }
 
     private static void insertDummyData(MongoDatabase database) {
-        insertDummyUsers(database.getCollection("users", User.class));
-        insertDummyRideOuts(database.getCollection("rideouts", RideOut.class));
+        insertDummyUsers(database.getCollection(Database.USER_COLLECTION, User.class));
+        insertDummyRideOuts(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class));
     }
 
     private static void insertDummyRideOuts(MongoCollection<RideOut> collection) {

@@ -1,6 +1,9 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.io.rideout.PasswordManager;
+import org.io.rideout.database.UserDao;
+import org.io.rideout.database.VehicleDao;
 import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
@@ -19,14 +22,14 @@ public class UserResource {
     public static ObjectId VID_9876 = new ObjectId("5c6a96ba2ebe572fd56ce470");
     public static ObjectId VID_1234 = new ObjectId("5c6a96ba2ebe572fd56ce471");
 
+    private UserDao userDao = UserDao.getInstance();
+    private VehicleDao vehicleDao = VehicleDao.getInstance();
+
     // GET all users
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<User> getAllUsers() {
-        ArrayList<User> result = new ArrayList<>();
-        result.add(getDummyRider());
-        result.add(getDummyStaff());
-        return result;
+        return userDao.getAll();
     }
 
     // GET user by ID
@@ -34,10 +37,10 @@ public class UserResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("id") ObjectId id) {
-        if (id.equals(UID_12345)) {
-            return getDummyRider();
-        } else if (id.equals(UID_23456)) {
-            return getDummyStaff();
+        User result = userDao.getById(id);
+
+        if (result != null) {
+            return result;
         }
 
         throw new NotFoundException();
@@ -48,13 +51,7 @@ public class UserResource {
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Vehicle> getUserVehicles(@PathParam("id") ObjectId id) {
-        if (id.equals(UID_12345)) {
-            return getDummyRider().getRiderInformation().getVehicles();
-        } else if (id.equals(UID_23456)) {
-            return new ArrayList<>();
-        }
-
-        throw new NotFoundException();
+        return vehicleDao.getAll(id);
     }
 
     // GET user vehicle by ID
@@ -62,14 +59,10 @@ public class UserResource {
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Vehicle getUserVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
-        if (uid.equals(UID_12345)) {
-            RiderInformation riderInformation = getDummyRider().getRiderInformation();
+        Vehicle result = vehicleDao.getById(uid, vid);
 
-            if (vid.equals(VID_9876)) {
-                return riderInformation.getVehicles().get(0);
-            } else if (vid.equals(VID_1234)) {
-                return riderInformation.getVehicles().get(1);
-            }
+        if (result != null) {
+            return result;
         }
 
         throw new NotFoundException();
@@ -81,11 +74,10 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User updateUser(@PathParam("id") ObjectId id, User user) {
-        if (id.equals(UID_54321)) {
-            return user;
-        }
+        User result = userDao.update(id, user);
 
-        throw new NotFoundException();
+        if (result == null) throw new NotFoundException();
+        return result;
     }
 
     // UPDATE user vehicle
@@ -94,12 +86,9 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid, Vehicle vehicle) {
-        if (uid.equals(UID_12345)) {
-            if (vid.equals(VID_9876) || vid.equals(VID_1234)) {
-                return vehicle;
-            }
-        }
+        Vehicle result = vehicleDao.update(uid, vid, vehicle);
 
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -108,12 +97,8 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User addUser(User user) {
-        switch (user.getRole()) {
-            case User.RIDER: user.setId(UID_12345); break;
-            case User.STAFF: user.setId(UID_23456); break;
-        }
-
-        return user;
+        user.setPassword(PasswordManager.hashPassword(user.getPassword()));
+        return userDao.insert(user);
     }
 
     // CREATE user vehicle
@@ -122,7 +107,10 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
-        return getDummyRider().getRiderInformation().getVehicles().get(0);
+        Vehicle result = vehicleDao.insert(uid, vehicle);
+
+        if (result != null) return result;
+        throw new InternalServerErrorException();
     }
 
     // DELETE user
@@ -130,13 +118,10 @@ public class UserResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User removeUser(@PathParam("id") ObjectId id) {
-        if (id.equals(UID_12345)) {
-            return getDummyRider();
-        } else if (id.equals(UID_23456)) {
-            return getDummyStaff();
-        }
+        User result = userDao.delete(id);
 
-        throw new NotFoundException();
+        if (result == null) throw new NotFoundException();
+        return result;
     }
 
     //DELETE user vehicle
@@ -144,16 +129,9 @@ public class UserResource {
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Vehicle removeVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
-        if (uid.equals(UID_12345)) {
-            RiderInformation riderInformation = getDummyRider().getRiderInformation();
+        Vehicle result = vehicleDao.delete(uid, vid);
 
-            if (vid.equals(VID_9876)) {
-                return riderInformation.getVehicles().get(0);
-            } else if (vid.equals(VID_1234)) {
-                return riderInformation.getVehicles().get(1);
-            }
-        }
-
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -178,19 +156,5 @@ public class UserResource {
         dummy.getRiderInformation().addVehicle(new Vehicle(VID_9876, "Honda", "Monkey", 125, "REG123"));
         dummy.getRiderInformation().addVehicle(new Vehicle(VID_1234, "Suzuki", "GSXR", 1000, "REG987"));
         return dummy;
-    }
-
-    static User getDummyStaff() {
-        return new User(
-                UID_23456,
-                "jsmith",
-                "john123",
-                User.STAFF,
-                "John",
-                "Smith",
-                new Date(100),
-                "07491012345",
-                null
-        );
     }
 }
