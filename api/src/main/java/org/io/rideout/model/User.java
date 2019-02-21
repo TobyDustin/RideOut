@@ -1,30 +1,34 @@
 package org.io.rideout.model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-
 import java.util.Date;
 
-@JsonSubTypes({ @JsonSubTypes.Type(value = Rider.class), @JsonSubTypes.Type(value = Staff.class) })
-public abstract class User {
+public class User {
 
-    protected String id;
-    protected String username;
-    protected String password;
-    protected String firstName;
-    protected String lastName;
-    protected Date dateOfBirth;
-    protected String contactNumber;
+    public final static String STAFF = "staff";
+    public final static String RIDER = "rider";
 
-    protected User() {}
+    private String id;
+    private String username;
+    private String password;
+    private String role = User.RIDER;
+    private String firstName;
+    private String lastName;
+    private Date dateOfBirth;
+    private String contactNumber;
+    private RiderInformation riderInformation;
 
-    protected User(String id, String username, String password, String firstName, String lastName, Date dateOfBirth, String contactNumber) {
+    public User() {}
+
+    public User(String id, String username, String password, String role, String firstName, String lastName, Date dateOfBirth, String contactNumber, RiderInformation riderInformation) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
         this.contactNumber = contactNumber;
+        this.riderInformation = riderInformation;
     }
 
     public String getId() {
@@ -49,6 +53,14 @@ public abstract class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getFirstName() {
@@ -81,5 +93,13 @@ public abstract class User {
 
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
+    }
+
+    public RiderInformation getRiderInformation() {
+        return riderInformation;
+    }
+
+    public void setRiderInformation(RiderInformation riderInformation) {
+        this.riderInformation = riderInformation;
     }
 }

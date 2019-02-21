@@ -75,7 +75,7 @@ public class RideOutResourceTest {
         RideOut rideOut = response.readEntity(RideOut.class);
         assertEquals(200, response.getStatus());
         testRideOut(rideOut);
-        RiderResourceTest.testRider(rideOut.getRiders().get(0));
+        UserResourceTest.testRider(rideOut.getRiders().get(0));
     }
 
     @Test
