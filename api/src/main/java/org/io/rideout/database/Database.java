@@ -8,8 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
-import javax.xml.crypto.Data;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -34,7 +32,7 @@ public class Database {
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));
         MongoClientSettings settings = MongoClientSettings.builder()
                 .codecRegistry(pojoCodecRegistry)
-                .applyConnectionString(new ConnectionString(getConnectionString()))
+                .applyConnectionString(new ConnectionString(connectionString))
                 .build();
 
         MongoClient client = MongoClients.create(settings);
