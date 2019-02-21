@@ -1,9 +1,6 @@
 package org.io.rideout.resource;
 
-import org.io.rideout.model.Booking;
-import org.io.rideout.model.RideOut;
-import org.io.rideout.model.StayOut;
-import org.io.rideout.model.TourOut;
+import org.io.rideout.model.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -111,8 +108,8 @@ public class RideOutResource {
         if (rideOutId.equals("12345")) {
             RideOut rideOut = getDummyRideOut();
 
-            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
-            rideOut.getRiders().add(RiderResource.getDummyRider());
+            if (!riderId.equals("12345")) throw new NotFoundException("RiderInformation not found");
+            rideOut.getRiders().add(UserResource.getDummyRider());
 
             return rideOut;
         }
@@ -126,7 +123,7 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     public RideOut removeRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
         if (rideOutId.equals("12345")) {
-            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
+            if (!riderId.equals("12345")) throw new NotFoundException("RiderInformation not found");
 
             return getDummyRideOut();
         }
