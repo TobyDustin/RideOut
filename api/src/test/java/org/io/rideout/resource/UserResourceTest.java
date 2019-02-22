@@ -1,7 +1,9 @@
 package org.io.rideout.resource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.types.ObjectId;
 import org.io.rideout.HttpTestServer;
+import org.io.rideout.PasswordManager;
+import org.io.rideout.database.TestDatabase;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 import org.junit.AfterClass;
@@ -28,6 +30,8 @@ public class UserResourceTest {
 
     @BeforeClass
     public static void setUp() {
+        TestDatabase.setUp();
+
         server = HttpTestServer.startServer();
         Client c = ClientBuilder.newClient();
 
@@ -37,6 +41,7 @@ public class UserResourceTest {
     @AfterClass
     public static void tearDown() {
         server.stop();
+        TestDatabase.tearDown();
     }
 
     @Test
@@ -46,94 +51,106 @@ public class UserResourceTest {
         ArrayList result = response.readEntity(ArrayList.class);
 
         assertEquals(200, response.getStatus());
-        assertEquals(2, result.size());
-
-        ObjectMapper mapper = new ObjectMapper();
-        testRider(mapper.convertValue(result.get(0), User.class));
-        testStaff(mapper.convertValue(result.get(1), User.class));
+        assertTrue(result.size() >= 2);
     }
 
     @Test
     public void testGetRiderSuccess() {
-        Response response = target.path("/user/12345").request().get();
+        String id = TestDatabase.GET_RIDER.toHexString();
+        Response response = target.path("/user/" + id).request().get();
 
         User user = response.readEntity(User.class);
         assertEquals(200, response.getStatus());
-        testRider(user);
+        testRider(user, TestDatabase.GET_RIDER);
     }
 
     @Test
     public void testGetStaffSuccess() {
-        Response response = target.path("/user/23456").request().get();
+        String id = TestDatabase.GET_STAFF.toHexString();
+        Response response = target.path("/user/" + id).request().get();
 
         User user = response.readEntity(User.class);
         assertEquals(200, response.getStatus());
-        testStaff(user);
+        testStaff(user, TestDatabase.GET_STAFF);
     }
 
     @Test
     public void testGetUserNotFound() {
-        Response response = target.path("user/54321").request().get();
+        String id = new ObjectId().toHexString();
+        Response response = target.path("user/" + id).request().get();
 
         assertEquals(404, response.getStatus());
     }
 
     @Test
     public void testGetUserVehicles() {
-        Response response = target.path("user/12345/vehicle").request().get();
+        String id = TestDatabase.GET_RIDER.toHexString();
+        Response response = target.path("user/" + id + "/vehicle").request().get();
         ArrayList<Vehicle> vehicles = response.readEntity(new GenericType<ArrayList<Vehicle>>() {});
 
-        testVehicle(vehicles.get(0));
+        testVehicle(vehicles.get(0), TestDatabase.GET_VEHICLE);
     }
 
     @Test
     public void testGetUserVehiclesEmptyCollection() {
-        Response response = target.path("user/23456/vehicle").request().get();
+        String id = TestDatabase.GET_STAFF.toHexString();
+        Response response = target.path("user/" + id + "/vehicle").request().get();
         ArrayList<Vehicle> vehicles = response.readEntity(new GenericType<ArrayList<Vehicle>>() {});
         assertEquals(0, vehicles.size());
     }
 
     @Test
     public void testGetUserVehicleById() {
-        Response response = target.path("user/12345/vehicle/9876").request().get();
+        String uid = TestDatabase.VEHICLE_RIDER.toHexString();
+        String vid = TestDatabase.GET_VEHICLE.toHexString();
+        Response response = target.path("user/" + uid + "/vehicle/" + vid).request().get();
         Vehicle vehicle = response.readEntity(Vehicle.class);
 
-        testVehicle(vehicle);
+        testVehicle(vehicle, TestDatabase.GET_VEHICLE);
     }
 
     @Test
     public void testUpdateVehicle() {
-        Response response = target.path("user/12345/vehicle/9876").request()
-                .put(Entity.entity(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
+        String uid = TestDatabase.VEHICLE_RIDER.toHexString();
+        String vid = TestDatabase.PUT_VEHICLE.toHexString();
+        Response response = target.path("user/" + uid + "/vehicle/" + vid).request()
+                .put(Entity.entity(new Vehicle(TestDatabase.PUT_VEHICLE, "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
         Vehicle vehicle = response.readEntity(Vehicle.class);
 
-        testVehicle(vehicle);
+        testVehicle(vehicle, TestDatabase.PUT_VEHICLE);
     }
 
     @Test
     public void testDeleteVehicle() {
-        Response response = target.path("user/12345/vehicle/9876").request().delete();
+        String uid = TestDatabase.VEHICLE_RIDER.toHexString();
+        String vid = TestDatabase.DELETE_VEHICLE.toHexString();
+        Response response = target.path("user/" + uid + "/vehicle/" + vid).request().delete();
         Vehicle vehicle = response.readEntity(Vehicle.class);
 
-        testVehicle(vehicle);
+        testVehicle(vehicle, TestDatabase.DELETE_VEHICLE);
     }
 
     @Test
     public void testAddVehicle() {
-        Response response = target.path("user/12345/vehicle/").request()
-                .post(Entity.entity(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
+        String id = TestDatabase.VEHICLE_RIDER.toHexString();
+        Response response = target.path("user/" + id + "/vehicle/").request()
+                .post(Entity.entity(new Vehicle(null, "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
         Vehicle vehicle = response.readEntity(Vehicle.class);
 
-        testVehicle(vehicle);
+        testVehicle(vehicle, null);
     }
 
     @Test
     public void testPutUser() {
-        String body = "{\"id\":\"23456\",\"username\":\"jsmith\",\"password\":\"john123\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
-        Response response = target.path("user/54321").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String id = TestDatabase.PUT_STAFF.toHexString();
+        String password = PasswordManager.hashPassword("john123");
+        String body = "{\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\""+password+"\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
+        Response response = target.path("user/" + id).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
-        testStaff(response.readEntity(User.class));
+        User result = response.readEntity(User.class);
+        System.out.println(result.getPassword());
+        testStaff(result, TestDatabase.PUT_STAFF);
     }
 
     @Test
@@ -142,30 +159,32 @@ public class UserResourceTest {
         Response response = target.path("user").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
-        testStaff(response.readEntity(User.class));
+        testStaff(response.readEntity(User.class), null);
     }
 
     @Test
     public void testPutUserNotFound() {
-        String body = "{\"id\":\"12345\",\"username\":\"jsmith\",\"password\":\"john123\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
-        Response response = target.path("rider/121212").request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String id = new ObjectId().toHexString();
+        String body = "{\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\"john123\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
+        Response response = target.path("rider/" + id).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(404, response.getStatus());
     }
 
     @Test
     public void testDeleteRiderSuccess() {
-        Response response = target.path("user/12345").request().delete();
+        String id = TestDatabase.DELETE_RIDER.toHexString();
+        Response response = target.path("user/" + id).request().delete();
 
         assertEquals(200, response.getStatus());
-        testRider(response.readEntity(User.class));
+        testRider(response.readEntity(User.class), TestDatabase.DELETE_RIDER);
     }
 
-    static void testRider(User user) {
+    static void testRider(User user, ObjectId id) {
         assertNotNull(user);
-        assertEquals("12345", user.getId());
+        if (id != null) assertEquals(id, user.getId());
         assertEquals("jsmith", user.getUsername());
-        assertEquals("john123", user.getPassword());
+        assertTrue(PasswordManager.verify("john123", user.getPassword()));
         assertEquals(User.RIDER, user.getRole());
         assertEquals("John",  user.getFirstName());
         assertEquals("Smith", user.getLastName());
@@ -177,11 +196,11 @@ public class UserResourceTest {
         assertEquals("A", user.getRiderInformation().getLicense());
     }
 
-    static void testStaff(User user) {
+    static void testStaff(User user, ObjectId id) {
         assertNotNull(user);
-        assertEquals("23456", user.getId());
+        if (id != null) assertEquals(id, user.getId());
         assertEquals("jsmith", user.getUsername());
-        assertEquals("john123", user.getPassword());
+        assertTrue(PasswordManager.verify("john123", user.getPassword()));
         assertEquals(User.STAFF, user.getRole());
         assertEquals("John",  user.getFirstName());
         assertEquals("Smith", user.getLastName());
@@ -190,9 +209,9 @@ public class UserResourceTest {
         assertNull(user.getRiderInformation());
     }
 
-    static void testVehicle(Vehicle vehicle) {
+    static void testVehicle(Vehicle vehicle, ObjectId id) {
         assertNotNull(vehicle);
-        assertEquals("9876", vehicle.getId());
+        if (id != null) assertEquals(id, vehicle.getId());
         assertEquals("Honda", vehicle.getMake());
         assertEquals("Monkey", vehicle.getModel());
         assertEquals(Integer.valueOf(125), vehicle.getPower());
