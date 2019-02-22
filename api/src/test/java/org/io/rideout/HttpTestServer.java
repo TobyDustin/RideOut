@@ -4,6 +4,10 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.net.URI;
 
@@ -23,7 +27,9 @@ public class HttpTestServer {
     public static org.glassfish.grizzly.http.server.HttpServer startServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in org.io.rideout package
-        final ResourceConfig rc = new ResourceConfig().packages("org.io.rideout");
+        final ResourceConfig rc = new ResourceConfig()
+                .register(new CorsFilter())
+                .packages("org.io.rideout");
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
@@ -41,5 +47,16 @@ public class HttpTestServer {
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
         System.in.read();
         server.stop();
+    }
+
+    @Provider
+    public static class CorsFilter implements ContainerResponseFilter {
+
+        @Override
+        public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
+            response.getHeaders().add("Access-Control-Allow-Origin", "*");
+            response.getHeaders().add("Access-Control-Allow-Headers", "*");
+            response.getHeaders().add("Access-Control-Allow-Methods", "*");
+        }
     }
 }
