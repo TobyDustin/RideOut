@@ -39,6 +39,12 @@ public class UserDao {
         return collection.find(eq("_id", id)).first();
     }
 
+    public User getByUsername(String username) {
+        MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+
+        return collection.find(eq("username", username)).first();
+    }
+
     public User insert(User user) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
