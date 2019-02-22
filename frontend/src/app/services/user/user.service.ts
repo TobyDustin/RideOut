@@ -14,18 +14,15 @@ export class UserService {
 
   login(username: string, password: string) : Observable<boolean> {
 
-    return this.http.post(`${environment.api}/authenticate`,
+    return this.http.post<{token: string}>(`${environment.api}/authenticate`,
       {
         username: username,
         password: password
-      },
-      {
-        responseType: 'text'
       })
       .pipe(
         map(
           (res) => {
-            localStorage.setItem('access_token', res);
+            localStorage.setItem('access_token', res.token);
             return true;
           }
         )
