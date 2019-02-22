@@ -79,9 +79,9 @@ public class TestDatabase {
         rideOuts.add(getDummyRideOut(GET_RIDEOUT));
         rideOuts.add(getDummyStayOut(GET_STAYOUT));
         rideOuts.add(getDummyTourOut(GET_TOUROUT));
-        rideOuts.add(getDummyTourOut(ADD_RIDER_RIDEOUT));
-        rideOuts.add(getDummyTourOut(REMOVE_RIDER_RIDEOUT));
-        rideOuts.add(getDummyTourOut(PUT_RIDEOUT));
+        rideOuts.add(getDummyRideOut(ADD_RIDER_RIDEOUT));
+        rideOuts.add(getDummyRideOut(REMOVE_RIDER_RIDEOUT));
+        rideOuts.add(getDummyRideOut(PUT_RIDEOUT));
         rideOuts.add(getDummyRideOut(DELETE_RIDEOUT));
 
         collection.insertMany(rideOuts);

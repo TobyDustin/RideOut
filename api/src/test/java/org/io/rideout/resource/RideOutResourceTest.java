@@ -138,16 +138,6 @@ public class RideOutResourceTest {
     }
 
     @Test
-    public void testPutRideOut() {
-        String id = TestDatabase.PUT_RIDEOUT.toHexString();
-        String body = "{\"id\":\"" + id + "\",\"rideoutType\":\"Ride\",\"name\":\"Ride around the candovers\",\"dateStart\":\"100\",\"dateEnd\":\"100\",\"maxRiders\":\"15\",\"leadRider\":\"54321\",\"route\":\"https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx\",\"minCancellationDate\":\"100\"}";
-        Response response = target.path("rideout/" + id).request().put(entity(body, MediaType.APPLICATION_JSON_TYPE));
-
-        assertEquals(200, response.getStatus());
-        testRideOut(response.readEntity(RideOut.class), TestDatabase.PUT_RIDEOUT);
-    }
-
-    @Test
     public void testRemoveUserRideOutNotFound() {
         String id = new ObjectId().toHexString();
         String rid = TestDatabase.GET_RIDER.toHexString();
@@ -200,7 +190,7 @@ public class RideOutResourceTest {
     @Test
     public void testPostRideOut() {
         Response response = target.path("rideout").request()
-                .put(entity(new RideOut(
+                .post(entity(new RideOut(
                         null,
                         "Ride around the candovers",
                         new Date(100),
