@@ -51,7 +51,10 @@ public class UserResource {
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Vehicle> getUserVehicles(@PathParam("id") ObjectId id) {
-        return vehicleDao.getAll(id);
+        ArrayList<Vehicle> result = vehicleDao.getAll(id);
+
+        if (result != null) return result;
+        throw new NotFoundException();
     }
 
     // GET user vehicle by ID
@@ -133,28 +136,5 @@ public class UserResource {
 
         if (result != null) return result;
         throw new NotFoundException();
-    }
-
-//    ======== DUMMY DATA =========
-
-    static User getDummyRider() {
-        User dummy = new User(
-                UID_12345,
-                "jsmith",
-                "john123",
-                User.RIDER,
-                "John",
-                "Smith",
-                new Date(100),
-                "07491012345",
-                new RiderInformation(
-                "999",
-                true,
-                "A"
-                )
-        );
-        dummy.getRiderInformation().addVehicle(new Vehicle(VID_9876, "Honda", "Monkey", 125, "REG123"));
-        dummy.getRiderInformation().addVehicle(new Vehicle(VID_1234, "Suzuki", "GSXR", 1000, "REG987"));
-        return dummy;
     }
 }
