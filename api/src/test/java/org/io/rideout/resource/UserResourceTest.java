@@ -143,7 +143,8 @@ public class UserResourceTest {
     @Test
     public void testPutUser() {
         String id = TestDatabase.PUT_STAFF.toHexString();
-        String body = "{\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\"john123\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
+        String password = PasswordManager.hashPassword("john123");
+        String body = "{\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\""+password+"\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
         Response response = target.path("user/" + id).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());

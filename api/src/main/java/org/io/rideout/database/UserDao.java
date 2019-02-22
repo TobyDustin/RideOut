@@ -5,16 +5,17 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
+import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.set;
+import static com.mongodb.client.model.Updates.*;
 
 public class UserDao {
     private static UserDao ourInstance = new UserDao();
@@ -57,14 +58,8 @@ public class UserDao {
     public User update(ObjectId id, User user) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", id), combine(
-                set("username", user.getUsername()),
-                set("password", PasswordManager.hashPassword(user.getPassword())),
-                set("firstName", user.getFirstName()),
-                set("lastName", user.getLastName()),
-                set("dateOfBirth", user.getDateOfBirth()),
-                set("contactNumber", user.getContactNumber())
-        ));
+        UpdateResult result = collection.updateOne(eq("_id", id),
+                user.getRiderInformation() == null ? getUpdateUser(user) : getUpdateUserWithRiderInfo(user));
 
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
@@ -80,5 +75,32 @@ public class UserDao {
         }
 
         return null;
+    }
+
+    private Bson getUpdateUser(User user) {
+        return combine(
+                set("username", user.getUsername()),
+                set("password", user.getPassword()),
+                set("firstName", user.getFirstName()),
+                set("lastName", user.getLastName()),
+                set("dateOfBirth", user.getDateOfBirth()),
+                set("contactNumber", user.getContactNumber()),
+                unset("riderInformation")
+        );
+    }
+
+    private Bson getUpdateUserWithRiderInfo(User user) {
+        RiderInformation info = user.getRiderInformation();
+        return combine(
+                set("username", user.getUsername()),
+                set("password", user.getPassword()),
+                set("firstName", user.getFirstName()),
+                set("lastName", user.getLastName()),
+                set("dateOfBirth", user.getDateOfBirth()),
+                set("contactNumber", user.getContactNumber()),
+                set("riderInformation.emergencyContactNumber", info.getEmergencyContactNumber()),
+                set("riderInformation.isInsured", info.isInsured()),
+                set("riderInformation.license", info.getLicense())
+        );
     }
 }
