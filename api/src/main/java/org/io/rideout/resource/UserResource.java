@@ -1,5 +1,9 @@
 package org.io.rideout.resource;
 
+import org.bson.types.ObjectId;
+import org.io.rideout.PasswordManager;
+import org.io.rideout.database.UserDao;
+import org.io.rideout.database.VehicleDao;
 import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
@@ -12,24 +16,31 @@ import java.util.Date;
 @Path("user")
 public class UserResource {
 
+    public static ObjectId UID_12345 = new ObjectId("5c6a97fe3bd3d419a78de2c4");
+    public static ObjectId UID_23456 = new ObjectId("5c6a97fe3bd3d419a78de2c5");
+    public static ObjectId UID_54321 = new ObjectId("5c6a9bd73b16145a50f1c4cc");
+    public static ObjectId VID_9876 = new ObjectId("5c6a96ba2ebe572fd56ce470");
+    public static ObjectId VID_1234 = new ObjectId("5c6a96ba2ebe572fd56ce471");
+
+    private UserDao userDao = UserDao.getInstance();
+    private VehicleDao vehicleDao = VehicleDao.getInstance();
+
     // GET all users
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<User> getAllUsers() {
-        ArrayList<User> result = new ArrayList<>();
-        result.add(getDummyRider());
-        result.add(getDummyStaff());
-        return result;
+        return userDao.getAll();
     }
 
     // GET user by ID
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@PathParam("id") String id) {
-        switch (id) {
-            case "12345": return getDummyRider();
-            case "23456": return getDummyStaff();
+    public User getUser(@PathParam("id") ObjectId id) {
+        User result = userDao.getById(id);
+
+        if (result != null) {
+            return result;
         }
 
         throw new NotFoundException();
@@ -39,12 +50,10 @@ public class UserResource {
     @GET
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<Vehicle> getUserVehicles(@PathParam("id") String id) {
-        switch (id) {
-            case "12345": return getDummyRider().getRiderInformation().getVehicles();
-            case "23456": return new ArrayList<>();
-        }
+    public ArrayList<Vehicle> getUserVehicles(@PathParam("id") ObjectId id) {
+        ArrayList<Vehicle> result = vehicleDao.getAll(id);
 
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -52,17 +61,11 @@ public class UserResource {
     @GET
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Vehicle getUserVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid) {
-        if (uid.equals("12345")) {
-            RiderInformation riderInformation = getDummyRider().getRiderInformation();
-            switch (vid) {
-                case "9876":
-                    return riderInformation.getVehicles().get(0);
-                case "1234":
-                    return riderInformation.getVehicles().get(1);
-                default:
-                    throw new NotFoundException();
-            }
+    public Vehicle getUserVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
+        Vehicle result = vehicleDao.getById(uid, vid);
+
+        if (result != null) {
+            return result;
         }
 
         throw new NotFoundException();
@@ -73,12 +76,11 @@ public class UserResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User updateUser(@PathParam("id") String id, User user) {
-        if (id.equals("54321")) {
-            return user;
-        }
+    public User updateUser(@PathParam("id") ObjectId id, User user) {
+        User result = userDao.update(id, user);
 
-        throw new NotFoundException();
+        if (result == null) throw new NotFoundException();
+        return result;
     }
 
     // UPDATE user vehicle
@@ -86,15 +88,10 @@ public class UserResource {
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle updateVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid, Vehicle vehicle) {
-        if (uid.equals("12345")) {
-            switch (vid) {
-                case "9876":
-                case "1234": return vehicle;
-                default: throw new NotFoundException();
-            }
-        }
+    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid, Vehicle vehicle) {
+        Vehicle result = vehicleDao.update(uid, vid, vehicle);
 
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -103,12 +100,8 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User addUser(User user) {
-        switch (user.getRole()) {
-            case User.RIDER: user.setId("12345"); break;
-            case User.STAFF: user.setId("23456"); break;
-        }
-
-        return user;
+        user.setPassword(PasswordManager.hashPassword(user.getPassword()));
+        return userDao.insert(user);
     }
 
     // CREATE user vehicle
@@ -116,77 +109,32 @@ public class UserResource {
     @Path("{uid}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle addVehicle(@PathParam("uid") String uid, Vehicle vehicle) {
-        return getDummyRider().getRiderInformation().getVehicles().get(0);
+    public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        Vehicle result = vehicleDao.insert(uid, vehicle);
+
+        if (result != null) return result;
+        throw new InternalServerErrorException();
     }
 
     // DELETE user
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User removeUser(@PathParam("id") String id) {
-        switch (id) {
-            case "12345": return getDummyRider();
-            case "23456": return getDummyStaff();
-            default: throw new NotFoundException();
-        }
+    public User removeUser(@PathParam("id") ObjectId id) {
+        User result = userDao.delete(id);
+
+        if (result == null) throw new NotFoundException();
+        return result;
     }
 
     //DELETE user vehicle
     @DELETE
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Vehicle removeVehicle(@PathParam("uid") String uid, @PathParam("vid") String vid) {
-        if (uid.equals("12345")) {
-            User rider = getDummyRider();
-            RiderInformation riderInformation = rider.getRiderInformation();
-            switch (vid) {
-                case "9876":
-                    return riderInformation.getVehicles().get(0);
-                case "1234":
-                    return riderInformation.getVehicles().get(1);
-                default:
-                    throw new NotFoundException();
-            }
-        }
+    public Vehicle removeVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
+        Vehicle result = vehicleDao.delete(uid, vid);
 
+        if (result != null) return result;
         throw new NotFoundException();
-    }
-
-//    ======== DUMMY DATA =========
-
-    static User getDummyRider() {
-        User dummy = new User(
-                "12345",
-                "jsmith",
-                "john123",
-                User.RIDER,
-                "John",
-                "Smith",
-                new Date(100),
-                "07491012345",
-                new RiderInformation(
-                "999",
-                true,
-                "A"
-                )
-        );
-        dummy.getRiderInformation().addVehicle(new Vehicle("9876", "Honda", "Monkey", 125, "REG123"));
-        dummy.getRiderInformation().addVehicle(new Vehicle("1234", "Suzuki", "GSXR", 1000, "REG987"));
-        return dummy;
-    }
-
-    static User getDummyStaff() {
-        return new User(
-                "23456",
-                "jsmith",
-                "john123",
-                User.STAFF,
-                "John",
-                "Smith",
-                new Date(100),
-                "07491012345",
-                null
-        );
     }
 }

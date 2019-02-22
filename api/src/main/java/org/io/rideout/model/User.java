@@ -1,5 +1,12 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
+
 import java.util.Date;
 
 public class User {
@@ -7,7 +14,10 @@ public class User {
     public final static String STAFF = "staff";
     public final static String RIDER = "rider";
 
-    private String id;
+    @BsonId
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
     private String username;
     private String password;
     private String role = User.RIDER;
@@ -19,7 +29,7 @@ public class User {
 
     public User() {}
 
-    public User(String id, String username, String password, String role, String firstName, String lastName, Date dateOfBirth, String contactNumber, RiderInformation riderInformation) {
+    public User(ObjectId id, String username, String password, String role, String firstName, String lastName, Date dateOfBirth, String contactNumber, RiderInformation riderInformation) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -31,11 +41,11 @@ public class User {
         this.riderInformation = riderInformation;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

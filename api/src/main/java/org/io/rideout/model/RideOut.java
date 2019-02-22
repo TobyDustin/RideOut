@@ -3,16 +3,27 @@ package org.io.rideout.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+@BsonDiscriminator
 @JsonTypeName("Ride")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "rideoutType")
 @JsonSubTypes({ @JsonSubTypes.Type(value = StayOut.class) })
 public class RideOut {
 
-    private String id;
+    @BsonId
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
     private String name;
     private Date dateStart;
     private Date dateEnd;
@@ -29,7 +40,7 @@ public class RideOut {
         this.checkpoints = new ArrayList<>();
         this.riders = new ArrayList<>();
     }
-    public RideOut(String id,String name,Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate){
+    public RideOut(ObjectId id,String name,Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate){
         this.id = id;
         this.name = name;
         this.dateStart = dateStart;
@@ -48,11 +59,11 @@ public class RideOut {
     //  START OF GETTERS AND SETTERS
     //***
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

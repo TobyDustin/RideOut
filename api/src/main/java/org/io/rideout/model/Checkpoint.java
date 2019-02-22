@@ -1,14 +1,25 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
+
 public class Checkpoint {
-    private String id;
+
+    @BsonId
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
     private String name;
     private double lat;
     private double lon;
     private String description;
 
 
-    public Checkpoint(String id, String name,double lat,double lon, String description){
+    public Checkpoint(ObjectId id, String name,double lat,double lon, String description){
         this.id = id;
         this.name = name;
         this.lat = lat;
@@ -16,11 +27,11 @@ public class Checkpoint {
         this. description = description;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
