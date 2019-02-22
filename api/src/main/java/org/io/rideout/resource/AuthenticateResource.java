@@ -2,6 +2,10 @@ package org.io.rideout.resource;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.io.rideout.PasswordManager;
+import org.io.rideout.database.UserDao;
+import org.io.rideout.model.Token;
+import org.io.rideout.model.User;
 import org.io.rideout.model.UserCredentials;
 
 import javax.ws.rs.Consumes;
@@ -16,18 +20,20 @@ public class AuthenticateResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response authenticate(UserCredentials credentials) {
-        if (authenticate(credentials.getUsername(), credentials.getPassword())) {
-            String token = issueToken("12345", "jsmith");
-            return Response.ok(token).build();
+        User user = UserDao.getInstance().getByUsername(credentials.getUsername());
+        if (authenticate(credentials.getPassword(), user)) {
+            String token = issueToken(user.getId().toHexString(), user.getUsername());
+            return Response.ok(new Token(token)).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
 
-    private boolean authenticate(String username, String password) {
-        return username.equals("jsmith") && password.equals("john123");
+    private boolean authenticate(String password, User user) {
+        if (user == null) return false;
+        return PasswordManager.verify(password, user.getPassword());
     }
 
     private String issueToken(String id, String username) {

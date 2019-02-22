@@ -1,9 +1,9 @@
 package org.io.rideout.resource;
 
-import org.io.rideout.model.Booking;
-import org.io.rideout.model.RideOut;
-import org.io.rideout.model.StayOut;
-import org.io.rideout.model.TourOut;
+import org.bson.types.ObjectId;
+import org.io.rideout.database.RideOutDao;
+import org.io.rideout.database.UserDao;
+import org.io.rideout.model.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,30 +13,24 @@ import java.util.Date;
 @Path("rideout")
 public class RideOutResource {
 
+    private RideOutDao rideoutDao = RideOutDao.getInstance();
+    private UserDao userDao = UserDao.getInstance();
+
     // GET all ride outs
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<RideOut> getAllRideOuts() {
-        ArrayList<RideOut> result = new ArrayList<>();
-
-        RideOut dummyRideOut = getDummyRideOut();
-        StayOut dummyStayOut = getDummyStayOut();
-
-        result.add(dummyRideOut);
-        result.add(dummyStayOut);
-        return result;
+        return rideoutDao.getAll();
     }
 
     // GET ride out by id
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public RideOut getRideOut(@PathParam("id") String id) {
-        if (id.equals("12345")) {
+    public RideOut getRideOut(@PathParam("id") ObjectId id) {
+        RideOut result = rideoutDao.getById(id);
 
-            return getDummyRideOut();
-        }
-
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -45,9 +39,7 @@ public class RideOutResource {
     @Path("ride")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<RideOut> getRideOuts() {
-        ArrayList<RideOut> rideOuts = new ArrayList<>();
-        rideOuts.add(getDummyRideOut());
-        return rideOuts;
+        return rideoutDao.getAllByType("ride");
     }
 
     // GET ride outs with type stay
@@ -55,9 +47,13 @@ public class RideOutResource {
     @Path("stay")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<StayOut> getStayOuts() {
-        ArrayList<StayOut> stayOuts = new ArrayList<>();
-        stayOuts.add(getDummyStayOut());
-        return stayOuts;
+        ArrayList<StayOut> result = new ArrayList<>();
+
+        for (RideOut ride : rideoutDao.getAllByType("stay")) {
+            if (ride instanceof StayOut) result.add((StayOut) ride);
+        }
+
+        return result;
     }
 
     // GET ride outs with type tour
@@ -65,9 +61,13 @@ public class RideOutResource {
     @Path("tour")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<TourOut> getTourOuts() {
-        ArrayList<TourOut> tourOuts = new ArrayList<>();
-        tourOuts.add(getDummyTourOut());
-        return tourOuts;
+        ArrayList<TourOut> result = new ArrayList<>();
+
+        for (RideOut ride : rideoutDao.getAllByType("tour")) {
+            if (ride instanceof TourOut) result.add((TourOut) ride);
+        }
+
+        return result;
     }
 
     // UPDATE rideout
@@ -75,10 +75,10 @@ public class RideOutResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
-    public RideOut updateRideOut(@PathParam("id") String id, RideOut rideOut) {
-        if (id.equals("12345")) {
-            return rideOut;
-        }
+    public RideOut updateRideOut(@PathParam("id") ObjectId id, RideOut rideOut) {
+        RideOut result = rideoutDao.update(id, rideOut);
+
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -87,19 +87,17 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut addRideOut(RideOut rideOut) {
-        rideOut.setId("12345");
-        return rideOut;
-
+        return rideoutDao.insert(rideOut);
     }
 
     // DELETE ride out
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public RideOut deleteRideOut(@PathParam("id") String id) {
-        if (id.equals("12345")) {
-            return getDummyRideOut();
-        }
+    public RideOut deleteRideOut(@PathParam("id") ObjectId id) {
+        RideOut result = rideoutDao.delete(id);
+
+        if (result != null) return result;
         throw new NotFoundException();
     }
 
@@ -107,85 +105,27 @@ public class RideOutResource {
     @PUT
     @Path("{rideOutId}/rider/{riderId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public RideOut addRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
-        if (rideOutId.equals("12345")) {
-            RideOut rideOut = getDummyRideOut();
+    public RideOut addRider(@PathParam("rideOutId") ObjectId rideOutId, @PathParam("riderId") ObjectId riderId) {
+        User rider = userDao.getById(riderId);
+        if (rider == null) throw new NotFoundException("Rider not found");
 
-            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
-            rideOut.getRiders().add(RiderResource.getDummyRider());
+        RideOut result = rideoutDao.addRider(rideOutId, rider);
 
-            return rideOut;
-        }
-
-        throw new NotFoundException("RideOut not found");
+        if (result != null) return result;
+        throw new NotFoundException("Rideout not found");
     }
 
     // REMOVE rider from ride out
     @DELETE
     @Path("{rideOutId}/rider/{riderId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public RideOut removeRider(@PathParam("rideOutId") String rideOutId, @PathParam("riderId") String riderId) {
-        if (rideOutId.equals("12345")) {
-            if (!riderId.equals("12345")) throw new NotFoundException("Rider not found");
+    public RideOut removeRider(@PathParam("rideOutId") ObjectId rideOutId, @PathParam("riderId") ObjectId riderId) {
+        User rider = userDao.getById(riderId);
+        if (rider == null) throw new NotFoundException("Rider not found");
 
-            return getDummyRideOut();
-        }
+        RideOut result = rideoutDao.removeRider(rideOutId, rider);
 
-        throw new NotFoundException("RideOut not found");
-    }
-
-    // ======== DUMMY DATA ========
-
-    private RideOut getDummyRideOut() {
-        RideOut dummy = new RideOut(
-                "12345",
-                "Ride around the candovers",
-                new Date(100),
-                new Date(100),
-                15,
-                "54321",
-                "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
-                new Date(100)
-
-        );
-        return dummy;
-    }
-    
-    private StayOut getDummyStayOut() {
-        StayOut dummy = new StayOut(
-                "23456",
-                "Stay around the candovers",
-                new Date(200),
-                new Date(200),
-                10,
-                "1234",
-                "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
-                new Date(200)
-        );
-        Booking accommodation = new Booking("1234", "Marriot Hotel", "ABCDE");
-        Booking restaurant = new Booking("4321", "KFC", "");
-        dummy.addAccommodation(accommodation);
-        dummy.addRestaurant(restaurant);
-        return dummy;
-    }
-
-    private TourOut getDummyTourOut() {
-        TourOut dummy = new TourOut(
-                "34567",
-                "Tour around the candovers",
-                new Date(300),
-                new Date(300),
-                5,
-                "2345",
-                "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
-                new Date(300)
-        );
-        Booking accommodation = new Booking("1234", "Marriot Hotel", "ABCDE");
-        Booking restaurant = new Booking("4321", "KFC", "");
-        Booking travel = new Booking("9876", "Condor Ferries", "QWERTY");
-        dummy.addAccommodation(accommodation);
-        dummy.addRestaurant(restaurant);
-        dummy.addTravelBooking(travel);
-        return dummy;
+        if (result != null) return result;
+        throw new NotFoundException("Rideout not found");
     }
 }

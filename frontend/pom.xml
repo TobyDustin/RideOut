@@ -57,12 +57,12 @@
             </goals>
           </execution>
           <execution>
-            <id>prod</id>
+            <id>ng build prod</id>
             <goals>
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run-script build</arguments>
+              <arguments>run ng build -- --prod</arguments>
             </configuration>
             <phase>generate-resources</phase>
           </execution>
