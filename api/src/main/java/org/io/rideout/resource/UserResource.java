@@ -1,26 +1,25 @@
 package org.io.rideout.resource;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
-import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Path("user")
 public class UserResource {
-
-    public static ObjectId UID_12345 = new ObjectId("5c6a97fe3bd3d419a78de2c4");
-    public static ObjectId UID_23456 = new ObjectId("5c6a97fe3bd3d419a78de2c5");
-    public static ObjectId UID_54321 = new ObjectId("5c6a9bd73b16145a50f1c4cc");
-    public static ObjectId VID_9876 = new ObjectId("5c6a96ba2ebe572fd56ce470");
-    public static ObjectId VID_1234 = new ObjectId("5c6a96ba2ebe572fd56ce471");
 
     private UserDao userDao = UserDao.getInstance();
     private VehicleDao vehicleDao = VehicleDao.getInstance();
@@ -28,6 +27,17 @@ public class UserResource {
     // GET all users
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(
+            summary = "Get all Users",
+            tags = {"user"},
+            description = "Returns all Users",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of Users", content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = User.class))
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized")
+            }
+    )
     public ArrayList<User> getAllUsers() {
         return userDao.getAll();
     }
@@ -36,7 +46,19 @@ public class UserResource {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getUser(@PathParam("id") ObjectId id) {
+    @Operation(
+            summary = "Get User",
+            tags = {"user"},
+            description = "Returns User with given ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User", content = @Content(
+                            schema = @Schema(implementation = User.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
+    )
+    public User getUser(@Parameter(description = "User ID") @PathParam("id") ObjectId id) {
         User result = userDao.getById(id);
 
         if (result != null) {
@@ -50,7 +72,18 @@ public class UserResource {
     @GET
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<Vehicle> getUserVehicles(@PathParam("id") ObjectId id) {
+    @Operation(
+            summary = "Get all Vehicles",
+            tags = {"user", "vehicle"},
+            description = "Returns all Vehicles for given user",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of Vehicles", content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = Vehicle.class))
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized")
+            }
+    )
+    public ArrayList<Vehicle> getUserVehicles(@Parameter(description = "User ID") @PathParam("id") ObjectId id) {
         ArrayList<Vehicle> result = vehicleDao.getAll(id);
 
         if (result != null) return result;
@@ -61,7 +94,20 @@ public class UserResource {
     @GET
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Vehicle getUserVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
+    @Operation(
+            summary = "Get Vehicle",
+            tags = {"user", "vehicle"},
+            description = "Returns User with given ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Vehicle", content = @Content(
+                            schema = @Schema(implementation = Vehicle.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+            }
+    )
+    public Vehicle getUserVehicle(@Parameter(description = "User ID") @PathParam("uid") ObjectId uid,
+                                  @Parameter(description = "Vehicle ID") @PathParam("vid") ObjectId vid) {
         Vehicle result = vehicleDao.getById(uid, vid);
 
         if (result != null) {
@@ -76,7 +122,22 @@ public class UserResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User updateUser(@PathParam("id") ObjectId id, User user) {
+    @Operation(
+            summary = "Update User",
+            tags = {"user"},
+            description = "Updates user with given ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User", content = @Content(
+                            schema = @Schema(implementation = User.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            },
+            requestBody = @RequestBody(description = "Updated User", content = @Content(
+                    schema = @Schema(implementation = User.class)
+            ))
+    )
+    public User updateUser(@Parameter(description = "User ID") @PathParam("id") ObjectId id, User user) {
         User result = userDao.update(id, user);
 
         if (result == null) throw new NotFoundException();
@@ -88,7 +149,23 @@ public class UserResource {
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid, Vehicle vehicle) {
+    @Operation(
+            summary = "Update Vehicle",
+            tags = {"user", "vehicle"},
+            description = "Updates Vehicle with given ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Vehicle", content = @Content(
+                            schema = @Schema(implementation = Vehicle.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+            },
+            requestBody = @RequestBody(description = "Updated Vehicle", content = @Content(
+                    schema = @Schema(implementation = Vehicle.class)
+            ))
+    )
+    public Vehicle updateVehicle(@Parameter(description = "User ID") @PathParam("uid") ObjectId uid,
+                                 @Parameter(description = "Vehicle ID") @PathParam("vid") ObjectId vid, Vehicle vehicle) {
         Vehicle result = vehicleDao.update(uid, vid, vehicle);
 
         if (result != null) return result;
@@ -99,6 +176,19 @@ public class UserResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(
+            summary = "Add User",
+            tags = {"user"},
+            description = "Adds new User",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User", content = @Content(
+                            schema = @Schema(implementation = User.class)
+                    ))
+            },
+            requestBody = @RequestBody(description = "New User", content = @Content(
+                    schema = @Schema(implementation = User.class)
+            ))
+    )
     public User addUser(User user) {
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
         return userDao.insert(user);
@@ -109,7 +199,22 @@ public class UserResource {
     @Path("{uid}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+    @Operation(
+            summary = "Add Vehicle",
+            tags = {"user", "vehicle"},
+            description = "Adds new Vehicle to a User",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Vehicle", content = @Content(
+                            schema = @Schema(implementation = Vehicle.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+            },
+            requestBody = @RequestBody(description = "New Vehicle", content = @Content(
+                    schema = @Schema(implementation = Vehicle.class)
+            ))
+    )
+    public Vehicle addVehicle(@Parameter(description = "User ID") @PathParam("uid") ObjectId uid, Vehicle vehicle) {
         Vehicle result = vehicleDao.insert(uid, vehicle);
 
         if (result != null) return result;
@@ -120,7 +225,19 @@ public class UserResource {
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User removeUser(@PathParam("id") ObjectId id) {
+    @Operation(
+            summary = "Delete User",
+            tags = {"user"},
+            description = "Deletes a User",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User", content = @Content(
+                            schema = @Schema(implementation = User.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
+    )
+    public User removeUser(@Parameter(description = "User ID") @PathParam("id") ObjectId id) {
         User result = userDao.delete(id);
 
         if (result == null) throw new NotFoundException();
@@ -131,7 +248,20 @@ public class UserResource {
     @DELETE
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Vehicle removeVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
+    @Operation(
+            summary = "Delete Vehicle",
+            tags = {"user", "vehicle"},
+            description = "Deletes a Vehicle",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Vehicle", content = @Content(
+                            schema = @Schema(implementation = Vehicle.class)
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Vehicle not found")
+            }
+    )
+    public Vehicle removeVehicle(@Parameter(description = "User ID") @PathParam("uid") ObjectId uid,
+                                 @Parameter(description = "Vehicle ID") @PathParam("vid") ObjectId vid) {
         Vehicle result = vehicleDao.delete(uid, vid);
 
         if (result != null) return result;
