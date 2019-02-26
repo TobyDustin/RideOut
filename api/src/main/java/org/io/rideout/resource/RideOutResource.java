@@ -1,6 +1,7 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.io.rideout.authantication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.model.*;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Path("rideout")
+@Secured
 public class RideOutResource {
 
     private RideOutDao rideoutDao = RideOutDao.getInstance();
