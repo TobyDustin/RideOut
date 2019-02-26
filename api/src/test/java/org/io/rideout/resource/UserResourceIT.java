@@ -23,7 +23,7 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-public class UserResourceTest {
+public class UserResourceIT {
 
     private static org.glassfish.grizzly.http.server.HttpServer server;
     private static WebTarget target;
