@@ -33,10 +33,11 @@
                 <version>2.0.7</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
-                    <outputPath>${project.build.directory}/docs</outputPath>
+                    <outputPath>${project.basedir}/src/main/resources/docs</outputPath>
                     <outputFormat>JSONANDYAML</outputFormat>
                     <resourcePackages>
                         <package>org.io.rideout.resource</package>
+                        <package>org.io.rideout.authantication</package>
                     </resourcePackages>
                     <prettyPrint>true</prettyPrint>
                 </configuration>
