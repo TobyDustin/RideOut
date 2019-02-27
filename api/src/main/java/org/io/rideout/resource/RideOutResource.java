@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bson.types.ObjectId;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
@@ -20,6 +21,9 @@ import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 
 @Path("rideout")
+@SecurityRequirement(
+        name = "JWT"
+)
 public class RideOutResource {
 
     private RideOutDao rideoutDao = RideOutDao.getInstance();
@@ -57,8 +61,12 @@ public class RideOutResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "RideOut", content = @Content(
                             schema = @Schema(
-                                    implementation = RideOut.class,
-                                    subTypes = {StayOut.class, TourOut.class}
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
                             )
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized"),
@@ -66,7 +74,7 @@ public class RideOutResource {
             }
     )
     public RideOut getRideOut(
-            @Parameter(description = "ID of the RideOut") @PathParam("id") ObjectId id
+            @Parameter(description = "ID of the RideOut", schema = @Schema(type = "string")) @PathParam("id") ObjectId id
     ) {
         RideOut result = rideoutDao.getById(id);
 
@@ -155,18 +163,29 @@ public class RideOutResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Updated RideOut", content = @Content(
                             schema = @Schema(
-                                    implementation = RideOut.class,
-                                    subTypes = {StayOut.class, TourOut.class}
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
                             )
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized"),
                     @ApiResponse(responseCode = "404", description = "RideOut not found")
             },
             requestBody = @RequestBody(description = "RideOut model with changes to be saved", content = @Content(
-                    schema = @Schema(implementation = RideOut.class)
+                    schema = @Schema(
+                            type = "object",
+                            oneOf = {
+                                    RideOut.class,
+                                    StayOut.class,
+                                    TourOut.class
+                            }
+                    )
             ))
     )
-    public RideOut updateRideOut(@Parameter(description = "ID of the RideOut") @PathParam("id") ObjectId id,
+    public RideOut updateRideOut(@Parameter(description = "ID of the RideOut", schema = @Schema(type = "string")) @PathParam("id") ObjectId id,
                                  RideOut rideOut) {
         RideOut result = rideoutDao.update(id, rideOut);
 
@@ -185,14 +204,25 @@ public class RideOutResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Created RideOut", content = @Content(
                             schema = @Schema(
-                                    implementation = RideOut.class,
-                                    subTypes = {StayOut.class, TourOut.class}
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
                             )
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized")
             },
             requestBody = @RequestBody(description = "RideOut to add", content = @Content(
-                    schema = @Schema(implementation = RideOut.class)
+                    schema = @Schema(
+                            type = "object",
+                            oneOf = {
+                                    RideOut.class,
+                                    StayOut.class,
+                                    TourOut.class
+                            }
+                    )
             ))
     )
     public RideOut addRideOut(RideOut rideOut) {
@@ -210,15 +240,19 @@ public class RideOutResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Deleted RideOut", content = @Content(
                             schema = @Schema(
-                                    implementation = RideOut.class,
-                                    subTypes = {StayOut.class, TourOut.class}
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
                             )
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized"),
                     @ApiResponse(responseCode = "404", description = "RideOut not found")
             }
     )
-    public RideOut deleteRideOut(@Parameter(description = "ID to be deleted") @PathParam("id") ObjectId id) {
+    public RideOut deleteRideOut(@Parameter(description = "ID to be deleted", schema = @Schema(type = "string")) @PathParam("id") ObjectId id) {
         RideOut result = rideoutDao.delete(id);
 
         if (result != null) return result;
@@ -236,16 +270,20 @@ public class RideOutResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "RideOut", content = @Content(
                             schema = @Schema(
-                                    implementation = RideOut.class,
-                                    subTypes = {StayOut.class, TourOut.class}
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
                             )
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized"),
                     @ApiResponse(responseCode = "404", description = "Rider or RideOut not found")
             }
     )
-    public RideOut addRider(@Parameter(description = "RideOut ID") @PathParam("rideOutId") ObjectId rideOutId,
-                            @Parameter(description = "Rider ID") @PathParam("riderId") ObjectId riderId) {
+    public RideOut addRider(@Parameter(description = "RideOut ID", schema = @Schema(type = "string")) @PathParam("rideOutId") ObjectId rideOutId,
+                            @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId) {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
@@ -266,16 +304,20 @@ public class RideOutResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "RideOut", content = @Content(
                             schema = @Schema(
-                                    implementation = RideOut.class,
-                                    subTypes = {StayOut.class, TourOut.class}
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
                             )
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized"),
                     @ApiResponse(responseCode = "404", description = "Rider or RideOut not found")
             }
     )
-    public RideOut removeRider(@Parameter(description = "RideOut ID") @PathParam("rideOutId") ObjectId rideOutId,
-                               @Parameter(description = "Rider ID") @PathParam("riderId") ObjectId riderId) {
+    public RideOut removeRider(@Parameter(description = "RideOut ID", schema = @Schema(type = "string")) @PathParam("rideOutId") ObjectId rideOutId,
+                               @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId) {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
