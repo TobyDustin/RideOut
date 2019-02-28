@@ -19,7 +19,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class Database {
 
-    final static String RIDEOUT_DATABASE = "rider";
+    final static String RIDEOUT_DATABASE = "rideout";
     final static String TEST_DATABASE = "test";
     final static String USER_COLLECTION = "users";
     final static String RIDEOUT_COLLECTION = "rideouts";
