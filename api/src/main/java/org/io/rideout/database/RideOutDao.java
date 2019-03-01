@@ -12,8 +12,7 @@ import org.io.rideout.model.User;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
+import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
 
 public class RideOutDao {
@@ -56,6 +55,15 @@ public class RideOutDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         return collection.find(eq("_id", id)).first();
+    }
+
+    public ArrayList<RideOut> search(String name) {
+        MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
+
+        ArrayList<RideOut> result = new ArrayList<>();
+        collection.find(regex("name", name)).forEach((Consumer<RideOut>) result::add);
+
+        return result;
     }
 
     public RideOut insert(RideOut rideout) {

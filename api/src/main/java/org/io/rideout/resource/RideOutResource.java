@@ -70,6 +70,14 @@ public class RideOutResource {
         return result;
     }
 
+    // Search rideouts by name
+    @GET
+    @Path("s/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<RideOut> search(@PathParam("name") String name) {
+        return rideoutDao.search(name);
+    }
+
     // UPDATE rideout
     @PUT
     @Path("{id}")
