@@ -1,8 +1,18 @@
 package org.io.rideout.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
+
 public class Booking {
 
-    private String id;
+    @BsonId
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
     private String name;
     private String reference;
 
@@ -10,7 +20,7 @@ public class Booking {
         super();
     }
 
-    public Booking(String id, String name, String reference) {
+    public Booking(ObjectId id, String name, String reference) {
         super();
 
         this.id = id;
@@ -18,11 +28,11 @@ public class Booking {
         this.reference = reference;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

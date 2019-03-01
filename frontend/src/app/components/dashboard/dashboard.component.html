@@ -1,0 +1,25 @@
+<app-nav>
+  <div class="dashboard">
+    <h1 class="mat-h1">Dashboard</h1>
+    <span *ngIf="!rideOuts">There are currently no Ride Outs available!</span>
+    <mat-card *ngFor="let rideOut of rideOuts" class="dashboard-card">
+      <img class="card-image"
+        mat-card-image
+        src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/-1.3998,50.9011,12.71,0,0/1280x720?access_token=pk.eyJ1IjoiZWRqIiwiYSI6ImNqbnZya3ZpMzA1MWgzcG5xdDU0YnNiYmoifQ.aTiNGJqYuukvBE4v5nCSrA"
+        alt="Ride Out Route"/>
+      <mat-card-title>
+        {{ rideOut.name }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{ rideOut.rideoutType }} Out · {{ rideOut.dateStart | date }}
+      </mat-card-subtitle>
+      <mat-card-content class="dashboard-card-content">
+        <div class="flex-container">
+          <div class="mat-subheading-1"> Riders: {{ rideOut.riders.length }}/{{ rideOut.maxRiders }} </div>
+          <div class="spacer"></div>
+          <div class="mat-subheading-1"> Checkpoints: {{ rideOut.checkpoints.length }} </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</app-nav>

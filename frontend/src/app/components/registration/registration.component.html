@@ -1,0 +1,153 @@
+<div class="register">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <mat-card-title>
+        Register
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-username">
+              Username
+            </label>
+          </mat-label>
+          <input
+            id="register-username"
+            matInput
+            required
+            [(ngModel)]="user.username">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-password">
+              Password
+            </label>
+          </mat-label>
+          <input
+            id="register-password"
+            matInput
+            required
+            type="password"
+            [(ngModel)]="user.password">
+          <mat-icon matPrefix>lock</mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-password-verify">
+              Password Verification
+            </label>
+          </mat-label>
+          <input
+            id="register-password-verify"
+            matInput
+            required
+            type="password"
+            [(ngModel)]="passwordVerify">
+          <mat-icon matPrefix>lock</mat-icon>
+        </mat-form-field>
+        <mat-divider></mat-divider>
+      </p>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-first-name">
+              First Name
+            </label>
+          </mat-label>
+          <input
+            id="register-first-name"
+            matInput
+            required
+            [(ngModel)]="user.firstName">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-last-name">
+              Last Name
+            </label>
+          </mat-label>
+          <input
+            id="register-last-name"
+            matInput
+            required
+            [(ngModel)]="user.lastName">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-contact-number">
+              Contact Number
+            </label>
+          </mat-label>
+          <input
+            id="register-contact-number"
+            matInput
+            required
+            [(ngModel)]="user.contactNumber">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field
+          appearance="outline">
+          <mat-label>
+            <label
+              for="register-date-of-birth">
+              Date of Birth
+            </label>
+          </mat-label>
+          <input
+            id="register-date-of-birth"
+            matInput
+            [matDatepicker]="datePicker"
+            required
+            [(ngModel)]="user.dateOfBirth">
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <div class="flex-container">
+        <button
+          mat-raised-button
+          color="warn"
+          routerLink="">
+          Cancel
+        </button>
+        <span class="spacer"></span>
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="buttonDisabled()"
+          (click)="registerUser()">
+          Register
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

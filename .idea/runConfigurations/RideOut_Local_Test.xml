@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RideOut Local Test" type="CompoundRunConfigurationType">
+    <toRun name="API Local Test" type="Application" />
+    <toRun name="FrontEnd Local Test" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,35 +1,51 @@
 package org.io.rideout.model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
+import org.io.rideout.helpers.ObjectIdJsonDeserializer;
+import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
 import java.util.Date;
 
-@JsonSubTypes({ @JsonSubTypes.Type(value = Rider.class), @JsonSubTypes.Type(value = Staff.class) })
-public abstract class User {
+public class User {
 
-    protected String id;
-    protected String username;
-    protected String firstName;
-    protected String lastName;
-    protected Date dateOfBirth;
-    protected String contactNumber;
+    public final static String STAFF = "staff";
+    public final static String RIDER = "rider";
 
-    protected User() {}
+    @BsonId
+    @JsonSerialize(using = ObjectIdJsonSerializer.class)
+    @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
+    private ObjectId id;
+    private String username;
+    private String password;
+    private String role = User.RIDER;
+    private String firstName;
+    private String lastName;
+    private Date dateOfBirth;
+    private String contactNumber;
+    private RiderInformation riderInformation;
 
-    protected User(String id, String username, String firstName, String lastName, Date dateOfBirth, String contactNumber) {
+    public User() {}
+
+    public User(ObjectId id, String username, String password, String role, String firstName, String lastName, Date dateOfBirth, String contactNumber, RiderInformation riderInformation) {
         this.id = id;
         this.username = username;
+        this.password = password;
+        this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
         this.contactNumber = contactNumber;
+        this.riderInformation = riderInformation;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -39,6 +55,22 @@ public abstract class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getFirstName() {
@@ -71,5 +103,13 @@ public abstract class User {
 
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
+    }
+
+    public RiderInformation getRiderInformation() {
+        return riderInformation;
+    }
+
+    public void setRiderInformation(RiderInformation riderInformation) {
+        this.riderInformation = riderInformation;
     }
 }

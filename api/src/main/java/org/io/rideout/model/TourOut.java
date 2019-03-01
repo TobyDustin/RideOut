@@ -2,10 +2,13 @@ package org.io.rideout.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+@BsonDiscriminator
 @JsonTypeName("Tour")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "rideoutType")
 public class TourOut extends StayOut {
@@ -16,7 +19,7 @@ public class TourOut extends StayOut {
         super();
     }
 
-    public TourOut(String id, String name, Date dateStart, Date dateEnd, int maxRiders, String leadRider, String route, Date minCancellationDate) {
+    public TourOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, String leadRider, String route, Date minCancellationDate) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
         this.travelBookings = new ArrayList<>();
     }

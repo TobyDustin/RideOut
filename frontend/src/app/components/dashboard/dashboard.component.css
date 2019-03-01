@@ -1,0 +1,22 @@
+.dashboard {
+  text-align: center;
+}
+
+.dashboard-card {
+  text-align: start;
+  display: inline-block;
+  height: 300px;
+  width: 640px;
+  margin: 20px;
+  object-fit: contain;
+}
+
+.card-image {
+  height: 210px;
+  width: available;
+  object-fit: cover;
+}
+
+.dashboard-card-content {
+  text-align: center;
+}
