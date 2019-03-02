@@ -61,7 +61,7 @@ public class RideOutDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find(regex("name", name)).forEach((Consumer<RideOut>) result::add);
+        collection.find(regex("name", name, "i")).forEach((Consumer<RideOut>) result::add);
 
         return result;
     }
