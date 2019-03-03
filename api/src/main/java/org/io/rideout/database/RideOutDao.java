@@ -2,16 +2,17 @@ package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.io.rideout.model.RideOut;
-import org.io.rideout.model.StayOut;
-import org.io.rideout.model.TourOut;
-import org.io.rideout.model.User;
+import org.io.rideout.model.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
+import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.*;
@@ -28,7 +29,8 @@ public class RideOutDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find().forEach((Consumer<RideOut>) result::add);
+        List<Bson> pipe = Arrays.asList(lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
+        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
         return result;
     }
 
@@ -48,20 +50,23 @@ public class RideOutDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find(filter).forEach((Consumer<RideOut>) result::add);
+        List<Bson> pipe = Arrays.asList(match(filter), lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
+        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
         return result;
     }
 
     public RideOut getById(ObjectId id) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        return collection.find(eq("_id", id)).first();
+        List<Bson> pipe = Arrays.asList(match(eq("_id", id)), lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
+        return collection.aggregate(pipe).first();
     }
 
     public RideOut insert(RideOut rideout) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
         ObjectId id = new ObjectId();
         rideout.setId(id);
+        rideout.getRiders().clear();
 
         collection.insertOne(rideout);
         return getById(id);
@@ -80,14 +85,14 @@ public class RideOutDao {
         return collection.findOneAndDelete(eq("_id", id));
     }
 
-    public RideOut addRider(ObjectId id, User rider) {
+    public RideOut addRider(ObjectId id, SimpleUser rider) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", id), addToSet("riders", rider));
+        UpdateResult result = collection.updateOne(eq("_id", id), addToSet("riders", new Document().append("_id", rider.getId())));
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
 
-    public RideOut removeRider(ObjectId id, User rider) {
+    public RideOut removeRider(ObjectId id, SimpleUser rider) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         UpdateResult result = collection.updateOne(eq("_id", id), pull("riders", eq("_id", rider.getId())));

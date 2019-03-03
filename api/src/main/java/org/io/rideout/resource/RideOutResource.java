@@ -109,7 +109,7 @@ public class RideOutResource {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
-        RideOut result = rideoutDao.addRider(rideOutId, rider);
+        RideOut result = rideoutDao.addRider(rideOutId, rider.simplify());
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
@@ -123,7 +123,7 @@ public class RideOutResource {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
-        RideOut result = rideoutDao.removeRider(rideOutId, rider);
+        RideOut result = rideoutDao.removeRider(rideOutId, rider.simplify());
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
