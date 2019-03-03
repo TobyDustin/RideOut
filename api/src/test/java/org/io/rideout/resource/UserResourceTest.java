@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.io.rideout.HttpTestServer;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.database.TestDatabase;
+import org.io.rideout.model.SimpleUser;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 import org.junit.AfterClass;
@@ -216,5 +217,13 @@ public class UserResourceTest {
         assertEquals("Monkey", vehicle.getModel());
         assertEquals(Integer.valueOf(125), vehicle.getPower());
         assertEquals("REG123", vehicle.getRegistration());
+    }
+
+    static void testSimpleUser(SimpleUser user, ObjectId id) {
+        assertNotNull(user);
+        if (id != null) assertEquals(id, user.getId());
+        assertEquals("jsmith", user.getUsername());
+        assertEquals("John",  user.getFirstName());
+        assertEquals("Smith", user.getLastName());
     }
 }

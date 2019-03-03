@@ -76,10 +76,11 @@ public class RideOutResourceTest {
         String id = TestDatabase.ADD_RIDER_RIDEOUT.toHexString();
         String rid = TestDatabase.GET_RIDER.toHexString();
         Response response = target.path("rideout/" + id + "/rider/" + rid).request().put(Entity.text(""));
-        RideOut rideOut = response.readEntity(RideOut.class);
+        //System.out.println(response.readEntity(String.class));
         assertEquals(200, response.getStatus());
+        RideOut rideOut = response.readEntity(RideOut.class);
         testRideOut(rideOut, TestDatabase.ADD_RIDER_RIDEOUT);
-        UserResourceTest.testRider(rideOut.getRiders().get(0), TestDatabase.GET_RIDER);
+        UserResourceTest.testSimpleUser(rideOut.getRiders().get(0), TestDatabase.GET_RIDER);
     }
 
     @Test
