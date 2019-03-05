@@ -37,7 +37,7 @@ public class RideOut {
     private ArrayList<User> riders;
 
     @BsonProperty("full")
-    private boolean isFull;
+    private boolean isFull = false;
 
     public RideOut() {
         super();

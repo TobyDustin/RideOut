@@ -67,7 +67,7 @@ public class RideOutResource {
     @Path("tour")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<TourOut> getTourOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("stay");
+        filters.types = Collections.singletonList("tour");
         ArrayList<TourOut> result = new ArrayList<>();
 
         for (RideOut ride : rideoutDao.getAll(filters)) {
