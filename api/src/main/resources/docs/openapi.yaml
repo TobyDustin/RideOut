@@ -1,0 +1,816 @@
+openapi: 3.0.1
+info:
+  title: RideOut
+  description: A RideOut API documentation
+  version: "0.1"
+servers:
+- url: https://rideout.edjeffreys.com/dev/api
+  description: Development
+  variables: {}
+- url: https://rideout.edjeffreys.com/api
+  description: Production
+  variables: {}
+paths:
+  /authenticate:
+    post:
+      tags:
+      - authentication
+      summary: Authenticate user
+      description: Authenticates given credentials and returns bearer token.
+      operationId: authenticate
+      requestBody:
+        description: User credentials
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        200:
+          description: Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        401:
+          description: User credentials are invalid
+  /2:
+    get:
+      tags:
+      - documentation
+      summary: Get OpenAPI documentation
+      description: Returns OpenAPI documentation in selected format
+      operationId: getDocs
+      parameters:
+      - name: format
+        in: query
+        description: Specifies what format to return
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+          default: json
+        example: json
+      responses:
+        200:
+          description: OpenAPI documentation
+          content:
+            application/json:
+              schema:
+                type: string
+            application/yaml:
+              schema:
+                type: string
+  /rideout/{id}:
+    get:
+      tags:
+      - rideout
+      summary: Get RideOut by ID
+      description: Returns a RideOut with given ID
+      operationId: getRideOut
+      parameters:
+      - name: id
+        in: path
+        description: ID of the RideOut
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: RideOut
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/RideOut'
+                - $ref: '#/components/schemas/StayOut'
+                - $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+        404:
+          description: RideOut not found
+      security:
+      - JWT: []
+    put:
+      tags:
+      - rideout
+      summary: Update a RideOut
+      description: Updates a given RideOut
+      operationId: updateRideOut
+      parameters:
+      - name: id
+        in: path
+        description: ID of the RideOut
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: RideOut model with changes to be saved
+        content:
+          application/json:
+            schema:
+              type: object
+              oneOf:
+              - $ref: '#/components/schemas/RideOut'
+              - $ref: '#/components/schemas/StayOut'
+              - $ref: '#/components/schemas/TourOut'
+      responses:
+        200:
+          description: Updated RideOut
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/RideOut'
+                - $ref: '#/components/schemas/StayOut'
+                - $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+        404:
+          description: RideOut not found
+      security:
+      - JWT: []
+    delete:
+      tags:
+      - rideout
+      summary: Delete RideOut
+      description: Deletes given RideOut
+      operationId: deleteRideOut
+      parameters:
+      - name: id
+        in: path
+        description: ID to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Deleted RideOut
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/RideOut'
+                - $ref: '#/components/schemas/StayOut'
+                - $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+        404:
+          description: RideOut not found
+      security:
+      - JWT: []
+  /rideout:
+    get:
+      tags:
+      - rideout
+      summary: Get all rideouts
+      description: Returns all RideOuts (all types)
+      operationId: getAllRideOuts
+      responses:
+        200:
+          description: List of RideOuts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RideOut'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+    post:
+      tags:
+      - rideout
+      summary: Insert RideOut
+      description: Adds new RideOut
+      operationId: addRideOut
+      requestBody:
+        description: RideOut to add
+        content:
+          application/json:
+            schema:
+              type: object
+              oneOf:
+              - $ref: '#/components/schemas/RideOut'
+              - $ref: '#/components/schemas/StayOut'
+              - $ref: '#/components/schemas/TourOut'
+      responses:
+        200:
+          description: Created RideOut
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/RideOut'
+                - $ref: '#/components/schemas/StayOut'
+                - $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+  /rideout/stay:
+    get:
+      tags:
+      - rideout
+      summary: Get all StayOut
+      description: Returns all StayOuts
+      operationId: getStayOuts
+      responses:
+        200:
+          description: List of StayOuts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StayOut'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+  /rideout/tour:
+    get:
+      tags:
+      - rideout
+      summary: Get all TourOuts
+      description: Returns all TourOuts
+      operationId: getTourOuts
+      responses:
+        200:
+          description: List of TourOuts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+  /rideout/{rideOutId}/rider/{riderId}:
+    put:
+      tags:
+      - user
+      - rideout
+      summary: Add rider to RideOut
+      description: Adds given Rider to a RideOut
+      operationId: addRider
+      parameters:
+      - name: rideOutId
+        in: path
+        description: RideOut ID
+        required: true
+        schema:
+          type: string
+      - name: riderId
+        in: path
+        description: Rider ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: RideOut
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/RideOut'
+                - $ref: '#/components/schemas/StayOut'
+                - $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+        404:
+          description: Rider or RideOut not found
+      security:
+      - JWT: []
+    delete:
+      tags:
+      - user
+      - rideout
+      summary: Remove rider from RideOut
+      description: Removes given Rider from a RideOut
+      operationId: removeRider
+      parameters:
+      - name: rideOutId
+        in: path
+        description: RideOut ID
+        required: true
+        schema:
+          type: string
+      - name: riderId
+        in: path
+        description: Rider ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: RideOut
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/RideOut'
+                - $ref: '#/components/schemas/StayOut'
+                - $ref: '#/components/schemas/TourOut'
+        401:
+          description: User unauthorized
+        404:
+          description: Rider or RideOut not found
+      security:
+      - JWT: []
+  /rideout/ride:
+    get:
+      tags:
+      - rideout
+      summary: Get all RideOuts
+      description: Returns all RideOuts (type = ride)
+      operationId: getRideOuts
+      responses:
+        200:
+          description: List of RideOuts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RideOut'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+  /user/{id}:
+    get:
+      tags:
+      - user
+      summary: Get User
+      description: Returns User with given ID
+      operationId: getUser
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: User unauthorized
+        404:
+          description: User not found
+      security:
+      - JWT: []
+    put:
+      tags:
+      - user
+      summary: Update User
+      description: Updates user with given ID
+      operationId: updateUser
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated User
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: User unauthorized
+        404:
+          description: User not found
+      security:
+      - JWT: []
+    delete:
+      tags:
+      - user
+      summary: Delete User
+      description: Deletes a User
+      operationId: removeUser
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: User unauthorized
+        404:
+          description: User not found
+      security:
+      - JWT: []
+  /user:
+    get:
+      tags:
+      - user
+      summary: Get all Users
+      description: Returns all Users
+      operationId: getAllUsers
+      responses:
+        200:
+          description: List of Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+    post:
+      tags:
+      - user
+      summary: Add User
+      description: Adds new User
+      operationId: addUser
+      requestBody:
+        description: New User
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /user/{id}/vehicle:
+    get:
+      tags:
+      - user
+      - vehicle
+      summary: Get all Vehicles
+      description: Returns all Vehicles for given user
+      operationId: getUserVehicles
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: List of Vehicles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+        401:
+          description: User unauthorized
+      security:
+      - JWT: []
+  /user/{uid}/vehicle/{vid}:
+    get:
+      tags:
+      - user
+      - vehicle
+      summary: Get Vehicle
+      description: Returns User with given ID
+      operationId: getUserVehicle
+      parameters:
+      - name: uid
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: vid
+        in: path
+        description: Vehicle ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Vehicle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        401:
+          description: User unauthorized
+        404:
+          description: Vehicle not found
+      security:
+      - JWT: []
+    put:
+      tags:
+      - user
+      - vehicle
+      summary: Update Vehicle
+      description: Updates Vehicle with given ID
+      operationId: updateVehicle
+      parameters:
+      - name: uid
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: vid
+        in: path
+        description: Vehicle ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated Vehicle
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+      responses:
+        200:
+          description: Vehicle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        401:
+          description: User unauthorized
+        404:
+          description: Vehicle not found
+      security:
+      - JWT: []
+    delete:
+      tags:
+      - user
+      - vehicle
+      summary: Delete Vehicle
+      description: Deletes a Vehicle
+      operationId: removeVehicle
+      parameters:
+      - name: uid
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      - name: vid
+        in: path
+        description: Vehicle ID
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Vehicle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        401:
+          description: User unauthorized
+        404:
+          description: Vehicle not found
+      security:
+      - JWT: []
+  /user/{uid}/vehicle:
+    post:
+      tags:
+      - user
+      - vehicle
+      summary: Add Vehicle
+      description: Adds new Vehicle to a User
+      operationId: addVehicle
+      parameters:
+      - name: uid
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: New Vehicle
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+      responses:
+        200:
+          description: Vehicle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        401:
+          description: User unauthorized
+        404:
+          description: Vehicle not found
+      security:
+      - JWT: []
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+        type:
+          type: string
+    UserCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        reference:
+          type: string
+    Checkpoint:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+        description:
+          type: string
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+          format: date-time
+        rideOutId:
+          type: string
+        amount:
+          type: number
+          format: float
+    RideOut:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        dateStart:
+          type: string
+          format: date-time
+        dateEnd:
+          type: string
+          format: date-time
+        maxRiders:
+          type: integer
+          format: int32
+        leadRider:
+          type: string
+        route:
+          type: string
+        minCancellationDate:
+          type: string
+          format: date-time
+        checkpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Checkpoint'
+        riders:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        published:
+          type: boolean
+      discriminator:
+        propertyName: rideoutType
+    RiderInformation:
+      type: object
+      properties:
+        emergencyContactNumber:
+          type: string
+        vehicles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle'
+        license:
+          type: string
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        insured:
+          type: boolean
+    StayOut:
+      type: object
+      properties:
+        accommodationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+        restaurantList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+      discriminator:
+        propertyName: rideoutType
+      allOf:
+      - $ref: '#/components/schemas/RideOut'
+    TourOut:
+      type: object
+      properties:
+        travelBookings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+      discriminator:
+        propertyName: rideoutType
+      allOf:
+      - $ref: '#/components/schemas/StayOut'
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date-time
+        contactNumber:
+          type: string
+        riderInformation:
+          $ref: '#/components/schemas/RiderInformation'
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        power:
+          type: integer
+          format: int32
+        registration:
+          type: string
+        checked:
+          type: boolean
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
