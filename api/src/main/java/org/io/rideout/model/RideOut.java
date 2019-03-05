@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
@@ -34,6 +35,9 @@ public class RideOut {
     private Date minCancellationDate;
     private ArrayList<Checkpoint> checkpoints;
     private ArrayList<User> riders;
+
+    @BsonProperty("full")
+    private boolean isFull;
 
     public RideOut() {
         super();
@@ -147,7 +151,11 @@ public class RideOut {
         this.riders = riders;
     }
 
+    public boolean isFull() {
+        return isFull;
+    }
 
-
-
+    public void setFull(boolean full) {
+        isFull = full;
+    }
 }

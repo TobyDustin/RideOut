@@ -4,12 +4,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.io.rideout.model.RideOut;
-import org.io.rideout.model.StayOut;
-import org.io.rideout.model.TourOut;
-import org.io.rideout.model.User;
+import org.io.rideout.model.*;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
+import javax.xml.transform.Result;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import static com.mongodb.client.model.Filters.*;
@@ -23,31 +25,11 @@ public class RideOutDao {
 
     private RideOutDao() {}
 
-    public ArrayList<RideOut> getAll() {
+    public ArrayList<RideOut> getAll(FilterBean filter) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find().forEach((Consumer<RideOut>) result::add);
-        return result;
-    }
-
-    public ArrayList<RideOut> getAllByType(String... filters) {
-        if (filters.length == 3) return getAll();
-        else if (filters.length == 0) throw new IllegalArgumentException("No filters passed");
-        else if (filters.length > 3) throw new IllegalArgumentException("Invalid filter options");
-
-        Bson filter;
-
-        if (filters.length == 1) {
-            filter = eq("_t", getTypeName(filters[0]));
-        } else {
-            filter = or(eq("_t", getTypeName(filters[0])), eq("_t", getTypeName(filters[1])));
-        }
-
-        MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-
-        ArrayList<RideOut> result = new ArrayList<>();
-        collection.find(filter).forEach((Consumer<RideOut>) result::add);
+        collection.find(convertFilterBean(filter)).forEach((Consumer<RideOut>) result::add);
         return result;
     }
 
@@ -57,11 +39,11 @@ public class RideOutDao {
         return collection.find(eq("_id", id)).first();
     }
 
-    public ArrayList<RideOut> search(String name) {
+    public ArrayList<RideOut> search(String name, FilterBean filters) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find(regex("name", name, "i")).forEach((Consumer<RideOut>) result::add);
+        collection.find(combine(regex("name", name, "i"), convertFilterBean(filters))).forEach((Consumer<RideOut>) result::add);
 
         return result;
     }
@@ -122,5 +104,33 @@ public class RideOutDao {
                 set("isPublished", rideout.isPublished()),
                 set("minCancellationDate", rideout.getMinCancellationDate())
         );
+    }
+
+    private Bson convertFilterBean(FilterBean filter) {
+        ArrayList<Bson> filters = new ArrayList<>();
+
+        if (filter.showOnlyVacant) {
+            filters.add(eq("full", false));
+        }
+
+        if (filter.showOnlyUsers) {
+            filters.add(
+                in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().toString())))
+            );
+        }
+
+        if (!filter.types.isEmpty() && filter.types.size() <= 3) {
+            ArrayList<Bson> typeFilters = new ArrayList<>();
+
+            for (String t : filter.types) {
+                typeFilters.add(eq("_t", getTypeName(t)));
+            }
+
+            filters.add(or(typeFilters));
+        } else if (filter.types.size() > 3) {
+            throw new BadRequestException();
+        }
+
+        return combine(filters);
     }
 }

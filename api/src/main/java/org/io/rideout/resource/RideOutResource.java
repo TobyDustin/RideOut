@@ -6,8 +6,12 @@ import org.io.rideout.database.UserDao;
 import org.io.rideout.model.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 @Path("rideout")
@@ -19,8 +23,8 @@ public class RideOutResource {
     // GET all ride outs
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<RideOut> getAllRideOuts() {
-        return rideoutDao.getAll();
+    public ArrayList<RideOut> getAllRideOuts(@BeanParam FilterBean filters) {
+        return rideoutDao.getAll(filters);
     }
 
     // GET ride out by id
@@ -38,18 +42,20 @@ public class RideOutResource {
     @GET
     @Path("ride")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<RideOut> getRideOuts() {
-        return rideoutDao.getAllByType("ride");
+    public ArrayList<RideOut> getRideOuts(@BeanParam FilterBean filters) {
+        filters.types = Collections.singletonList("ride");
+        return rideoutDao.getAll(filters);
     }
 
     // GET ride outs with type stay
     @GET
     @Path("stay")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<StayOut> getStayOuts() {
+    public ArrayList<StayOut> getStayOuts(@BeanParam FilterBean filters) {
+        filters.types = Collections.singletonList("stay");
         ArrayList<StayOut> result = new ArrayList<>();
 
-        for (RideOut ride : rideoutDao.getAllByType("stay")) {
+        for (RideOut ride : rideoutDao.getAll(filters)) {
             if (ride instanceof StayOut) result.add((StayOut) ride);
         }
 
@@ -60,10 +66,11 @@ public class RideOutResource {
     @GET
     @Path("tour")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<TourOut> getTourOuts() {
+    public ArrayList<TourOut> getTourOuts(@BeanParam FilterBean filters) {
+        filters.types = Collections.singletonList("stay");
         ArrayList<TourOut> result = new ArrayList<>();
 
-        for (RideOut ride : rideoutDao.getAllByType("tour")) {
+        for (RideOut ride : rideoutDao.getAll(filters)) {
             if (ride instanceof TourOut) result.add((TourOut) ride);
         }
 
@@ -74,8 +81,8 @@ public class RideOutResource {
     @GET
     @Path("s/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<RideOut> search(@PathParam("name") String name) {
-        return rideoutDao.search(name);
+    public ArrayList<RideOut> search(@PathParam("name") String name, @BeanParam FilterBean filters) {
+        return rideoutDao.search(name, filters);
     }
 
     // UPDATE rideout
