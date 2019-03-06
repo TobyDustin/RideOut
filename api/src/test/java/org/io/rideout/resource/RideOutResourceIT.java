@@ -3,62 +3,62 @@ package org.io.rideout.resource;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.bson.types.ObjectId;
+import org.glassfish.grizzly.http.server.HttpServer;
 import org.io.rideout.HttpTestServer;
 import org.io.rideout.database.TestDatabase;
 import org.io.rideout.model.RideOut;
 import org.io.rideout.model.StayOut;
 import org.io.rideout.model.TourOut;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.util.Date;
-import static org.junit.Assert.*;
 
 public class RideOutResourceIT {
 
 
-    private static org.glassfish.grizzly.http.server.HttpServer server;
+    private static HttpServer server;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         TestDatabase.setUp();
-
         server = HttpTestServer.startServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         server.stop();
         TestDatabase.tearDown();
     }
 
     @Test
-    public void testGetAllRideOut() throws IOException {
+    public void testGetAllRideOut() {
         given()
-        .when()
-            .get("api/rideout")
-        .then()
-            .assertThat()
-            .statusCode(200)
-        .and()
-            .contentType(ContentType.JSON)
-        .and()
-            .body("RideOut", hasSize(greaterThanOrEqualTo(3)));
+                .when()
+                .get("api/rideout")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("RideOut", hasSize(greaterThanOrEqualTo(3)));
     }
 
     @Test
-    public void testGetRideOutNotFound(){
+    public void testGetRideOutNotFound() {
         given()
-            .pathParam("id", "invalid_id")
-        .when()
-            .get("api/rideout/{id}")
-        .then()
-            .assertThat()
-            .statusCode(404);
+                .pathParam("id", "invalid_id")
+                .when()
+                .get("api/rideout/{id}")
+                .then()
+                .assertThat()
+                .statusCode(404);
     }
 
     @Test

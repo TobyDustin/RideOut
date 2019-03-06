@@ -1,183 +1,295 @@
 package org.io.rideout.resource;
 
+import io.restassured.http.ContentType;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.io.rideout.HttpTestServer;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.database.TestDatabase;
+import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 
 public class UserResourceIT {
 
     private static org.glassfish.grizzly.http.server.HttpServer server;
-    private static WebTarget target;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         TestDatabase.setUp();
-
         server = HttpTestServer.startServer();
-        Client c = ClientBuilder.newClient();
-
-        target = c.target(HttpTestServer.BASE_URI);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         server.stop();
         TestDatabase.tearDown();
     }
 
     @Test
-    public void testGetAllUsers() throws IOException {
-        Response response = target.path("/user").request().get();
-
-        ArrayList result = response.readEntity(ArrayList.class);
-
-        assertEquals(200, response.getStatus());
-        assertTrue(result.size() >= 2);
+    public void testGetAllUsers() {
+        given()
+                .when()
+                .get("api/user")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("User", hasSize(greaterThanOrEqualTo(2)));
     }
 
     @Test
     public void testGetRiderSuccess() {
         String id = TestDatabase.GET_RIDER.toHexString();
-        Response response = target.path("/user/" + id).request().get();
 
-        User user = response.readEntity(User.class);
-        assertEquals(200, response.getStatus());
-        testRider(user, TestDatabase.GET_RIDER);
+        given()
+                .pathParam("id", id)
+                .when()
+                .get("api/user/{id}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("role", equalTo("rider"));
     }
 
     @Test
     public void testGetStaffSuccess() {
         String id = TestDatabase.GET_STAFF.toHexString();
-        Response response = target.path("/user/" + id).request().get();
-
-        User user = response.readEntity(User.class);
-        assertEquals(200, response.getStatus());
-        testStaff(user, TestDatabase.GET_STAFF);
+        given()
+                .pathParam("id", id)
+                .when()
+                .get("api/user/{id}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("role", equalTo("staff"));
     }
 
     @Test
     public void testGetUserNotFound() {
         String id = new ObjectId().toHexString();
-        Response response = target.path("user/" + id).request().get();
 
-        assertEquals(404, response.getStatus());
+        given()
+                .pathParam("id", id)
+                .when()
+                .get("api/user/{id}")
+                .then()
+                .assertThat()
+                .statusCode(404);
     }
 
     @Test
     public void testGetUserVehicles() {
         String id = TestDatabase.GET_RIDER.toHexString();
-        Response response = target.path("user/" + id + "/vehicle").request().get();
-        ArrayList<Vehicle> vehicles = response.readEntity(new GenericType<ArrayList<Vehicle>>() {});
 
-        testVehicle(vehicles.get(0), TestDatabase.GET_VEHICLE);
+        given()
+                .pathParam("id", id)
+                .when()
+                .get("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", hasSize(greaterThanOrEqualTo(1)));
     }
 
     @Test
     public void testGetUserVehiclesEmptyCollection() {
         String id = TestDatabase.GET_STAFF.toHexString();
-        Response response = target.path("user/" + id + "/vehicle").request().get();
-        ArrayList<Vehicle> vehicles = response.readEntity(new GenericType<ArrayList<Vehicle>>() {});
-        assertEquals(0, vehicles.size());
+
+        given()
+                .pathParam("id", id)
+                .when()
+                .get("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", hasSize(0));
     }
 
     @Test
     public void testGetUserVehicleById() {
         String uid = TestDatabase.VEHICLE_RIDER.toHexString();
         String vid = TestDatabase.GET_VEHICLE.toHexString();
-        Response response = target.path("user/" + uid + "/vehicle/" + vid).request().get();
-        Vehicle vehicle = response.readEntity(Vehicle.class);
 
-        testVehicle(vehicle, TestDatabase.GET_VEHICLE);
+        given()
+                .pathParam("id", uid)
+                .pathParam("vid", vid)
+                .when()
+                .get("api/user/{id}/vehicle/{vid}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     @Test
     public void testUpdateVehicle() {
         String uid = TestDatabase.VEHICLE_RIDER.toHexString();
         String vid = TestDatabase.PUT_VEHICLE.toHexString();
-        Response response = target.path("user/" + uid + "/vehicle/" + vid).request()
-                .put(Entity.entity(new Vehicle(TestDatabase.PUT_VEHICLE, "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
-        Vehicle vehicle = response.readEntity(Vehicle.class);
+        Vehicle vehicle = new Vehicle(TestDatabase.PUT_VEHICLE, "Honda", "Monkey", 125, "REG123");
 
-        testVehicle(vehicle, TestDatabase.PUT_VEHICLE);
+        given()
+                .pathParam("id", uid)
+                .pathParam("vid", vid)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(vehicle)
+                .when()
+                .put("api/user/{id}/vehicle/{vid}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     @Test
     public void testDeleteVehicle() {
         String uid = TestDatabase.VEHICLE_RIDER.toHexString();
         String vid = TestDatabase.DELETE_VEHICLE.toHexString();
-        Response response = target.path("user/" + uid + "/vehicle/" + vid).request().delete();
-        Vehicle vehicle = response.readEntity(Vehicle.class);
 
-        testVehicle(vehicle, TestDatabase.DELETE_VEHICLE);
+        given()
+                .pathParam("id", uid)
+                .pathParam("vid", vid)
+                .with()
+                .when()
+                .delete("api/user/{id}/vehicle/{vid}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     @Test
     public void testAddVehicle() {
         String id = TestDatabase.VEHICLE_RIDER.toHexString();
-        Response response = target.path("user/" + id + "/vehicle/").request()
-                .post(Entity.entity(new Vehicle(null, "Honda", "Monkey", 125, "REG123"), MediaType.APPLICATION_JSON_TYPE));
-        Vehicle vehicle = response.readEntity(Vehicle.class);
+        Vehicle vehicle = new Vehicle(null, "Honda", "Monkey", 125, "REG123");
 
-        testVehicle(vehicle, null);
+        given()
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(vehicle)
+                .when()
+                .post("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     @Test
     public void testPutUser() {
         String id = TestDatabase.PUT_STAFF.toHexString();
         String password = PasswordManager.hashPassword("john123");
-        String body = "{\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\""+password+"\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
-        Response response = target.path("user/" + id).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
-        assertEquals(200, response.getStatus());
-        User result = response.readEntity(User.class);
-        System.out.println(result.getPassword());
-        testStaff(result, TestDatabase.PUT_STAFF);
+        given()
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .put("api/user/{id}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     @Test
     public void testPostUserSuccess() {
-        String body = "{\"username\":\"jsmith\",\"password\":\"john123\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
-        Response response = target.path("user").request().post(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String id = TestDatabase.PUT_STAFF.toHexString();
+        String password = PasswordManager.hashPassword("john123");
+        User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
-        assertEquals(200, response.getStatus());
-        testStaff(response.readEntity(User.class), null);
+        given()
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .post("api/user")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     @Test
     public void testPutUserNotFound() {
         String id = new ObjectId().toHexString();
-        String body = "{\"id\":\"" + id + "\",\"username\":\"jsmith\",\"password\":\"john123\",\"role\":\"staff\",\"firstName\":\"John\",\"lastName\":\"Smith\",\"dateOfBirth\":100,\"contactNumber\":\"07491012345\"}";
-        Response response = target.path("rider/" + id).request().put(Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+        String password = PasswordManager.hashPassword("john123");
+        User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
-        assertEquals(404, response.getStatus());
+        given()
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .put("api/user/{id}")
+                .then()
+                .assertThat()
+                .statusCode(404);
     }
 
     @Test
     public void testDeleteRiderSuccess() {
         String id = TestDatabase.DELETE_RIDER.toHexString();
-        Response response = target.path("user/" + id).request().delete();
 
-        assertEquals(200, response.getStatus());
-        testRider(response.readEntity(User.class), TestDatabase.DELETE_RIDER);
+        given()
+                .pathParam("id", id)
+                .with()
+                .when()
+                .delete("api/user/{id}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
     }
 
     static void testRider(User user, ObjectId id) {

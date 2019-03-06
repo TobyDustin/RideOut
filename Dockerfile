@@ -10,7 +10,7 @@ COPY frontend/pom.xml /tmp/frontend/
 COPY frontend/src /tmp/frontend/src/
 COPY frontend/*.json /tmp/frontend/
 WORKDIR /tmp/
-RUN mvn package -DskipTests
+RUN mvn package
 
 FROM tomcat:9-jre8-alpine
 RUN rm -r $CATALINA_HOME/webapps/ROOT
