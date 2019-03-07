@@ -4,9 +4,10 @@ import {DashboardComponent} from "./components/dashboard/dashboard.component";
 import {LoginComponent} from "./components/login/login.component";
 import {HashLocationStrategy, LocationStrategy} from "@angular/common";
 import {RegistrationComponent} from "./components/registration/registration.component";
+import {LandingComponent} from "./components/landing/landing.component";
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
+  { path: '', component: LandingComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent }
