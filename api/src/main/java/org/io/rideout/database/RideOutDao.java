@@ -72,8 +72,9 @@ public class RideOutDao {
         return getById(id);
     }
 
-    public RideOut update(ObjectId id, RideOut rideout) {
+    public RideOut update(RideOut rideout) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
+        ObjectId id = rideout.getId();
 
         UpdateResult result = collection.updateOne(eq("_id", id), getRideOutUpdate(rideout));
         return result.getModifiedCount() == 1 ? getById(id) : null;

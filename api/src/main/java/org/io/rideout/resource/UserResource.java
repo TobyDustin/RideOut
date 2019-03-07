@@ -73,11 +73,10 @@ public class UserResource {
 
     // UPDATE user
     @PUT
-    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User updateUser(@PathParam("id") ObjectId id, User user) {
-        User result = userDao.update(id, user);
+    public User updateUser(User user) {
+        User result = userDao.update(user);
 
         if (result == null) throw new NotFoundException();
         return result;
@@ -85,11 +84,11 @@ public class UserResource {
 
     // UPDATE user vehicle
     @PUT
-    @Path("{uid}/vehicle/{vid}")
+    @Path("{uid}/vehicle/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid, Vehicle vehicle) {
-        Vehicle result = vehicleDao.update(uid, vid, vehicle);
+    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        Vehicle result = vehicleDao.update(uid, vehicle);
 
         if (result != null) return result;
         throw new NotFoundException();

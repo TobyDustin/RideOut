@@ -157,12 +157,11 @@ public class UserResourceIT {
 
         given()
                 .pathParam("id", uid)
-                .pathParam("vid", vid)
                 .with()
                 .contentType(ContentType.JSON)
                 .body(vehicle)
                 .when()
-                .put("api/user/{id}/vehicle/{vid}")
+                .put("api/user/{id}/vehicle")
                 .then()
                 .assertThat()
                 .statusCode(200)
@@ -220,12 +219,11 @@ public class UserResourceIT {
         User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
         given()
-                .pathParam("id", id)
                 .with()
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when()
-                .put("api/user/{id}")
+                .put("api/user")
                 .then()
                 .assertThat()
                 .statusCode(200)
@@ -263,12 +261,11 @@ public class UserResourceIT {
         User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
         given()
-                .pathParam("id", id)
                 .with()
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when()
-                .put("api/user/{id}")
+                .put("api/user")
                 .then()
                 .assertThat()
                 .statusCode(404);
