@@ -75,6 +75,32 @@ public class RideOutResourceIT {
     }
 
     @Test
+    public void testSearchRideOutSuccess() {
+        given()
+                .pathParam("name", "tour")
+                .when()
+                .get("api/rideout/s/{name}")
+                .then()
+                .assertThat()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testSearchRideOutNoneFound() {
+        given()
+                .pathParam("name", "this is not in database")
+                .when().
+                get("api/rideout/s/{name}")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("RideOut", hasSize(equalTo(0)));
+    }
+
+    @Test
     public void testAddUserSuccess() {
         String id = TestDatabase.ADD_RIDER_RIDEOUT.toHexString();
         String rid = TestDatabase.GET_RIDER.toHexString();
