@@ -48,7 +48,7 @@ public class TestDatabase {
 
     public static void setUp() {
         // Create connection to database
-        String connectionString = "mongodb+srv://test:test@rideout-9fffk.gcp.mongodb.net/rideout?retryWrites=true";
+        String connectionString = "mongodb+srv://test:test@rideout-test-hqtvn.gcp.mongodb.net/test?retryWrites=true";
         CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));
         MongoClientSettings settings = MongoClientSettings.builder()

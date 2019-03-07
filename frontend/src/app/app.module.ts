@@ -13,6 +13,7 @@ import { NavComponent } from './components/nav/nav.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { LoginComponent } from './components/login/login.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -24,7 +25,8 @@ export function tokenGetter() {
     NavComponent,
     DashboardComponent,
     RegistrationComponent,
-    LoginComponent
+    LoginComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,

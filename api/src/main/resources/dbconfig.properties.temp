@@ -1,6 +1,0 @@
-# This is a prototype config file for database connection. Create a copy of this file named dbconfig.properties and
-# fill in your username and password. Do not change the connection string.
-
-username=
-password=
-connectionString=mongodb+srv://USERNAME:PASSWORD@rideout-9fffk.gcp.mongodb.net/rideout?retryWrites=true
