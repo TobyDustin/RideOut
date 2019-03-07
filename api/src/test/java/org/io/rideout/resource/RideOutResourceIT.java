@@ -219,12 +219,11 @@ public class RideOutResourceIT {
         );
 
         given()
-                .pathParam("id", id)
                 .when()
                 .with()
                 .header(new Header("Content-Type", "application/json"))
                 .body(rideOut)
-                .put("api/rideout/{id}")
+                .put("api/rideout")
                 .then()
                 .assertThat()
                 .statusCode(200);

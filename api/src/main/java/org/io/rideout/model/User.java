@@ -112,4 +112,8 @@ public class User {
     public void setRiderInformation(RiderInformation riderInformation) {
         this.riderInformation = riderInformation;
     }
+
+    public SimpleUser simplify() {
+        return new SimpleUser(id, username,  firstName, lastName);
+    }
 }

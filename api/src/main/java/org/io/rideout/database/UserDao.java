@@ -55,8 +55,9 @@ public class UserDao {
         return getById(id);
     }
 
-    public User update(ObjectId id, User user) {
+    public User update(User user) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+        ObjectId id = user.getId();
 
         UpdateResult result = collection.updateOne(eq("_id", id),
                 user.getRiderInformation() == null ? getUpdateUser(user) : getUpdateUserWithRiderInfo(user));
