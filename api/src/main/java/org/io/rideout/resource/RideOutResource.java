@@ -4,12 +4,14 @@ import org.bson.types.ObjectId;
 import org.io.rideout.authantication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
-import org.io.rideout.model.*;
+import org.io.rideout.model.RideOut;
+import org.io.rideout.model.StayOut;
+import org.io.rideout.model.TourOut;
+import org.io.rideout.model.User;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Path("rideout")
 @Secured
