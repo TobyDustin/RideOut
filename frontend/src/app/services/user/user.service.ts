@@ -34,7 +34,7 @@ export class UserService {
   }
 
   register(user: User) {
-    return this.http.post(`${environment.api}/rider`,
+    return this.http.post(`${environment.api}/user`,
       user,
       {
         responseType: 'text'
