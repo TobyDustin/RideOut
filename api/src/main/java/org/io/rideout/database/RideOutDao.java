@@ -1,19 +1,20 @@
 package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Field;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.io.rideout.model.*;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
-import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+import static com.mongodb.client.model.Aggregates.addFields;
+import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
 
@@ -29,7 +30,7 @@ public class RideOutDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find(convertFilterBean(filter)).forEach((Consumer<RideOut>) result::add);
+        collection.aggregate(getFilterPipe(filter)).forEach((Consumer<RideOut>) result::add);
         return result;
     }
 
@@ -43,7 +44,9 @@ public class RideOutDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         ArrayList<RideOut> result = new ArrayList<>();
-        collection.find(combine(regex("name", name, "i"), convertFilterBean(filters))).forEach((Consumer<RideOut>) result::add);
+        ArrayList<Bson> pipe = getFilterPipe(filters);
+        pipe.add(match(regex("name", name, "i")));
+        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
 
         return result;
     }
@@ -106,17 +109,21 @@ public class RideOutDao {
         );
     }
 
-    private Bson convertFilterBean(FilterBean filter) {
-        ArrayList<Bson> filters = new ArrayList<>();
+    private ArrayList<Bson> getFilterPipe(FilterBean filter) {
+        ArrayList<Bson> pipe = new ArrayList<>();
 
         if (filter.showOnlyVacant) {
-            filters.add(eq("full", false));
+            pipe.add(addFields(
+                    new Field<>("count", new Document("$size", "$riders")),
+                    new Field<>("full", new Document("$cmp", Arrays.asList("$maxRiders", "$count")))
+            ));
+            pipe.add(match(eq("full", 1)));
         }
 
         if (filter.showOnlyUsers) {
-            filters.add(
+            pipe.add(match(
                 in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().toString())))
-            );
+            ));
         }
 
         if (!filter.types.isEmpty() && filter.types.size() <= 3) {
@@ -126,11 +133,11 @@ public class RideOutDao {
                 typeFilters.add(eq("_t", getTypeName(t)));
             }
 
-            filters.add(or(typeFilters));
+            pipe.add(match(or(typeFilters)));
         } else if (filter.types.size() > 3) {
             throw new BadRequestException();
         }
 
-        return combine(filters);
+        return pipe;
     }
 }

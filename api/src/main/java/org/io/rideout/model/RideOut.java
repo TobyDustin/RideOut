@@ -36,9 +36,6 @@ public class RideOut {
     private ArrayList<Checkpoint> checkpoints;
     private ArrayList<User> riders;
 
-    @BsonProperty("full")
-    private boolean isFull = false;
-
     public RideOut() {
         super();
         this.checkpoints = new ArrayList<>();
@@ -149,13 +146,5 @@ public class RideOut {
 
     public void setRiders(ArrayList<User> riders) {
         this.riders = riders;
-    }
-
-    public boolean isFull() {
-        return isFull;
-    }
-
-    public void setFull(boolean full) {
-        isFull = full;
     }
 }
