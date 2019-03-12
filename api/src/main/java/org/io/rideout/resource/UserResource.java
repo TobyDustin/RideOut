@@ -4,14 +4,17 @@ import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
-import org.io.rideout.model.RiderInformation;
+import org.io.rideout.exception.AppValidationException;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
+import javax.validation.*;
 import javax.ws.rs.*;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Set;
 
 @Path("user")
 public class UserResource {
@@ -99,6 +102,22 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User addUser(User user) {
+        user.setId(new ObjectId());
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        if (!violations.isEmpty()) {
+            ArrayList<String> errors = new ArrayList<>();
+
+            for (ConstraintViolation<User> violation : violations) {
+                errors.add(violation.getPropertyPath() + " " + violation.getMessage());
+            }
+
+            throw new AppValidationException(errors);
+        }
+
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
         return userDao.insert(user);
     }
