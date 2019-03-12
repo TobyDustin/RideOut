@@ -1,6 +1,7 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
@@ -19,14 +20,9 @@ import java.util.Set;
 @Path("user")
 public class UserResource {
 
-    public static ObjectId UID_12345 = new ObjectId("5c6a97fe3bd3d419a78de2c4");
-    public static ObjectId UID_23456 = new ObjectId("5c6a97fe3bd3d419a78de2c5");
-    public static ObjectId UID_54321 = new ObjectId("5c6a9bd73b16145a50f1c4cc");
-    public static ObjectId VID_9876 = new ObjectId("5c6a96ba2ebe572fd56ce470");
-    public static ObjectId VID_1234 = new ObjectId("5c6a96ba2ebe572fd56ce471");
-
     private UserDao userDao = UserDao.getInstance();
     private VehicleDao vehicleDao = VehicleDao.getInstance();
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     // GET all users
     @GET
@@ -79,6 +75,12 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User updateUser(User user) {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        if (!violations.isEmpty()) {
+            throw new AppValidationException(extractViolations(violations));
+        }
+
         User result = userDao.update(user);
 
         if (result == null) throw new NotFoundException();
@@ -91,6 +93,12 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        Set<ConstraintViolation<Vehicle>> violations = validator.validate(vehicle);
+
+        if (!violations.isEmpty()) {
+            throw new AppValidationException(extractViolations(violations));
+        }
+
         Vehicle result = vehicleDao.update(uid, vehicle);
 
         if (result != null) return result;
@@ -103,19 +111,10 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public User addUser(User user) {
         user.setId(new ObjectId());
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
         if (!violations.isEmpty()) {
-            ArrayList<String> errors = new ArrayList<>();
-
-            for (ConstraintViolation<User> violation : violations) {
-                errors.add(violation.getPropertyPath() + " " + violation.getMessage());
-            }
-
-            throw new AppValidationException(errors);
+            throw new AppValidationException(extractViolations(violations));
         }
 
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
@@ -128,6 +127,13 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        vehicle.setId(new ObjectId());
+        Set<ConstraintViolation<Vehicle>> violations = validator.validate(vehicle);
+
+        if (!violations.isEmpty()) {
+            throw new AppValidationException(extractViolations(violations));
+        }
+
         Vehicle result = vehicleDao.insert(uid, vehicle);
 
         if (result != null) return result;
@@ -154,5 +160,15 @@ public class UserResource {
 
         if (result != null) return result;
         throw new NotFoundException();
+    }
+
+    private <T> ArrayList<String> extractViolations(Set<ConstraintViolation<T>> violations) {
+        ArrayList<String> errors = new ArrayList<>();
+
+        for (ConstraintViolation<T> violation : violations) {
+            errors.add(violation.getPropertyPath() + " " + violation.getMessage());
+        }
+
+        return errors;
     }
 }
