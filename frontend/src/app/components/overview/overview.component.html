@@ -1,0 +1,31 @@
+<app-nav>
+  <div class="overview-root">
+    <h2 class="overview">
+      {{ rideOut.name }}
+    </h2>
+    <div id="map" class="mapboxgl-map"></div>
+    <div class="flex-container">
+      <div class="mat-subheading-1"> Type: {{ rideOut.rideoutType }} </div>
+      <div class="spacer"></div>
+      <div class="mat-subheading-1"> Checkpoints: {{ rideOut.checkpoints.length }} </div>
+    </div>
+    <div class="flex-container">
+      <div class="mat-subheading-1"> Start: {{ rideOut.dateStart | date }} </div>
+      <div class="spacer"></div>
+      <div class="mat-subheading-1"> End: {{ rideOut.dateEnd | date }} </div>
+    </div>
+    <div class="flex-container">
+      <div class="mat-subheading-1"> Lead Rider: {{ rideOut.leadRider }} </div>
+      <div class="spacer"></div>
+      <div class="mat-subheading-1"> Checkpoints: {{ rideOut.checkpoints.length }} </div>
+    </div>
+    <div class="flex-container">
+      <div class="mat-subheading-1"> Riders: {{ rideOut.riders.length }}/{{ rideOut.maxRiders }} </div>
+      <div class="spacer"></div>
+      <button
+        mat-button>
+        Join
+      </button>
+    </div>
+  </div>
+</app-nav>

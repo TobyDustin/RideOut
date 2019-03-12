@@ -12,6 +12,10 @@ export class RideOutService {
   constructor(private http: HttpClient) { }
 
   public getAllRideOuts() : Observable<RideOut[]> {
-    return this.http.get<RideOut[]>(`${environment.api}/rideout`)
+    return this.http.get<RideOut[]>(`${environment.api}/rideout`);
+  }
+
+  public getRideOut(rideOut: String) {
+    return this.http.get<RideOut>(`${environment.api}/rideout/${rideOut}`);
   }
 }

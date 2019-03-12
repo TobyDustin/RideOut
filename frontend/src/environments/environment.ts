@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  api: "http://localhost:8080/api"
+  api: "http://localhost:8080/api",
+  mapbox: "pk.eyJ1IjoiZWRqIiwiYSI6ImNqbnZya3ZpMzA1MWgzcG5xdDU0YnNiYmoifQ.aTiNGJqYuukvBE4v5nCSrA"
 };
 
 /*

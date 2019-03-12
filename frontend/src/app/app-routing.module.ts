@@ -5,12 +5,14 @@ import {LoginComponent} from "./components/login/login.component";
 import {HashLocationStrategy, LocationStrategy} from "@angular/common";
 import {RegistrationComponent} from "./components/registration/registration.component";
 import {LandingComponent} from "./components/landing/landing.component";
+import {OverviewComponent} from "./components/overview/overview.component";
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegistrationComponent }
+  { path: 'register', component: RegistrationComponent },
+  { path: 'rideout/:rideout', component: OverviewComponent }
 ];
 
 @NgModule({
