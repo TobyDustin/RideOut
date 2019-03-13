@@ -75,12 +75,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User updateUser(User user) {
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
-        }
-
+        beenValidation(user);
         User result = userDao.update(user);
 
         if (result == null) throw new NotFoundException();
@@ -93,12 +88,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
-        Set<ConstraintViolation<Vehicle>> violations = validator.validate(vehicle);
-
-        if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
-        }
-
+        beenValidation(vehicle);
         Vehicle result = vehicleDao.update(uid, vehicle);
 
         if (result != null) return result;
@@ -111,13 +101,9 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public User addUser(User user) {
         user.setId(new ObjectId());
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
-        }
-
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
+        beenValidation(user);
+
         return userDao.insert(user);
     }
 
@@ -128,11 +114,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
         vehicle.setId(new ObjectId());
-        Set<ConstraintViolation<Vehicle>> violations = validator.validate(vehicle);
-
-        if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
-        }
+        beenValidation(vehicle);
 
         Vehicle result = vehicleDao.insert(uid, vehicle);
 
@@ -160,6 +142,14 @@ public class UserResource {
 
         if (result != null) return result;
         throw new NotFoundException();
+    }
+
+    private <T> void beenValidation(T entity) {
+        Set<ConstraintViolation<T>> violations = validator.validate(entity);
+
+        if (!violations.isEmpty()) {
+            throw new AppValidationException(extractViolations(violations));
+        }
     }
 
     private <T> ArrayList<String> extractViolations(Set<ConstraintViolation<T>> violations) {
