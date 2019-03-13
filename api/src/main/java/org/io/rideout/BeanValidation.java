@@ -17,11 +17,11 @@ public class BeanValidation {
         Set<ConstraintViolation<T>> violations = BeanValidation.validator.validate(entity);
 
         if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
+            throw new AppValidationException(convertViolations(violations));
         }
     }
 
-    private static  <T> ArrayList<String> extractViolations(Set<ConstraintViolation<T>> violations) {
+    private static <T> ArrayList<String> convertViolations(Set<ConstraintViolation<T>> violations) {
         ArrayList<String> errors = new ArrayList<>();
 
         for (ConstraintViolation<T> violation : violations) {
