@@ -2,6 +2,7 @@ package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
 import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
+import org.io.rideout.BeanValidation;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
@@ -22,7 +23,6 @@ public class UserResource {
 
     private UserDao userDao = UserDao.getInstance();
     private VehicleDao vehicleDao = VehicleDao.getInstance();
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     // GET all users
     @GET
@@ -75,7 +75,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User updateUser(User user) {
-        beenValidation(user);
+        BeanValidation.validate(user);
         User result = userDao.update(user);
 
         if (result == null) throw new NotFoundException();
@@ -88,7 +88,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
-        beenValidation(vehicle);
+        BeanValidation.validate(vehicle);
         Vehicle result = vehicleDao.update(uid, vehicle);
 
         if (result != null) return result;
@@ -102,7 +102,7 @@ public class UserResource {
     public User addUser(User user) {
         user.setId(new ObjectId());
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
-        beenValidation(user);
+        BeanValidation.validate(user);
 
         return userDao.insert(user);
     }
@@ -114,7 +114,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
         vehicle.setId(new ObjectId());
-        beenValidation(vehicle);
+        BeanValidation.validate(vehicle);
 
         Vehicle result = vehicleDao.insert(uid, vehicle);
 
@@ -142,23 +142,5 @@ public class UserResource {
 
         if (result != null) return result;
         throw new NotFoundException();
-    }
-
-    private <T> void beenValidation(T entity) {
-        Set<ConstraintViolation<T>> violations = validator.validate(entity);
-
-        if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
-        }
-    }
-
-    private <T> ArrayList<String> extractViolations(Set<ConstraintViolation<T>> violations) {
-        ArrayList<String> errors = new ArrayList<>();
-
-        for (ConstraintViolation<T> violation : violations) {
-            errors.add(violation.getPropertyPath() + " " + violation.getMessage());
-        }
-
-        return errors;
     }
 }

@@ -1,6 +1,7 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.io.rideout.BeanValidation;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.exception.AppValidationException;
@@ -22,7 +23,6 @@ public class RideOutResource {
 
     private RideOutDao rideoutDao = RideOutDao.getInstance();
     private UserDao userDao = UserDao.getInstance();
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     // GET all ride outs
     @GET
@@ -83,7 +83,7 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut updateRideOut(RideOut rideOut) {
-        beenValidation(rideOut);
+        BeanValidation.validate(rideOut);
         RideOut result = rideoutDao.update(rideOut);
 
         if (result != null) return result;
@@ -96,7 +96,7 @@ public class RideOutResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut addRideOut(RideOut rideOut) {
         rideOut.setId(new ObjectId());
-        beenValidation(rideOut);
+        BeanValidation.validate(rideOut);
 
         return rideoutDao.insert(rideOut);
     }
@@ -138,23 +138,5 @@ public class RideOutResource {
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
-    }
-
-    private <T> void beenValidation(T entity) {
-        Set<ConstraintViolation<T>> violations = validator.validate(entity);
-
-        if (!violations.isEmpty()) {
-            throw new AppValidationException(extractViolations(violations));
-        }
-    }
-
-    private <T> ArrayList<String> extractViolations(Set<ConstraintViolation<T>> violations) {
-        ArrayList<String> errors = new ArrayList<>();
-
-        for (ConstraintViolation<T> violation : violations) {
-            errors.add(violation.getPropertyPath() + " " + violation.getMessage());
-        }
-
-        return errors;
     }
 }
