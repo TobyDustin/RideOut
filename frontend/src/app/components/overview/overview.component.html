@@ -1,0 +1,44 @@
+<app-nav>
+  <div class="overview-root">
+    <mat-card class="overview">
+      <div class="map-container"
+           mat-card-image>
+        <agm-map class="map">
+          <agm-kml-layer [url]="rideOut.route"></agm-kml-layer>
+        </agm-map>
+      </div>
+      <mat-card-title>
+        {{ rideOut.name }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{ rideOut.rideoutType }} Out · {{ rideOut.dateStart | date }}
+      </mat-card-subtitle>
+      <mat-card-content>
+        <div class="flex-container">
+          <div class="mat-subheading-1"> Type: {{ rideOut.rideoutType }} </div>
+          <div class="spacer"></div>
+          <div class="mat-subheading-1"> Checkpoints: {{ rideOut.checkpoints.length }} </div>
+        </div>
+        <div class="flex-container">
+          <div class="mat-subheading-1"> Start: {{ rideOut.dateStart | date }} </div>
+          <div class="spacer"></div>
+          <div class="mat-subheading-1"> End: {{ rideOut.dateEnd | date }} </div>
+        </div>
+        <div class="flex-container">
+          <div class="mat-subheading-1"> Lead Rider: {{ rideOut.leadRider }} </div>
+          <div class="spacer"></div>
+          <div class="mat-subheading-1"> Checkpoints: {{ rideOut.checkpoints.length }} </div>
+        </div>
+        <div class="flex-container">
+          <div class="mat-subheading-1"> Riders: {{ rideOut.riders.length }}/{{ rideOut.maxRiders }} </div>
+          <div class="spacer"></div>
+          <button
+            mat-flat-button
+            color="primary">
+            Join
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</app-nav>
