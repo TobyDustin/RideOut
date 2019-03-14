@@ -12,7 +12,7 @@ export class LandingComponent implements OnInit {
 
   ngOnInit() {
     if (this.isLoggedIn()) {
-      this.router.navigateByUrl("dashboard");
+      this.router.parseUrl("/dashboard");
     }
   }
 
