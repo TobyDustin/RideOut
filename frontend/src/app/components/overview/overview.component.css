@@ -4,11 +4,7 @@
 }
 
 .overview {
-  text-align: center;
-}
-
-.map-container {
-  margin: 5px 10px;
+  margin: 15px;
 }
 
 .map {
