@@ -5,12 +5,23 @@ import {LoginComponent} from "./components/login/login.component";
 import {HashLocationStrategy, LocationStrategy} from "@angular/common";
 import {RegistrationComponent} from "./components/registration/registration.component";
 import {LandingComponent} from "./components/landing/landing.component";
+import {UserGuard} from "./guard/user.guard";
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegistrationComponent }
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [UserGuard]
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'register',
+    component: RegistrationComponent
+  }
 ];
 
 @NgModule({

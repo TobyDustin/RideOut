@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {User} from "../../models/user";
 import {UserService} from "../../services/user/user.service";
+import {AuthService} from "../../services/auth/auth.service";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -18,7 +19,8 @@ export class RegistrationComponent implements OnInit {
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
-    private service: UserService
+    private service: UserService,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
@@ -43,7 +45,7 @@ export class RegistrationComponent implements OnInit {
         (res) => {
           if(res) {
             // If registration successful, go to dashboard
-            this.service.login(this.user.username, this.user.password)
+            this.auth.login(this.user.username, this.user.password)
               .subscribe(
                 () => { this.router.navigate(['dashboard']) },
                 (err: HttpErrorResponse) => {
