@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {UserService} from "../../services/user/user.service";
+import {AuthService} from "../../services/auth/auth.service";
 import {Router} from "@angular/router";
-import * as jwt_decode from "jwt-decode"
 
 @Component({
   selector: 'app-nav',
@@ -21,20 +20,12 @@ export class NavComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router,
-    private service: UserService
+    private service: AuthService
   ) {}
 
   logout() {
     this.service.logout();
     this.router.navigate(['login']);
-  }
-
-  isLoggedIn() {
-    return (localStorage.getItem('access_token') !== null)
-  }
-
-  getUsername() {
-    return jwt_decode(localStorage.getItem('access_token')).username
   }
 
 }

@@ -20,8 +20,8 @@
       </button>
       <span> RideOut </span>
       <span class="spacer"></span>
-      <div *ngIf="isLoggedIn()">
-        <span>Hello, {{ getUsername() }} </span>
+      <div *ngIf="service.isLoggedIn()">
+        <span>Hello, {{ service.getUsername() }} </span>
         <button
           mat-icon-button
           mat-raised-button
