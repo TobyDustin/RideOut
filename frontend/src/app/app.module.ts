@@ -15,6 +15,8 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { LoginComponent } from './components/login/login.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { OverviewComponent } from './components/overview/overview.component';
+import { AgmCoreModule } from '@agm/core';
+import {environment} from "../environments/environment";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -43,6 +45,9 @@ export function tokenGetter() {
         tokenGetter: tokenGetter,
         whitelistedDomains: ['localhost:8080']
       }
+    }),
+    AgmCoreModule.forRoot({
+      apiKey: environment.mapsApi
     })
   ],
   providers: [],

@@ -3,7 +3,11 @@
     <h2 class="overview">
       {{ rideOut.name }}
     </h2>
-    <div id="map" class="mapboxgl-map"></div>
+    <div class="map-container">
+      <agm-map class="map">
+        <agm-kml-layer [url]="rideOut.route"></agm-kml-layer>
+      </agm-map>
+    </div>
     <div class="flex-container">
       <div class="mat-subheading-1"> Type: {{ rideOut.rideoutType }} </div>
       <div class="spacer"></div>

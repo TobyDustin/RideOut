@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {RideOut} from "../../models/rideout";
-import {RideOutService} from "../../services/rideout/ride-out.service";
-import * as mapboxgl from 'mapbox-gl';
-import {environment} from "../../../environments/environment";
+import { ActivatedRoute } from "@angular/router";
+import { RideOut } from "../../models/rideout";
+import { RideOutService } from "../../services/rideout/ride-out.service";
+import { AgmMap } from "@agm/core";
 
 @Component({
   selector: 'app-overview',
@@ -14,7 +13,7 @@ export class OverviewComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private service: RideOutService) { }
 
-  private rideOut = new RideOut();
+  public rideOut: RideOut;
 
   ngOnInit() {
     let rideOutId = "";
@@ -22,23 +21,12 @@ export class OverviewComponent implements OnInit {
       rideOutId = params.get('rideout');
     });
     this.getRideOut(rideOutId);
-    this.loadMap();
   }
 
   getRideOut(rideOutId: String) {
     this.service.getRideOut(rideOutId).subscribe((rideOut) => {
       this.rideOut = rideOut;
     })
-  }
-
-  loadMap() {
-    (mapboxgl as any).accessToken = environment.mapbox;
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v9',
-      zoom: 5,
-      center: [-78.880453, 42.897852]
-    });
   }
 
 }
