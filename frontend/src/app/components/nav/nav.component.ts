@@ -20,7 +20,7 @@ export class NavComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router,
-    private service: AuthService
+    public service: AuthService
   ) {}
 
   logout() {
