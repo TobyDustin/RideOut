@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
     this.service.login(this.username, this.password)
       .subscribe(
         () => {
-          this.router.parseUrl('/dashboard');
+          this.router.navigateByUrl('/dashboard');
         },
         (err: HttpErrorResponse) => {
           if (err.status === 403) {

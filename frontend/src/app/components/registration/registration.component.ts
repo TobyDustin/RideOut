@@ -50,7 +50,7 @@ export class RegistrationComponent implements OnInit {
               // If registration successful, go to dashboard
               this.auth.login(this.user.username, this.user.password)
                 .subscribe(
-                  () => { this.router.parseUrl('/dashboard') },
+                  () => { this.router.navigateByUrl('/dashboard') },
                   (err: HttpErrorResponse) => {
                     this.snackBar.open(err.message, "Dismiss")._dismissAfter(5000);
                   }
