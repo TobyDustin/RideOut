@@ -38,7 +38,11 @@ export class AuthService {
   }
 
   getUsername() {
-    return jwt_decode(this.getToken()).username
+    return jwt_decode(this.getToken()).username;
+  }
+
+  getId() {
+    return jwt_decode(this.getToken()).sub;
   }
 
   getToken() {

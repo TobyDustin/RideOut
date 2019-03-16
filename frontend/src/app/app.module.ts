@@ -17,6 +17,7 @@ import { LandingComponent } from './components/landing/landing.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { AgmCoreModule } from '@agm/core';
 import {environment} from "../environments/environment";
+import { VehicleComponent } from './components/vehicle/vehicle.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -30,7 +31,8 @@ export function tokenGetter() {
     RegistrationComponent,
     LoginComponent,
     LandingComponent,
-    OverviewComponent
+    OverviewComponent,
+    VehicleComponent
   ],
   imports: [
     BrowserModule,

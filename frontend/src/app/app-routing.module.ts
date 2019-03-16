@@ -7,6 +7,7 @@ import {LoginComponent} from "./components/login/login.component";
 import {RegistrationComponent} from "./components/registration/registration.component";
 import {LandingComponent} from "./components/landing/landing.component";
 import {OverviewComponent} from "./components/overview/overview.component";
+import {VehicleComponent} from "./components/vehicle/vehicle.component";
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -18,6 +19,11 @@ const routes: Routes = [
   {
     path: 'rideout/:rideout',
     component: OverviewComponent,
+    canActivate: [UserGuard]
+  },
+  {
+    path: 'vehicle',
+    component: VehicleComponent,
     canActivate: [UserGuard]
   },
   {
