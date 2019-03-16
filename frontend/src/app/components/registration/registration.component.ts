@@ -40,24 +40,28 @@ export class RegistrationComponent implements OnInit {
   }
 
   registerUser() {
-    this.service.register(this.user)
-      .subscribe(
-        (res) => {
-          if(res) {
-            // If registration successful, go to dashboard
-            this.auth.login(this.user.username, this.user.password)
-              .subscribe(
-                () => { this.router.navigate(['dashboard']) },
-                (err: HttpErrorResponse) => {
-                  this.snackBar.open(err.message, "Dismiss")
-                }
-              )
+    if (this.user.password != this.passwordVerify) {
+      this.snackBar.open("Passwords do not match!", "Dismiss")._dismissAfter(5000);
+    } else {
+      this.service.register(this.user)
+        .subscribe(
+          (res) => {
+            if(res) {
+              // If registration successful, go to dashboard
+              this.auth.login(this.user.username, this.user.password)
+                .subscribe(
+                  () => { this.router.navigateByUrl('/dashboard') },
+                  (err: HttpErrorResponse) => {
+                    this.snackBar.open(err.message, "Dismiss")._dismissAfter(5000);
+                  }
+                )
+            }
+          },
+          (err: HttpErrorResponse) => {
+            this.snackBar.open(err.message, "Dismiss")._dismissAfter(5000);
           }
-        },
-        (err: HttpErrorResponse) => {
-          this.snackBar.open(err.message, "Dismiss")
-        }
-      );
-  }
+        );
+    }
+    }
 
 }
