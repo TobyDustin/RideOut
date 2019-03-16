@@ -31,16 +31,12 @@ public class RideOut {
     private int maxRiders;
     private String leadRider;
     private String route;
-    private boolean isPublished;
+    private boolean isPublished = false;
     private Date minCancellationDate;
-    private ArrayList<Checkpoint> checkpoints;
-    private ArrayList<SimpleUser> riders;
+    private ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    private ArrayList<SimpleUser> riders = new ArrayList<>();
 
-    public RideOut() {
-        super();
-        this.checkpoints = new ArrayList<>();
-        this.riders = new ArrayList<>();
-    }
+    public RideOut() {}
 
     public RideOut(ObjectId id,String name,Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate) {
         this.id = id;
@@ -50,11 +46,7 @@ public class RideOut {
         this.maxRiders = maxRiders;
         this.leadRider = leadRider;
         this.route = route;
-        this.isPublished = false;
         this.minCancellationDate = minCancellationDate;
-
-        this.checkpoints = new ArrayList<>();
-        this.riders = new ArrayList<>();
     }
 
     //***

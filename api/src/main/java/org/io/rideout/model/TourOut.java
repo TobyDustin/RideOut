@@ -13,7 +13,7 @@ import java.util.Date;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "rideoutType")
 public class TourOut extends StayOut {
 
-    private ArrayList<Booking> travelBookings;
+    private ArrayList<Booking> travelBookings = new ArrayList<>();
 
     public TourOut() {
         super();
@@ -21,7 +21,6 @@ public class TourOut extends StayOut {
 
     public TourOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, String leadRider, String route, Date minCancellationDate) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
-        this.travelBookings = new ArrayList<>();
     }
 
     public ArrayList<Booking> getTravelBookings() {
