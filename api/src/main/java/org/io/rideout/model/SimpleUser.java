@@ -10,6 +10,7 @@ import org.io.rideout.helpers.ObjectIdJsonSerializer;
 public class SimpleUser {
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     private ObjectId id;
