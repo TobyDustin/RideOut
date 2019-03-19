@@ -44,8 +44,7 @@ public class VehicleDao {
 
     public Vehicle insert(ObjectId userId, Vehicle vehicle) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
-        ObjectId id = new ObjectId();
-        vehicle.setId(id);
+        ObjectId id = vehicle.getId();
 
         UpdateResult result = collection.updateOne(eq("_id", userId), combine(
                 addToSet("riderInformation.vehicles", vehicle))

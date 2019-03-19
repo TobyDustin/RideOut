@@ -13,7 +13,9 @@ import org.io.rideout.model.Vehicle;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.omg.PortableInterceptor.ObjectReferenceFactory;
 
+import javax.xml.crypto.Data;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -302,6 +304,73 @@ public class UserResourceIT {
                 .contentType(ContentType.JSON)
                 .and()
                 .body("", not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void testPutUserInvalidBody() {
+        User user = new User(null, "test", null, "sales", "Test", "User", new Date(100), "932097432", null);
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .put("api/user")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPostUserInvalidBody() {
+        User user = new User(null, "test", null, "sales", "Test", "User", new Date(100), "932097432", null);
+
+        given()
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .post("api/user")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPutVehicleInvalidBody() {
+        String id = new ObjectId().toHexString();
+        Vehicle vehicle = new Vehicle(new ObjectId(), "Test", "Test", -1, "N/A");
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(vehicle)
+                .when()
+                .put("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPostVehicleInvalidBody() {
+        String id = new ObjectId().toHexString();
+        Vehicle vehicle = new Vehicle(new ObjectId(), "Test", "Test", -1, "N/A");
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(vehicle)
+                .when()
+                .post("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(400);
     }
 
     static void testRider(User user, ObjectId id) {

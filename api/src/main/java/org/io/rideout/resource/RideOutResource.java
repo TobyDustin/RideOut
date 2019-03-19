@@ -1,17 +1,23 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.io.rideout.BeanValidation;
 import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
+import org.io.rideout.exception.AppValidationException;
 import org.io.rideout.model.RideOut;
 import org.io.rideout.model.StayOut;
 import org.io.rideout.model.TourOut;
 import org.io.rideout.model.User;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Path("rideout")
 @Secured
@@ -79,6 +85,7 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut updateRideOut(RideOut rideOut) {
+        BeanValidation.validate(rideOut);
         RideOut result = rideoutDao.update(rideOut);
 
         if (result != null) return result;
@@ -90,6 +97,9 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut addRideOut(RideOut rideOut) {
+        rideOut.setId(new ObjectId());
+        BeanValidation.validate(rideOut);
+
         return rideoutDao.insert(rideOut);
     }
 

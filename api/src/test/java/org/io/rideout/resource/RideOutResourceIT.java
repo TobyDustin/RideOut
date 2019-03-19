@@ -283,6 +283,54 @@ public class RideOutResourceIT {
 
     }
 
+    @Test
+    public void testPostRideOutInvalidBody() {
+        RideOut rideOut = new RideOut(
+            null,
+            "1",
+            new Date(100),
+            new Date(100),
+            15,
+            "54321",
+            "",
+            new Date(100)
+        );
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .with()
+                .contentType(ContentType.JSON)
+                .body(rideOut)
+                .post("api/rideout")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPutRideOutInvalidBody() {
+        RideOut rideOut = new RideOut(
+                null,
+                "1",
+                new Date(100),
+                new Date(100),
+                15,
+                "54321",
+                "",
+                new Date(100)
+        );
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .with()
+                .contentType(ContentType.JSON)
+                .body(rideOut)
+                .put("api/rideout")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
     private void testRideOut(RideOut rideOut, ObjectId id) {
         assertNotNull(rideOut);
         if (id != null) assertEquals(id, rideOut.getId());
