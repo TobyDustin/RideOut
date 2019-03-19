@@ -21,6 +21,8 @@ public class Payment {
     private String rideOutId;
     private Float amount;
 
+    public Payment() {}
+
     public Payment(ObjectId id, Date date, String rideOutId, Float amount) {
         this.id = id;
         this.date = date;

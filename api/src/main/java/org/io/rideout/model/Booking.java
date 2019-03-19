@@ -19,9 +19,7 @@ public class Booking {
     private String name;
     private String reference;
 
-    public Booking() {
-        super();
-    }
+    public Booking() {}
 
     public Booking(ObjectId id, String name, String reference) {
         super();

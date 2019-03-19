@@ -21,6 +21,7 @@ public class Checkpoint {
     private double lon;
     private String description;
 
+    public Checkpoint() {}
 
     public Checkpoint(ObjectId id, String name,double lat,double lon, String description){
         this.id = id;

@@ -25,7 +25,7 @@ public class Vehicle {
     @Positive
     private Integer power;
     private String registration;
-    private Boolean isChecked;
+    private Boolean isChecked = false;
 
     public Vehicle() {}
 
@@ -35,7 +35,6 @@ public class Vehicle {
         this.model = model;
         this.power = power;
         this.registration = registration;
-        this.isChecked = false;
     }
 
     public ObjectId getId() {
