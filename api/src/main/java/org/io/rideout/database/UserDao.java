@@ -41,6 +41,7 @@ public class UserDao {
     }
 
     public User getByUsername(String username) {
+        username = username.toLowerCase();
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
         return collection.find(eq("username", username)).first();
@@ -50,6 +51,7 @@ public class UserDao {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
         ObjectId id = user.getId();
+        user.setUsername(user.getUsername().toLowerCase());
         collection.insertOne(user);
         return getById(id);
     }
@@ -79,7 +81,7 @@ public class UserDao {
 
     private Bson getUpdateUser(User user) {
         return combine(
-                set("username", user.getUsername()),
+                set("username", user.getUsername().toLowerCase()),
                 set("password", user.getPassword()),
                 set("firstName", user.getFirstName()),
                 set("lastName", user.getLastName()),
@@ -92,7 +94,7 @@ public class UserDao {
     private Bson getUpdateUserWithRiderInfo(User user) {
         RiderInformation info = user.getRiderInformation();
         return combine(
-                set("username", user.getUsername()),
+                set("username", user.getUsername().toLowerCase()),
                 set("password", user.getPassword()),
                 set("firstName", user.getFirstName()),
                 set("lastName", user.getLastName()),
