@@ -9,9 +9,11 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
+import org.hibernate.validator.constraints.Length;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -22,25 +24,25 @@ import java.util.Date;
 public class RideOut {
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     private ObjectId id;
+
+    @NotNull
+    @Length(min = 5)
     private String name;
     private Date dateStart;
     private Date dateEnd;
     private int maxRiders;
     private String leadRider;
     private String route;
-    private boolean isPublished;
+    private boolean isPublished = false;
     private Date minCancellationDate;
-    private ArrayList<Checkpoint> checkpoints;
-    private ArrayList<SimpleUser> riders;
+    private ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    private ArrayList<SimpleUser> riders = new ArrayList<>();
 
-    public RideOut() {
-        super();
-        this.checkpoints = new ArrayList<>();
-        this.riders = new ArrayList<>();
-    }
+    public RideOut() {}
 
     public RideOut(ObjectId id,String name,Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate) {
         this.id = id;
@@ -50,11 +52,7 @@ public class RideOut {
         this.maxRiders = maxRiders;
         this.leadRider = leadRider;
         this.route = route;
-        this.isPublished = false;
         this.minCancellationDate = minCancellationDate;
-
-        this.checkpoints = new ArrayList<>();
-        this.riders = new ArrayList<>();
     }
 
     //***

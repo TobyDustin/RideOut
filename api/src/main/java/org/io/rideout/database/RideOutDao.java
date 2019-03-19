@@ -55,7 +55,7 @@ public class RideOutDao {
 
     public RideOut insert(RideOut rideout) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-        ObjectId id = new ObjectId();
+        ObjectId id = rideout.getId();
         rideout.setId(id);
         rideout.getRiders().clear();
 

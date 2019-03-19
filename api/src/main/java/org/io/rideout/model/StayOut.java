@@ -15,20 +15,15 @@ import java.util.Date;
 @JsonSubTypes({ @JsonSubTypes.Type(value = TourOut.class) })
 public class StayOut extends RideOut {
 
-    private ArrayList<Booking> accommodationList;
-    private ArrayList<Booking> restaurantList;
+    private ArrayList<Booking> accommodationList = new ArrayList<>();
+    private ArrayList<Booking> restaurantList = new ArrayList<>();
 
     public StayOut() {
         super();
-
-        this.accommodationList = new ArrayList<>();
-        this.restaurantList = new ArrayList<>();
     }
 
     public StayOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, String leadRider, String route, Date minCancellationDate) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
-        this.accommodationList = new ArrayList<>();
-        this.restaurantList = new ArrayList<>();
     }
 
     public ArrayList<Booking> getAccommodationList() {

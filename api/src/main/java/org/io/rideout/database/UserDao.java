@@ -50,8 +50,7 @@ public class UserDao {
     public User insert(User user) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
-        ObjectId id = new ObjectId();
-        user.setId(id);
+        ObjectId id = user.getId();
         user.setUsername(user.getUsername().toLowerCase());
         collection.insertOne(user);
         return getById(id);
