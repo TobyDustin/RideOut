@@ -1,4 +1,4 @@
-package org.io.rideout.authantication;
+package org.io.rideout.authentication;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;
