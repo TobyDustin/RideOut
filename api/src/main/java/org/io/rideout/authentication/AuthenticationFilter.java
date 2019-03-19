@@ -1,4 +1,4 @@
-package org.io.rideout.authantication;
+package org.io.rideout.authentication;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

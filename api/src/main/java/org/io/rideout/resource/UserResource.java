@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.io.rideout.BeanValidation;
 import org.io.rideout.PasswordManager;
+import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
 import org.io.rideout.exception.AppValidationException;
@@ -26,6 +27,7 @@ public class UserResource {
 
     // GET all users
     @GET
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<User> getAllUsers() {
         return userDao.getAll();
@@ -33,6 +35,7 @@ public class UserResource {
 
     // GET user by ID
     @GET
+    @Secured
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("id") ObjectId id) {
@@ -47,6 +50,7 @@ public class UserResource {
 
     // GET user vehicles
     @GET
+    @Secured
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Vehicle> getUserVehicles(@PathParam("id") ObjectId id) {
@@ -58,6 +62,7 @@ public class UserResource {
 
     // GET user vehicle by ID
     @GET
+    @Secured
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Vehicle getUserVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
@@ -72,6 +77,7 @@ public class UserResource {
 
     // UPDATE user
     @PUT
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User updateUser(User user) {
@@ -84,6 +90,7 @@ public class UserResource {
 
     // UPDATE user vehicle
     @PUT
+    @Secured
     @Path("{uid}/vehicle/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -109,6 +116,7 @@ public class UserResource {
 
     // CREATE user vehicle
     @POST
+    @Secured
     @Path("{uid}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -124,6 +132,7 @@ public class UserResource {
 
     // DELETE user
     @DELETE
+    @Secured
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User removeUser(@PathParam("id") ObjectId id) {
@@ -135,6 +144,7 @@ public class UserResource {
 
     //DELETE user vehicle
     @DELETE
+    @Secured
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Vehicle removeVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {

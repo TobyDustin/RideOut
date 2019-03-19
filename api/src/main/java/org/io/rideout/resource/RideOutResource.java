@@ -2,6 +2,7 @@ package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
 import org.io.rideout.BeanValidation;
+import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.exception.AppValidationException;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 @Path("rideout")
+@Secured
 public class RideOutResource {
 
     private RideOutDao rideoutDao = RideOutDao.getInstance();
