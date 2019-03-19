@@ -23,6 +23,7 @@ public class RideOutResourceIT {
 
 
     private static HttpServer server;
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzcwMmMzODlhYjdkYTBiOTVjMGE5ZjIiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.A_OS3PGBki3mTE9S-QzhBz-MgDKKM3fSbTBB0WfOczLuYAMluMG20jrioFV1IbYlFV8J6mgz_RiUtYfTePZyWg";
 
     @BeforeAll
     public static void setUp() {
@@ -39,6 +40,7 @@ public class RideOutResourceIT {
     @Test
     public void testGetAllRideOut() {
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .when()
                 .get("api/rideout")
                 .then()
@@ -53,6 +55,7 @@ public class RideOutResourceIT {
     @Test
     public void testGetRideOutNotFound() {
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", "invalid_id")
                 .when()
                 .get("api/rideout/{id}")
@@ -66,6 +69,7 @@ public class RideOutResourceIT {
         String id = TestDatabase.GET_RIDEOUT.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .get("api/rideout/{id}")
@@ -106,6 +110,7 @@ public class RideOutResourceIT {
         String rid = TestDatabase.GET_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -121,6 +126,7 @@ public class RideOutResourceIT {
         String rid = TestDatabase.GET_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -136,6 +142,7 @@ public class RideOutResourceIT {
         String rid = new ObjectId().toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -151,6 +158,7 @@ public class RideOutResourceIT {
         String rid = TestDatabase.GET_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -163,6 +171,7 @@ public class RideOutResourceIT {
     @Test
     public void testGetRideOuts() {
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("type", "ride")
                 .when()
                 .get("api/rideout/{type}")
@@ -176,6 +185,7 @@ public class RideOutResourceIT {
     @Test
     public void testGetStayOuts() {
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("type", "stay")
                 .when()
                 .get("api/rideout/{type}")
@@ -189,6 +199,7 @@ public class RideOutResourceIT {
     @Test
     public void testGetTourOuts() {
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("type", "tour")
                 .when()
                 .get("api/rideout/{type}")
@@ -205,6 +216,7 @@ public class RideOutResourceIT {
         String rid = TestDatabase.GET_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -220,6 +232,7 @@ public class RideOutResourceIT {
         String rid = new ObjectId().toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -245,6 +258,7 @@ public class RideOutResourceIT {
         );
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .when()
                 .with()
                 .header(new Header("Content-Type", "application/json"))
@@ -260,6 +274,7 @@ public class RideOutResourceIT {
         String id = TestDatabase.DELETE_RIDEOUT.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .delete("api/rideout/{id}")
@@ -282,6 +297,7 @@ public class RideOutResourceIT {
         );
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .with()
                 .header(new Header("Content-Type", "application/json"))
                 .body(rideOut)

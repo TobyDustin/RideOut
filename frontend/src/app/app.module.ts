@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from "@angular/common/http";
-import {JwtModule} from '@auth0/angular-jwt';
+import { JwtModule } from '@auth0/angular-jwt';
 import { MaterialModule } from "./modules/material.module";
 import { AppRoutingModule } from './app-routing.module';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -14,6 +14,9 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { LoginComponent } from './components/login/login.component';
 import { LandingComponent } from './components/landing/landing.component';
+import { OverviewComponent } from './components/overview/overview.component';
+import { AgmCoreModule } from '@agm/core';
+import {environment} from "../environments/environment";
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -26,7 +29,8 @@ export function tokenGetter() {
     DashboardComponent,
     RegistrationComponent,
     LoginComponent,
-    LandingComponent
+    LandingComponent,
+    OverviewComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +45,9 @@ export function tokenGetter() {
         tokenGetter: tokenGetter,
         whitelistedDomains: ['localhost:8080']
       }
+    }),
+    AgmCoreModule.forRoot({
+      apiKey: environment.mapsApi
     })
   ],
   providers: [],
