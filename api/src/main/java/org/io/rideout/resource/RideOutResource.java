@@ -76,11 +76,10 @@ public class RideOutResource {
 
     // UPDATE rideout
     @PUT
-    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
-    public RideOut updateRideOut(@PathParam("id") ObjectId id, RideOut rideOut) {
-        RideOut result = rideoutDao.update(id, rideOut);
+    public RideOut updateRideOut(RideOut rideOut) {
+        RideOut result = rideoutDao.update(rideOut);
 
         if (result != null) return result;
         throw new NotFoundException();
@@ -113,7 +112,7 @@ public class RideOutResource {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
-        RideOut result = rideoutDao.addRider(rideOutId, rider);
+        RideOut result = rideoutDao.addRider(rideOutId, rider.simplify());
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
@@ -127,7 +126,7 @@ public class RideOutResource {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
-        RideOut result = rideoutDao.removeRider(rideOutId, rider);
+        RideOut result = rideoutDao.removeRider(rideOutId, rider.simplify());
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");

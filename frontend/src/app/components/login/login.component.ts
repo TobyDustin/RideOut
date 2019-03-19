@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from "../../services/user/user.service";
+import {AuthService} from "../../services/auth/auth.service";
 import {MatSnackBar} from "@angular/material";
 import {HttpErrorResponse} from "@angular/common/http";
-import {first} from "rxjs/operators";
 import {Router} from "@angular/router";
 
 @Component({
@@ -16,7 +15,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private service: UserService,
+    private service: AuthService,
     private snackBar: MatSnackBar
   ) { }
 
@@ -26,11 +25,11 @@ export class LoginComponent implements OnInit {
     this.service.login(this.username, this.password)
       .subscribe(
         () => {
-          this.router.navigate(['/dashboard']);
+          this.router.navigateByUrl('/dashboard');
         },
         (err: HttpErrorResponse) => {
           if (err.status === 403) {
-            this.snackBar.open("Incorrect login!", "Dismiss")
+            this.snackBar.open("Incorrect login!", "Dismiss")._dismissAfter(5000);
           } else {
             this.snackBar.open(`An error occurred! ${err.statusText}`, "Dismiss")
           }

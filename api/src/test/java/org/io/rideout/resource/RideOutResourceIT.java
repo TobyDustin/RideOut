@@ -233,12 +233,11 @@ public class RideOutResourceIT {
 
         given()
                 .header(new Header("Authorization", "Bearer " + token))
-                .pathParam("id", id)
                 .when()
                 .with()
                 .header(new Header("Content-Type", "application/json"))
                 .body(rideOut)
-                .put("api/rideout/{id}")
+                .put("api/rideout")
                 .then()
                 .assertThat()
                 .statusCode(200);
