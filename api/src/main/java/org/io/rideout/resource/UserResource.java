@@ -2,17 +2,15 @@ package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
-import org.io.rideout.authantication.Secured;
+import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
-import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Path("user")
 public class UserResource {
