@@ -32,6 +32,7 @@ public class RideOut {
     @NotNull
     @Length(min = 5)
     private String name;
+    private String description;
     private Date dateStart;
     private Date dateEnd;
     private int maxRiders;

@@ -142,7 +142,7 @@ public class TestDatabase {
                 new Date(100),
                 new Date(100),
                 id.equals(PUT_RIDEOUT) ? 30 : 15,
-                "54321",
+                new SimpleUser(new ObjectId(), "leadrdr", "Lead", "Rider"),
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(100)
 

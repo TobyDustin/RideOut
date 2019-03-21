@@ -8,8 +8,13 @@ import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class Booking {
+
+    public final static String RESTAURANT = "restaurant";
+    public final static String ACCOMMODATION = "accommodation";
+    public final static String TRAVEL = "travel";
 
     @BsonId
     @NotNull
@@ -18,6 +23,10 @@ public class Booking {
     private ObjectId id;
     private String name;
     private String reference;
+
+    @NotNull
+    @Pattern(regexp = (RESTAURANT + "|" + ACCOMMODATION + "|" + TRAVEL))
+    private String type = RESTAURANT;
 
     public Booking() {}
 
