@@ -24,7 +24,7 @@ public class AuthenticateResource {
     public Response authenticate(UserCredentials credentials) {
         User user = UserDao.getInstance().getByUsername(credentials.getUsername());
         if (authenticate(credentials.getPassword(), user)) {
-            String token = issueToken(user.getId().toHexString(), user.getUsername());
+            String token = issueToken(user);
             return Response.ok(new Token(token)).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -36,12 +36,13 @@ public class AuthenticateResource {
         return PasswordManager.verify(password, user.getPassword());
     }
 
-    private String issueToken(String id, String username) {
+    private String issueToken(User user) {
         Algorithm algorithm = Algorithm.HMAC512("rideout-secrete-21334243215");
         return JWT.create()
                 .withIssuer("rideout")
-                .withSubject(id)
-                .withClaim("username", username)
+                .withSubject(user.getId().toHexString())
+                .withClaim("username", user.getUsername())
+                .withClaim("role", user.getRole())
                 .sign(algorithm);
     }
 }
