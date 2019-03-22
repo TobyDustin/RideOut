@@ -1,6 +1,14 @@
 <app-nav>
+  <div class="control">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openDialog()">
+      Add Vehicle
+    </button>
+  </div>
   <div class="vehicle">
-    <span *ngIf="vehicles.length == 0">You have not added any vehicles yet! <a routerLink="add">Add a vehicle</a></span>
+    <span *ngIf="vehicles.length == 0">You have not added any vehicles yet!</span>
     <div
       *ngIf="vehicles.length > 0">
       <table

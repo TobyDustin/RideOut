@@ -5,6 +5,7 @@ import {map} from "rxjs/operators";
 import {User} from "../../models/user";
 import {Observable} from "rxjs";
 import {AuthService} from "../auth/auth.service";
+import {Vehicle} from "../../models/vehicle";
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +25,10 @@ export class UserService {
   getVehicles() {
     const id = this.auth.getId();
     return this.http.get(`${environment.api}/user/${id}/vehicle`);
+  }
+
+  addVehicle(vehicle: Vehicle) {
+    const id = this.auth.getId();
+    return this.http.post(`${environment.api}/user/${id}/vehicle`, vehicle);
   }
 }

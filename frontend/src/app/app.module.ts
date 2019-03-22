@@ -18,6 +18,7 @@ import { OverviewComponent } from './components/overview/overview.component';
 import { AgmCoreModule } from '@agm/core';
 import {environment} from "../environments/environment";
 import { VehicleComponent } from './components/vehicle/vehicle.component';
+import { AddVehicleComponent } from './components/vehicle/add-vehicle/add-vehicle.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -32,7 +33,8 @@ export function tokenGetter() {
     LoginComponent,
     LandingComponent,
     OverviewComponent,
-    VehicleComponent
+    VehicleComponent,
+    AddVehicleComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +54,10 @@ export function tokenGetter() {
       apiKey: environment.mapsApi
     })
   ],
+  entryComponents: [
+    AddVehicleComponent
+  ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
