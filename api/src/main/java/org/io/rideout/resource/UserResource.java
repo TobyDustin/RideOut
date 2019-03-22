@@ -1,23 +1,17 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
-import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.io.rideout.BeanValidation;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
-import org.io.rideout.exception.AppValidationException;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
-import javax.validation.*;
 import javax.ws.rs.*;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Set;
 
 @Path("user")
 public class UserResource {
