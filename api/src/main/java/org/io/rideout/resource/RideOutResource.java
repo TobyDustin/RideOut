@@ -5,25 +5,12 @@ import org.io.rideout.BeanValidation;
 import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
-import org.io.rideout.exception.AppValidationException;
-import org.io.rideout.model.RideOut;
-import org.io.rideout.model.StayOut;
-import org.io.rideout.model.TourOut;
-import org.io.rideout.model.User;
-import org.io.rideout.model.FilterBean;
+import org.io.rideout.model.*;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.ws.rs.*;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
 
 @Path("rideout")
 @Secured
