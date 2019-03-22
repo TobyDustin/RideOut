@@ -1,16 +1,32 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.io.rideout.BeanValidation;
+import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
-import org.io.rideout.model.*;
+import org.io.rideout.exception.AppValidationException;
+import org.io.rideout.model.RideOut;
+import org.io.rideout.model.StayOut;
+import org.io.rideout.model.TourOut;
+import org.io.rideout.model.User;
+import org.io.rideout.model.FilterBean;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.ws.rs.*;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 @Path("rideout")
+@Secured
 public class RideOutResource {
 
     private RideOutDao rideoutDao = RideOutDao.getInstance();
@@ -19,8 +35,8 @@ public class RideOutResource {
     // GET all ride outs
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<RideOut> getAllRideOuts() {
-        return rideoutDao.getAll();
+    public ArrayList<RideOut> getAllRideOuts(@BeanParam FilterBean filters) {
+        return rideoutDao.getAll(filters);
     }
 
     // GET ride out by id
@@ -38,18 +54,20 @@ public class RideOutResource {
     @GET
     @Path("ride")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<RideOut> getRideOuts() {
-        return rideoutDao.getAllByType("ride");
+    public ArrayList<RideOut> getRideOuts(@BeanParam FilterBean filters) {
+        filters.types = Collections.singletonList("ride");
+        return rideoutDao.getAll(filters);
     }
 
     // GET ride outs with type stay
     @GET
     @Path("stay")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<StayOut> getStayOuts() {
+    public ArrayList<StayOut> getStayOuts(@BeanParam FilterBean filters) {
+        filters.types = Collections.singletonList("stay");
         ArrayList<StayOut> result = new ArrayList<>();
 
-        for (RideOut ride : rideoutDao.getAllByType("stay")) {
+        for (RideOut ride : rideoutDao.getAll(filters)) {
             if (ride instanceof StayOut) result.add((StayOut) ride);
         }
 
@@ -60,23 +78,32 @@ public class RideOutResource {
     @GET
     @Path("tour")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<TourOut> getTourOuts() {
+    public ArrayList<TourOut> getTourOuts(@BeanParam FilterBean filters) {
+        filters.types = Collections.singletonList("tour");
         ArrayList<TourOut> result = new ArrayList<>();
 
-        for (RideOut ride : rideoutDao.getAllByType("tour")) {
+        for (RideOut ride : rideoutDao.getAll(filters)) {
             if (ride instanceof TourOut) result.add((TourOut) ride);
         }
 
         return result;
     }
 
+    // Search rideouts by name
+    @GET
+    @Path("s/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<RideOut> search(@PathParam("name") String name, @BeanParam FilterBean filters) {
+        return rideoutDao.search(name, filters);
+    }
+
     // UPDATE rideout
     @PUT
-    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
-    public RideOut updateRideOut(@PathParam("id") ObjectId id, RideOut rideOut) {
-        RideOut result = rideoutDao.update(id, rideOut);
+    public RideOut updateRideOut(RideOut rideOut) {
+        BeanValidation.validate(rideOut);
+        RideOut result = rideoutDao.update(rideOut);
 
         if (result != null) return result;
         throw new NotFoundException();
@@ -87,6 +114,9 @@ public class RideOutResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.APPLICATION_JSON})
     public RideOut addRideOut(RideOut rideOut) {
+        rideOut.setId(new ObjectId());
+        BeanValidation.validate(rideOut);
+
         return rideoutDao.insert(rideOut);
     }
 
@@ -109,7 +139,7 @@ public class RideOutResource {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
-        RideOut result = rideoutDao.addRider(rideOutId, rider);
+        RideOut result = rideoutDao.addRider(rideOutId, rider.simplify());
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
@@ -123,7 +153,7 @@ public class RideOutResource {
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
-        RideOut result = rideoutDao.removeRider(rideOutId, rider);
+        RideOut result = rideoutDao.removeRider(rideOutId, rider.simplify());
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");

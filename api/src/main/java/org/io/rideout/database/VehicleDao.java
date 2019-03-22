@@ -44,8 +44,7 @@ public class VehicleDao {
 
     public Vehicle insert(ObjectId userId, Vehicle vehicle) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
-        ObjectId id = new ObjectId();
-        vehicle.setId(id);
+        ObjectId id = vehicle.getId();
 
         UpdateResult result = collection.updateOne(eq("_id", userId), combine(
                 addToSet("riderInformation.vehicles", vehicle))
@@ -54,8 +53,9 @@ public class VehicleDao {
         return result.getModifiedCount() == 1 ? getById(userId, id) : null;
     }
 
-    public Vehicle update(ObjectId userId, ObjectId vehicleId, Vehicle vehicle) {
+    public Vehicle update(ObjectId userId, Vehicle vehicle) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+        ObjectId vehicleId = vehicle.getId();
 
         if (delete(userId, vehicleId) == null) return null;
 

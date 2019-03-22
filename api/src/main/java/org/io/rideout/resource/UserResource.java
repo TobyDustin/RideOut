@@ -1,32 +1,33 @@
 package org.io.rideout.resource;
 
 import org.bson.types.ObjectId;
+import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
+import org.io.rideout.BeanValidation;
 import org.io.rideout.PasswordManager;
+import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
-import org.io.rideout.model.RiderInformation;
+import org.io.rideout.exception.AppValidationException;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
+import javax.validation.*;
 import javax.ws.rs.*;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Set;
 
 @Path("user")
 public class UserResource {
-
-    public static ObjectId UID_12345 = new ObjectId("5c6a97fe3bd3d419a78de2c4");
-    public static ObjectId UID_23456 = new ObjectId("5c6a97fe3bd3d419a78de2c5");
-    public static ObjectId UID_54321 = new ObjectId("5c6a9bd73b16145a50f1c4cc");
-    public static ObjectId VID_9876 = new ObjectId("5c6a96ba2ebe572fd56ce470");
-    public static ObjectId VID_1234 = new ObjectId("5c6a96ba2ebe572fd56ce471");
 
     private UserDao userDao = UserDao.getInstance();
     private VehicleDao vehicleDao = VehicleDao.getInstance();
 
     // GET all users
     @GET
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<User> getAllUsers() {
         return userDao.getAll();
@@ -34,6 +35,7 @@ public class UserResource {
 
     // GET user by ID
     @GET
+    @Secured
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("id") ObjectId id) {
@@ -48,6 +50,7 @@ public class UserResource {
 
     // GET user vehicles
     @GET
+    @Secured
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Vehicle> getUserVehicles(@PathParam("id") ObjectId id) {
@@ -59,6 +62,7 @@ public class UserResource {
 
     // GET user vehicle by ID
     @GET
+    @Secured
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Vehicle getUserVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {
@@ -73,11 +77,12 @@ public class UserResource {
 
     // UPDATE user
     @PUT
-    @Path("{id}")
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User updateUser(@PathParam("id") ObjectId id, User user) {
-        User result = userDao.update(id, user);
+    public User updateUser(User user) {
+        BeanValidation.validate(user);
+        User result = userDao.update(user);
 
         if (result == null) throw new NotFoundException();
         return result;
@@ -85,11 +90,13 @@ public class UserResource {
 
     // UPDATE user vehicle
     @PUT
-    @Path("{uid}/vehicle/{vid}")
+    @Secured
+    @Path("{uid}/vehicle/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid, Vehicle vehicle) {
-        Vehicle result = vehicleDao.update(uid, vid, vehicle);
+    public Vehicle updateVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        BeanValidation.validate(vehicle);
+        Vehicle result = vehicleDao.update(uid, vehicle);
 
         if (result != null) return result;
         throw new NotFoundException();
@@ -100,16 +107,23 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public User addUser(User user) {
+        user.setId(new ObjectId());
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
+        BeanValidation.validate(user);
+
         return userDao.insert(user);
     }
 
     // CREATE user vehicle
     @POST
+    @Secured
     @Path("{uid}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Vehicle addVehicle(@PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        vehicle.setId(new ObjectId());
+        BeanValidation.validate(vehicle);
+
         Vehicle result = vehicleDao.insert(uid, vehicle);
 
         if (result != null) return result;
@@ -118,6 +132,7 @@ public class UserResource {
 
     // DELETE user
     @DELETE
+    @Secured
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public User removeUser(@PathParam("id") ObjectId id) {
@@ -129,6 +144,7 @@ public class UserResource {
 
     //DELETE user vehicle
     @DELETE
+    @Secured
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Vehicle removeVehicle(@PathParam("uid") ObjectId uid, @PathParam("vid") ObjectId vid) {

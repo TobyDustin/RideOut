@@ -149,7 +149,7 @@ public class TestDatabase {
         );
 
         if (id.equals(REMOVE_RIDER_RIDEOUT)) {
-            dummy.getRiders().add(getDummyRider(GET_RIDER, GET_VEHICLE));
+            dummy.getRiders().add(new SimpleUser(GET_RIDER, null, null, null));
         }
 
         return dummy;

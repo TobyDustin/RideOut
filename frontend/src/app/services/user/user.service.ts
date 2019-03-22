@@ -12,29 +12,8 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  login(username: string, password: string) : Observable<boolean> {
-
-    return this.http.post<{token: string}>(`${environment.api}/authenticate`,
-      {
-        username: username,
-        password: password
-      })
-      .pipe(
-        map(
-          (res) => {
-            localStorage.setItem('access_token', res.token);
-            return true;
-          }
-        )
-      )
-  }
-
-  logout() {
-    localStorage.removeItem('access_token');
-  }
-
   register(user: User) {
-    return this.http.post(`${environment.api}/rider`,
+    return this.http.post(`${environment.api}/user`,
       user,
       {
         responseType: 'text'
