@@ -27,6 +27,7 @@ public class UserResourceIT {
 
     private static org.glassfish.grizzly.http.server.HttpServer server;
     private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzcwMmMzODlhYjdkYTBiOTVjMGE5ZjIiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.A_OS3PGBki3mTE9S-QzhBz-MgDKKM3fSbTBB0WfOczLuYAMluMG20jrioFV1IbYlFV8J6mgz_RiUtYfTePZyWg";
+    private String staffToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzZlYzM3OGIxYTA1MjI3OWRiYmY3MTEiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.utEc47HzLcndvRVDo5nFkNSU3N1GhqyqVkICYVx5N4MByQ8khELeO39iX5dSPP4awLH1-XyHbSZoZ3bThksUQQ";
 
     @BeforeAll
     public static void setUp() {
@@ -250,11 +251,47 @@ public class UserResourceIT {
 
     @Test
     public void testPostUserSuccess() {
-        String id = TestDatabase.PUT_STAFF.toHexString();
         String password = PasswordManager.hashPassword("john123");
-        User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
+        User user = new User(null, "jsmith", password, User.RIDER, "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
         given()
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .post("api/user")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .contentType(ContentType.JSON)
+                .and()
+                .body("", not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void testPostStaffUnauthorized() {
+        String password = PasswordManager.hashPassword("john123");
+        User user = new User(null, "jsmith", password, User.STAFF, "John", "Smith", new Date(100), "07491012345", new RiderInformation());
+
+        given()
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .post("api/user")
+                .then()
+                .assertThat()
+                .statusCode(401);
+    }
+
+    @Test
+    public void testPostStaffSuccess() {
+        String password = PasswordManager.hashPassword("john123");
+        User user = new User(null, "jsmith", password, User.STAFF, "John", "Smith", new Date(100), "07491012345", new RiderInformation());
+
+        given()
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .with()
                 .contentType(ContentType.JSON)
                 .body(user)

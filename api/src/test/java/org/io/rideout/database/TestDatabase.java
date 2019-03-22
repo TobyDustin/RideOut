@@ -11,6 +11,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.model.*;
+import org.io.rideout.resource.AuthenticateResource;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -142,7 +143,7 @@ public class TestDatabase {
                 new Date(100),
                 new Date(100),
                 id.equals(PUT_RIDEOUT) ? 30 : 15,
-                new SimpleUser(new ObjectId(), "leadrdr", "Lead", "Rider"),
+                "12345",
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(100)
 

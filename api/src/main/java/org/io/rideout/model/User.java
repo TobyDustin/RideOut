@@ -33,6 +33,7 @@ public class User {
     private String role = User.RIDER;
     private String firstName;
     private String lastName;
+    @NotNull
     private Date dateOfBirth;
     private String contactNumber;
     private RiderInformation riderInformation;

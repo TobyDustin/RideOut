@@ -73,15 +73,16 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     }
 
     private void abortWithUnauthorized(ContainerRequestContext requestContext) {
-        requestContext.abortWith(
-                Response.status(Response.Status.UNAUTHORIZED)
-                        .header(HttpHeaders.WWW_AUTHENTICATE,
-                                AUTHENTICATION_SCHEMA + " realm=\"" + REALM + "\"")
-                        .build()
-        );
+        requestContext.abortWith(getUnauthorizedResponse());
     }
 
-    private String validateToken(String token) {
+    public static Response getUnauthorizedResponse() {
+        return Response.status(Response.Status.UNAUTHORIZED)
+            .header(HttpHeaders.WWW_AUTHENTICATE, AUTHENTICATION_SCHEMA + " realm=\"" + REALM + "\"")
+            .build();
+    }
+
+    public static String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC512("rideout-secrete-21334243215");
             JWTVerifier verifier = JWT.require(algorithm)

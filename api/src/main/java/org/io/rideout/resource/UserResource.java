@@ -4,10 +4,12 @@ import org.bson.types.ObjectId;
 import org.glassfish.jersey.jaxb.internal.XmlJaxbElementProvider;
 import org.io.rideout.BeanValidation;
 import org.io.rideout.PasswordManager;
+import org.io.rideout.authentication.AuthenticationFilter;
 import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
 import org.io.rideout.exception.AppValidationException;
+import org.io.rideout.exception.UnauthorizedException;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
@@ -17,7 +19,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
+
+import static org.io.rideout.authentication.AuthenticationFilter.AUTHENTICATION_SCHEMA;
 
 @Path("user")
 public class UserResource {
@@ -106,12 +111,31 @@ public class UserResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User addUser(User user) {
+    public User addUser(User user, @HeaderParam("Authorization") @DefaultValue("") String authHeader) {
         user.setId(new ObjectId());
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
         BeanValidation.validate(user);
 
-        return userDao.insert(user);
+        if (user.getRole().equals(User.RIDER)) {
+            return userDao.insert(user);
+        } else if (user.getRole().equals(User.STAFF)) {
+            if (!authHeader.isEmpty()) {
+                String token = authHeader.substring(AUTHENTICATION_SCHEMA.length()).trim();
+                String id = AuthenticationFilter.validateToken(token);
+
+                if (id != null) {
+                    User auth = userDao.getById(new ObjectId(id));
+
+                    if (auth != null && auth.getRole().equals(User.STAFF)) {
+                        return userDao.insert(user);
+                    }
+                }
+            }
+
+            throw new UnauthorizedException();
+        }
+
+        throw new BadRequestException();
     }
 
     // CREATE user vehicle
