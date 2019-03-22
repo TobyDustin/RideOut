@@ -1,4 +1,4 @@
-package org.io.rideout.authantication;
+package org.io.rideout.authentication;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

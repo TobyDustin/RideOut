@@ -8,18 +8,24 @@ import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class Vehicle {
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     @Schema(type = "string")
     private ObjectId id;
     private String make;
     private String model;
+
+    @Positive
     private Integer power;
     private String registration;
-    private Boolean isChecked;
+    private Boolean isChecked = false;
 
     public Vehicle() {}
 
@@ -29,7 +35,6 @@ public class Vehicle {
         this.model = model;
         this.power = power;
         this.registration = registration;
-        this.isChecked = false;
     }
 
     public ObjectId getId() {

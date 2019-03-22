@@ -8,9 +8,12 @@ import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.NotNull;
+
 public class Booking {
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     @Schema(type = "string")
@@ -18,9 +21,7 @@ public class Booking {
     private String name;
     private String reference;
 
-    public Booking() {
-        super();
-    }
+    public Booking() {}
 
     public Booking(ObjectId id, String name, String reference) {
         super();

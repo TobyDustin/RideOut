@@ -6,22 +6,18 @@ public class RiderInformation {
 
     private String emergencyContactNumber;
     private Boolean isInsured;
-    private ArrayList<Vehicle> vehicles;
+    private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private String license;
-    private ArrayList<Payment> payments;
+    private ArrayList<Payment> payments = new ArrayList<>();
 
     public RiderInformation() {
         super();
-        this.vehicles = new ArrayList<>();
-        this.payments = new ArrayList<>();
     }
 
     public RiderInformation(String emergencyContactNumber, Boolean isInsured, String license) {
         this.emergencyContactNumber = emergencyContactNumber;
         this.isInsured = isInsured;
         this.license = license;
-        this.vehicles = new ArrayList<>();
-        this.payments = new ArrayList<>();
     }
 
     public String getEmergencyContactNumber() {

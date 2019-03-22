@@ -8,11 +8,13 @@ import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class Payment {
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     @Schema(type = "string")
@@ -20,6 +22,8 @@ public class Payment {
     private Date date;
     private String rideOutId;
     private Float amount;
+
+    public Payment() {}
 
     public Payment(ObjectId id, Date date, String rideOutId, Float amount) {
         this.id = id;

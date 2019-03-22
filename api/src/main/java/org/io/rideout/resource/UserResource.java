@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bson.types.ObjectId;
+import org.io.rideout.BeanValidation;
 import org.io.rideout.PasswordManager;
+import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
 import org.io.rideout.model.User;
@@ -27,6 +29,7 @@ public class UserResource {
 
     // GET all users
     @GET
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
             summary = "Get all Users",
@@ -48,6 +51,7 @@ public class UserResource {
 
     // GET user by ID
     @GET
+    @Secured
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
@@ -77,6 +81,7 @@ public class UserResource {
 
     // GET user vehicles
     @GET
+    @Secured
     @Path("{id}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
@@ -102,6 +107,7 @@ public class UserResource {
 
     // GET user vehicle by ID
     @GET
+    @Secured
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
@@ -132,7 +138,7 @@ public class UserResource {
 
     // UPDATE user
     @PUT
-    @Path("{id}")
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(
@@ -153,8 +159,9 @@ public class UserResource {
                     name = "JWT"
             )
     )
-    public User updateUser(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("id") ObjectId id, User user) {
-        User result = userDao.update(id, user);
+    public User updateUser(User user) {
+        BeanValidation.validate(user);
+        User result = userDao.update(user);
 
         if (result == null) throw new NotFoundException();
         return result;
@@ -162,7 +169,8 @@ public class UserResource {
 
     // UPDATE user vehicle
     @PUT
-    @Path("{uid}/vehicle/{vid}")
+    @Secured
+    @Path("{uid}/vehicle/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(
@@ -183,9 +191,9 @@ public class UserResource {
                     name = "JWT"
             )
     )
-    public Vehicle updateVehicle(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("uid") ObjectId uid,
-                                 @Parameter(description = "Vehicle ID", schema = @Schema(type = "string")) @PathParam("vid") ObjectId vid, Vehicle vehicle) {
-        Vehicle result = vehicleDao.update(uid, vid, vehicle);
+    public Vehicle updateVehicle(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        BeanValidation.validate(vehicle);
+        Vehicle result = vehicleDao.update(uid, vehicle);
 
         if (result != null) return result;
         throw new NotFoundException();
@@ -209,12 +217,16 @@ public class UserResource {
             ))
     )
     public User addUser(User user) {
+        user.setId(new ObjectId());
         user.setPassword(PasswordManager.hashPassword(user.getPassword()));
+        BeanValidation.validate(user);
+
         return userDao.insert(user);
     }
 
     // CREATE user vehicle
     @POST
+    @Secured
     @Path("{uid}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -237,6 +249,8 @@ public class UserResource {
             )
     )
     public Vehicle addVehicle(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("uid") ObjectId uid, Vehicle vehicle) {
+        vehicle.setId(new ObjectId());
+        BeanValidation.validate(vehicle);
         Vehicle result = vehicleDao.insert(uid, vehicle);
 
         if (result != null) return result;
@@ -245,6 +259,7 @@ public class UserResource {
 
     // DELETE user
     @DELETE
+    @Secured
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
@@ -271,6 +286,7 @@ public class UserResource {
 
     //DELETE user vehicle
     @DELETE
+    @Secured
     @Path("{uid}/vehicle/{vid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
