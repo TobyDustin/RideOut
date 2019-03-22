@@ -159,7 +159,19 @@ public class RideOutResource {
     @GET
     @Path("s/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<RideOut> search(@PathParam("name") String name, @BeanParam FilterBean filters) {
+    @Operation(
+            summary = "Search RideOuts by name",
+            tags = {"rideout"},
+            description = "Returns all RideOuts with name matching given string",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of RideOuts", content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = RideOut.class,
+                                    subTypes = {StayOut.class, TourOut.class}))
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized")
+            }
+    )
+    public ArrayList<RideOut> search(@Parameter(description = "Search query") @PathParam("name") String name, @BeanParam FilterBean filters) {
         return rideoutDao.search(name, filters);
     }
 
@@ -197,6 +209,7 @@ public class RideOutResource {
             ))
     )
     public RideOut updateRideOut(RideOut rideOut) {
+        BeanValidation.validate(rideOut);
         RideOut result = rideoutDao.update(rideOut);
 
         if (result != null) return result;

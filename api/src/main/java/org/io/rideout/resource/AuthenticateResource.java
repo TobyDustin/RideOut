@@ -31,12 +31,12 @@ import javax.ws.rs.core.Response;
 @OpenAPIDefinition(
         info = @Info(
                 description = "A RideOut API documentation",
-                version = "0.1",
+                version = "0.2",
                 title = "RideOut"
         ),
         servers = {
                 @Server(
-                        url = "https://rideout.edjeffreys.com/dev/api",
+                        url = "https://dev.rideout.edjeffreys.com/api",
                         description = "Development"
                 ),
                 @Server(
