@@ -1,7 +1,6 @@
 package org.io.rideout.model;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
