@@ -2,7 +2,6 @@ package org.io.rideout.resource;
 
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.io.rideout.HttpTestServer;
 import org.io.rideout.PasswordManager;
@@ -13,15 +12,12 @@ import org.io.rideout.model.Vehicle;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.omg.PortableInterceptor.ObjectReferenceFactory;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserResourceIT {
 

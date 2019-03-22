@@ -1,13 +1,10 @@
 package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.io.rideout.PasswordManager;
 import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 
