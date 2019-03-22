@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Vehicle} from "../../../models/vehicle";
 import {UserService} from "../../../services/user/user.service";
-import {MatSnackBar} from "@angular/material";
+import {MatDialogClose, MatDialogRef, MatSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-add-vehicle',
@@ -13,6 +13,7 @@ export class AddVehicleComponent implements OnInit {
   public vehicle: Vehicle;
 
   constructor(
+    private ref: MatDialogRef<any>,
     private service: UserService,
     private snackBar: MatSnackBar
   ) { }
@@ -24,11 +25,16 @@ export class AddVehicleComponent implements OnInit {
   addVehicle() {
     this.service.addVehicle(this.vehicle).subscribe((vehicle) => {
       if (vehicle) {
-        this.snackBar.open("Vehicle added!")._dismissAfter(5000)
+        this.snackBar.open("Vehicle added!")._dismissAfter(5000);
+        this.ref.close();
       } else {
-        this.snackBar.open("An error occurred!")._dismissAfter(5000)
+        this.snackBar.open("An error occurred!")._dismissAfter(5000);
       }
     })
+  }
+
+  close() {
+    this.ref.close();
   }
 
 }

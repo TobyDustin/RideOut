@@ -3,6 +3,7 @@ import {Vehicle} from "../../models/vehicle";
 import {UserService} from "../../services/user/user.service";
 import {AddVehicleComponent} from "./add-vehicle/add-vehicle.component";
 import {MatDialog} from "@angular/material";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-vehicle',
@@ -11,7 +12,7 @@ import {MatDialog} from "@angular/material";
 })
 export class VehicleComponent implements OnInit {
 
-  public vehicles: Vehicle[] = Array<Vehicle>();
+  public vehicles: Observable<Vehicle> = new Observable<Vehicle>();
   public displayedColumns = ["make", "model", "power", "registration", "isChecked"];
 
   constructor(private service: UserService, private dialog: MatDialog) { }
@@ -21,16 +22,13 @@ export class VehicleComponent implements OnInit {
   }
 
   getVehicles() {
-    this.service.getVehicles().subscribe((vehicles: Vehicle[]) => {
+    this.service.getVehicles().subscribe((vehicles: Observable<Vehicle>) => {
       this.vehicles = vehicles;
     })
   }
 
   openDialog() {
-    let dialogRef = this.dialog.open(AddVehicleComponent, {
-      width: '400px',
-      height: '600px'
-    });
+    let dialogRef = this.dialog.open(AddVehicleComponent);
   }
 
 }
