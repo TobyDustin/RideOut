@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Update Rider Info</h2>
+<div mat-dialog-content>
+  <p>
+    <mat-form-field
+      appearance="outline">
+      <mat-label>
+        <label
+          for="r-license">
+          License Category
+        </label>
+      </mat-label>
+      <mat-select
+        id="r-license"
+        [(ngModel)]="this.license"
+        required>
+        <mat-option *ngFor="let license of licenseCategories" [value]="license">
+          {{ license }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field
+      appearance="outline">
+      <mat-label>
+        <label
+          for="u-emergency-contact">
+          Emergency Contact No.
+        </label>
+      </mat-label>
+      <input
+        id="u-emergency-contact"
+        matInput
+        [(ngModel)]="this.emergencyContactNumber"
+        required>
+    </mat-form-field>
+  </p>
+</div>
+<div
+  mat-dialog-actions
+  class="flex-container">
+  <button
+    mat-raised-button
+    color="warn"
+    (click)="close()">
+    Cancel
+  </button>
+  <div class="spacer"></div>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="updateRiderInfo()">
+    Update
+  </button>
+</div>
