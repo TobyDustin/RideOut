@@ -8,9 +8,9 @@
     </button>
   </div>
   <div class="vehicle">
-    <span *ngIf="vehicles.length == 0">You have not added any vehicles yet!</span>
+    <span *ngIf="(vehicles | async)?.length == 0">You have not added any vehicles yet!</span>
     <div
-      *ngIf="vehicles.length > 0">
+      *ngIf="(vehicles | async)?.length > 0">
       <table
         mat-table
         [dataSource]="vehicles"

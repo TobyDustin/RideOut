@@ -22,9 +22,9 @@ export class UserService {
       })
   }
 
-  getVehicles() {
+  getVehicles(): Observable<Vehicle[]> {
     const id = this.auth.getId();
-    return this.http.get(`${environment.api}/user/${id}/vehicle`);
+    return this.http.get<Vehicle[]>(`${environment.api}/user/${id}/vehicle`);
   }
 
   addVehicle(vehicle: Vehicle) {
