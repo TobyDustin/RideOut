@@ -1,20 +1,21 @@
 package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Field;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.io.rideout.model.*;
 
+import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
 import static com.mongodb.client.model.Aggregates.*;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
+import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
 
 public class RideOutDao {
@@ -25,46 +26,36 @@ public class RideOutDao {
 
     private RideOutDao() {}
 
-    public ArrayList<RideOut> getAll() {
-        MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-
-        ArrayList<RideOut> result = new ArrayList<>();
-        List<Bson> pipe = Arrays.asList(lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
-        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
-        return result;
-    }
-
-    public ArrayList<RideOut> getAllByType(String... filters) {
-        if (filters.length == 3) return getAll();
-        else if (filters.length == 0) throw new IllegalArgumentException("No filters passed");
-        else if (filters.length > 3) throw new IllegalArgumentException("Invalid filter options");
-
-        Bson filter;
-
-        if (filters.length == 1) {
-            filter = eq("_t", getTypeName(filters[0]));
-        } else {
-            filter = or(eq("_t", getTypeName(filters[0])), eq("_t", getTypeName(filters[1])));
-        }
-
-        MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-
-        ArrayList<RideOut> result = new ArrayList<>();
-        List<Bson> pipe = Arrays.asList(match(filter), lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
-        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
-        return result;
+    public ArrayList<RideOut> getAll(FilterBean filter) {
+        return search(null, filter);
     }
 
     public RideOut getById(ObjectId id) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
+        List<Bson> pipe = Arrays.asList(
+                match(eq("_id", id)),
+                lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders")
+        );
 
-        List<Bson> pipe = Arrays.asList(match(eq("_id", id)), lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
         return collection.aggregate(pipe).first();
+    }
+
+    public ArrayList<RideOut> search(String name, FilterBean filters) {
+        MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
+
+        ArrayList<RideOut> result = new ArrayList<>();
+        ArrayList<Bson> pipe = getFilterPipe(filters);
+        if (name != null) pipe.add(match(regex("name", name, "i")));
+        pipe.add(lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
+
+        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
+
+        return result;
     }
 
     public RideOut insert(RideOut rideout) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-        ObjectId id = new ObjectId();
+        ObjectId id = rideout.getId();
         rideout.setId(id);
         rideout.getRiders().clear();
 
@@ -120,5 +111,37 @@ public class RideOutDao {
                 set("isPublished", rideout.isPublished()),
                 set("minCancellationDate", rideout.getMinCancellationDate())
         );
+    }
+
+    private ArrayList<Bson> getFilterPipe(FilterBean filter) {
+        ArrayList<Bson> pipe = new ArrayList<>();
+
+        if (filter.showOnlyVacant) {
+            pipe.add(addFields(
+                    new Field<>("count", new Document("$size", "$riders")),
+                    new Field<>("full", new Document("$cmp", Arrays.asList("$maxRiders", "$count")))
+            ));
+            pipe.add(match(eq("full", 1)));
+        }
+
+        if (filter.showOnlyUsers) {
+            pipe.add(match(
+                in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().toString())))
+            ));
+        }
+
+        if (!filter.types.isEmpty() && filter.types.size() <= 3) {
+            ArrayList<Bson> typeFilters = new ArrayList<>();
+
+            for (String t : filter.types) {
+                typeFilters.add(eq("_t", getTypeName(t)));
+            }
+
+            pipe.add(match(or(typeFilters)));
+        } else if (filter.types.size() > 3) {
+            throw new BadRequestException();
+        }
+
+        return pipe;
     }
 }

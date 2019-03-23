@@ -1,13 +1,10 @@
 package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.io.rideout.PasswordManager;
 import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 
@@ -41,6 +38,7 @@ public class UserDao {
     }
 
     public User getByUsername(String username) {
+        username = username.toLowerCase();
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
         return collection.find(eq("username", username)).first();
@@ -49,8 +47,8 @@ public class UserDao {
     public User insert(User user) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
 
-        ObjectId id = new ObjectId();
-        user.setId(id);
+        ObjectId id = user.getId();
+        user.setUsername(user.getUsername().toLowerCase());
         collection.insertOne(user);
         return getById(id);
     }
@@ -80,7 +78,7 @@ public class UserDao {
 
     private Bson getUpdateUser(User user) {
         return combine(
-                set("username", user.getUsername()),
+                set("username", user.getUsername().toLowerCase()),
                 set("password", user.getPassword()),
                 set("firstName", user.getFirstName()),
                 set("lastName", user.getLastName()),
@@ -93,7 +91,7 @@ public class UserDao {
     private Bson getUpdateUserWithRiderInfo(User user) {
         RiderInformation info = user.getRiderInformation();
         return combine(
-                set("username", user.getUsername()),
+                set("username", user.getUsername().toLowerCase()),
                 set("password", user.getPassword()),
                 set("firstName", user.getFirstName()),
                 set("lastName", user.getLastName()),

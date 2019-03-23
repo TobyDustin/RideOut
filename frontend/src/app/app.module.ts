@@ -49,9 +49,6 @@ export function tokenGetter() {
         tokenGetter: tokenGetter,
         whitelistedDomains: ['localhost:8080']
       }
-    }),
-    AgmCoreModule.forRoot({
-      apiKey: environment.mapsApi
     })
   ],
   entryComponents: [

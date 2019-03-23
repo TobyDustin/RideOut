@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 public class User {
@@ -15,11 +17,19 @@ public class User {
     public final static String RIDER = "rider";
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     private ObjectId id;
+
+    @NotNull
     private String username;
+
+    @NotNull
     private String password;
+
+    @NotNull
+    @Pattern(regexp = (STAFF + "|" + RIDER))
     private String role = User.RIDER;
     private String firstName;
     private String lastName;

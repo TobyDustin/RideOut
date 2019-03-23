@@ -5,7 +5,6 @@
 export const environment = {
   production: false,
   api: "http://localhost:8080/api",
-  mapsApi: "AIzaSyBmQS77IZlG9-PsauKmoRnJrhFB87YSGfA"
 };
 
 /*

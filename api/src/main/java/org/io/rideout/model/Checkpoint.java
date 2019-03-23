@@ -7,9 +7,12 @@ import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.NotNull;
+
 public class Checkpoint {
 
     @BsonId
+    @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     private ObjectId id;
@@ -18,6 +21,7 @@ public class Checkpoint {
     private double lon;
     private String description;
 
+    public Checkpoint() {}
 
     public Checkpoint(ObjectId id, String name,double lat,double lon, String description){
         this.id = id;

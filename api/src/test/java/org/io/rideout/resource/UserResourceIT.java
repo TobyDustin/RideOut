@@ -1,7 +1,7 @@
 package org.io.rideout.resource;
 
 import io.restassured.http.ContentType;
-import org.bson.conversions.Bson;
+import io.restassured.http.Header;
 import org.bson.types.ObjectId;
 import org.io.rideout.HttpTestServer;
 import org.io.rideout.PasswordManager;
@@ -15,14 +15,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserResourceIT {
 
     private static org.glassfish.grizzly.http.server.HttpServer server;
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzcwMmMzODlhYjdkYTBiOTVjMGE5ZjIiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.A_OS3PGBki3mTE9S-QzhBz-MgDKKM3fSbTBB0WfOczLuYAMluMG20jrioFV1IbYlFV8J6mgz_RiUtYfTePZyWg";
 
     @BeforeAll
     public static void setUp() {
@@ -39,6 +39,7 @@ public class UserResourceIT {
     @Test
     public void testGetAllUsers() {
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .when()
                 .get("api/user")
                 .then()
@@ -55,6 +56,7 @@ public class UserResourceIT {
         String id = TestDatabase.GET_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .get("api/user/{id}")
@@ -71,6 +73,7 @@ public class UserResourceIT {
     public void testGetStaffSuccess() {
         String id = TestDatabase.GET_STAFF.toHexString();
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .get("api/user/{id}")
@@ -88,6 +91,7 @@ public class UserResourceIT {
         String id = new ObjectId().toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .get("api/user/{id}")
@@ -101,6 +105,7 @@ public class UserResourceIT {
         String id = TestDatabase.GET_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .get("api/user/{id}/vehicle")
@@ -118,6 +123,7 @@ public class UserResourceIT {
         String id = TestDatabase.GET_STAFF.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .when()
                 .get("api/user/{id}/vehicle")
@@ -136,6 +142,7 @@ public class UserResourceIT {
         String vid = TestDatabase.GET_VEHICLE.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", uid)
                 .pathParam("vid", vid)
                 .when()
@@ -156,6 +163,7 @@ public class UserResourceIT {
         Vehicle vehicle = new Vehicle(TestDatabase.PUT_VEHICLE, "Honda", "Monkey", 125, "REG123");
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", uid)
                 .with()
                 .contentType(ContentType.JSON)
@@ -177,6 +185,7 @@ public class UserResourceIT {
         String vid = TestDatabase.DELETE_VEHICLE.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", uid)
                 .pathParam("vid", vid)
                 .with()
@@ -197,6 +206,7 @@ public class UserResourceIT {
         Vehicle vehicle = new Vehicle(null, "Honda", "Monkey", 125, "REG123");
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .with()
                 .contentType(ContentType.JSON)
@@ -219,6 +229,7 @@ public class UserResourceIT {
         User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .with()
                 .contentType(ContentType.JSON)
                 .body(user)
@@ -261,6 +272,7 @@ public class UserResourceIT {
         User user = new User(new ObjectId(id), "jsmith", password, "staff", "John", "Smith", new Date(100), "07491012345", new RiderInformation());
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .with()
                 .contentType(ContentType.JSON)
                 .body(user)
@@ -276,6 +288,7 @@ public class UserResourceIT {
         String id = TestDatabase.DELETE_RIDER.toHexString();
 
         given()
+                .header(new Header("Authorization", "Bearer " + token))
                 .pathParam("id", id)
                 .with()
                 .when()
@@ -287,6 +300,73 @@ public class UserResourceIT {
                 .contentType(ContentType.JSON)
                 .and()
                 .body("", not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void testPutUserInvalidBody() {
+        User user = new User(null, "test", null, "sales", "Test", "User", new Date(100), "932097432", null);
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .put("api/user")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPostUserInvalidBody() {
+        User user = new User(null, "test", null, "sales", "Test", "User", new Date(100), "932097432", null);
+
+        given()
+                .with()
+                .contentType(ContentType.JSON)
+                .body(user)
+                .when()
+                .post("api/user")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPutVehicleInvalidBody() {
+        String id = new ObjectId().toHexString();
+        Vehicle vehicle = new Vehicle(new ObjectId(), "Test", "Test", -1, "N/A");
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(vehicle)
+                .when()
+                .put("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testPostVehicleInvalidBody() {
+        String id = new ObjectId().toHexString();
+        Vehicle vehicle = new Vehicle(new ObjectId(), "Test", "Test", -1, "N/A");
+
+        given()
+                .header(new Header("Authorization", "Bearer " + token))
+                .pathParam("id", id)
+                .with()
+                .contentType(ContentType.JSON)
+                .body(vehicle)
+                .when()
+                .post("api/user/{id}/vehicle")
+                .then()
+                .assertThat()
+                .statusCode(400);
     }
 
     static void testRider(User user, ObjectId id) {
