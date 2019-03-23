@@ -43,7 +43,7 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USERNAME --password-stdin
-            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
+            docker push $IMAGE_NAME
 
   kube_deploy:
     docker:
@@ -81,19 +81,20 @@ workflows:
       - docker_build:
           requires:
             - build
-          filters:
-            branches:
-              only:
-                - master
-                - dev
+          # FILTERS REMOVED FOR TESTING
+          #filters:
+          #  branches:
+          #    only:
+          #      - master
+          #      - dev
       - docker_publish:
           requires:
             - docker_build
-          filters:
-            branches:
-              only:
-                - master
-                - dev
+          #filters:
+          #  branches:
+          #    only:
+          #      - master
+          #      - dev
       - kube_deploy:
           requires:
             - docker_publish
