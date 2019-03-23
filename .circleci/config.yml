@@ -28,6 +28,14 @@ jobs:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results/junit
+      - run:
+          name: Save WAR file
+          command: |
+            mkdir -p ~/rideout
+            find . -type f -regex ".*/target/.*war" -exec cp {} ~/rideout/ \;
+          when: always
+      - store_artifacts:
+          path: ~/rideout
   docker_build:
     environment:
       IMAGE_NAME: solentio/rideout
