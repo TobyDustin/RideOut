@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
-import { RideOut } from "../../models/rideout";
-import { RideOutService } from "../../services/rideout/ride-out.service";
-import { AgmMap } from "@agm/core";
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from "@angular/router";
+import {RideOut} from "../../models/rideout";
+import {RideOutService} from "../../services/rideout/ride-out.service";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-overview',
@@ -11,7 +11,11 @@ import { AgmMap } from "@agm/core";
 })
 export class OverviewComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private service: RideOutService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private service: RideOutService,
+    private sanitizer: DomSanitizer
+  ) { }
 
   public rideOut: RideOut;
 
@@ -27,6 +31,10 @@ export class OverviewComponent implements OnInit {
     this.service.getRideOut(rideOutId).subscribe((rideOut) => {
       this.rideOut = rideOut;
     })
+  }
+
+  getRoute() {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.google.com/maps/d/embed?mid=${this.rideOut.route || ""}`);
   }
 
 }
