@@ -1,0 +1,50 @@
+<app-nav>
+  <div class="control">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openDialog()">
+      Add Vehicle
+    </button>
+  </div>
+  <div class="vehicle">
+    <span *ngIf="(vehicles | async)?.length == 0">You have not added any vehicles yet!</span>
+    <div
+      *ngIf="(vehicles | async)?.length > 0">
+      <table
+        mat-table
+        [dataSource]="vehicles"
+        class="mat-elevation-z8 table">
+
+        <ng-container matColumnDef="make">
+          <th mat-header-cell *matHeaderCellDef> Make </th>
+          <td mat-cell *matCellDef="let vehicle"> {{ vehicle.make }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="model">
+          <th mat-header-cell *matHeaderCellDef> Model </th>
+          <td mat-cell *matCellDef="let vehicle"> {{ vehicle.model }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="power">
+          <th mat-header-cell *matHeaderCellDef> Power </th>
+          <td mat-cell *matCellDef="let vehicle"> {{ vehicle.power }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="registration">
+          <th mat-header-cell *matHeaderCellDef> Registration </th>
+          <td mat-cell *matCellDef="let vehicle"> {{ vehicle.registration }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="isChecked">
+          <th mat-header-cell *matHeaderCellDef> Checked by Staff </th>
+          <td mat-cell *matCellDef="let vehicle"> {{ vehicle.isChecked }} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+    </div>
+  </div>
+</app-nav>
