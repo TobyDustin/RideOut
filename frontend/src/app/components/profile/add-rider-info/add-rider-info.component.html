@@ -11,7 +11,7 @@
       </mat-label>
       <mat-select
         id="r-license"
-        [(ngModel)]="this.license"
+        [(ngModel)]="this.riderInfo.license"
         required>
         <mat-option *ngFor="let license of licenseCategories" [value]="license">
           {{ license }}
@@ -31,7 +31,7 @@
       <input
         id="u-emergency-contact"
         matInput
-        [(ngModel)]="this.emergencyContactNumber"
+        [(ngModel)]="this.riderInfo.emergencyContactNumber"
         required>
     </mat-form-field>
   </p>
