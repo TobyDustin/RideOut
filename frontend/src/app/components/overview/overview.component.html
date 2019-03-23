@@ -3,9 +3,11 @@
     <mat-card class="overview">
       <div class="map-container"
            mat-card-image>
-        <agm-map class="map">
-          <agm-kml-layer [url]="rideOut.route"></agm-kml-layer>
-        </agm-map>
+        <iframe
+          class="e2e-iframe-untrusted-src map"
+          width="100%"
+          frameborder="0"
+          [src]="getRoute()"></iframe>
       </div>
       <mat-card-title>
         {{ rideOut.name }}
