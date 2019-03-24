@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {Observable} from "rxjs";
 import {RideOut} from "../../models/rideout";
@@ -19,7 +19,15 @@ export class RideOutService {
     return this.http.get<RideOut>(`${environment.api}/rideout/${rideOut}`);
   }
 
-  public searchRideOuts(search: String) : Observable<RideOut[]> {
-    return this.http.get<RideOut[]>(`${environment.api}/rideout/s/${search}`);
+  public searchRideOuts(search: String, filters: Array<string>, types: Array<string>) : Observable<RideOut[]> {
+    let params = new HttpParams();
+    filters.forEach((filter) => {
+      params = params.append(filter, 'true');
+    });
+    types.forEach((type) => {
+      params = params.append('type', type)
+    });
+    console.log(params);
+    return this.http.get<RideOut[]>(`${environment.api}/rideout/s/${search}`, {params});
   }
 }

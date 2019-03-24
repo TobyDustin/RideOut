@@ -3,7 +3,7 @@
     <div class="title">
       <h1 class="mat-h1">Dashboard</h1>
     </div>
-    <div>
+    <div class="search">
       <mat-form-field
         appearance="outline">
         <mat-label>
@@ -15,10 +15,31 @@
         <input
           id="search"
           matInput
-          required
           [(ngModel)]="search"
           (change)="searchRideOuts()">
         <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Filters</mat-label>
+        <mat-select
+          [(value)]="selectedFilters"
+          multiple
+          (selectionChange)="searchRideOuts()">
+          <mat-option *ngFor="let filter of filters" [value]="filter.value">
+            {{ filter.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Types</mat-label>
+        <mat-select
+          [(value)]="selectedTypes"
+          multiple
+          (selectionChange)="searchRideOuts()">
+          <mat-option *ngFor="let type of types" [value]="type.value">
+            {{ type.name }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
     <span *ngIf="!rideOuts || rideOuts.length == 0">No RideOuts Found!</span>
