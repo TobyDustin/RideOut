@@ -126,7 +126,7 @@ public class RideOutDao {
 
         if (filter.showOnlyUsers) {
             pipe.add(match(
-                in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().toString())))
+                in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().getName())))
             ));
         }
 
