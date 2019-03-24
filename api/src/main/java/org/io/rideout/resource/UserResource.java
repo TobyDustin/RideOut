@@ -18,8 +18,11 @@ import org.io.rideout.exception.UnauthorizedException;
 import org.io.rideout.model.User;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
+import javax.ws.rs.core.SecurityContext;
+import java.util.Collections;
+import java.util.List;
 
 import static org.io.rideout.authentication.AuthenticationFilter.AUTHENTICATION_SCHEMA;
 
@@ -46,8 +49,16 @@ public class UserResource {
                     name = "JWT"
             )
     )
-    public ArrayList<User> getAllUsers() {
-        return userDao.getAll();
+    public List<User> getAllUsers(@Context SecurityContext securityContext) {
+        if (securityContext.isUserInRole(User.STAFF)) {
+            return userDao.getAll();
+        } else if (securityContext.isUserInRole(User.RIDER)) {
+            User result = userDao.getById(new ObjectId(securityContext.getUserPrincipal().getName()));
+            if (result == null) throw new NotFoundException();
+            return Collections.singletonList(result);
+        }
+
+        throw new UnauthorizedException();
     }
 
     // GET user by ID
@@ -70,7 +81,13 @@ public class UserResource {
                     name = "JWT"
             )
     )
-    public User getUser(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("id") ObjectId id) {
+    public User getUser(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("id") ObjectId id,
+                        @Context SecurityContext securityContext) {
+
+        if (securityContext.isUserInRole(User.RIDER) && !id.toHexString().equals(securityContext.getUserPrincipal().getName())) {
+            throw new UnauthorizedException();
+        }
+
         User result = userDao.getById(id);
 
         if (result != null) {
@@ -113,7 +130,12 @@ public class UserResource {
                     name = "JWT"
             )
     )
-    public User updateUser(User user) {
+    public User updateUser(User user, @Context SecurityContext securityContext) {
+        if (securityContext.isUserInRole(User.RIDER) &&
+                !user.getId().toHexString().equals(securityContext.getUserPrincipal().getName())) {
+            throw new UnauthorizedException();
+        }
+
         BeanValidation.validate(user);
         User result = userDao.update(user);
 
@@ -185,7 +207,13 @@ public class UserResource {
                     name = "JWT"
             )
     )
-    public User removeUser(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("id") ObjectId id) {
+    public User removeUser(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("id") ObjectId id,
+                           @Context SecurityContext securityContext) {
+
+        if (securityContext.isUserInRole(User.RIDER) && !id.toHexString().equals(securityContext.getUserPrincipal().getName())) {
+            throw new UnauthorizedException();
+        }
+
         User result = userDao.delete(id);
 
         if (result == null) throw new NotFoundException();

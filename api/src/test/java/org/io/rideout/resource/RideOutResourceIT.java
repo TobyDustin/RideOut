@@ -23,7 +23,7 @@ public class RideOutResourceIT {
 
 
     private static HttpServer server;
-    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzcwMmMzODlhYjdkYTBiOTVjMGE5ZjIiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.A_OS3PGBki3mTE9S-QzhBz-MgDKKM3fSbTBB0WfOczLuYAMluMG20jrioFV1IbYlFV8J6mgz_RiUtYfTePZyWg";
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzZlYzM3OGIxYTA1MjI3OWRiYmY3MTAiLCJyb2xlIjoicmlkZXIiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.3T3CyGggttRBsC7iFHcV6gqhdTlzLLoT1cRaVdVivyjOejWT49gaNZd-Gf6MlT0BKq6ptwArb-77tXdVSAOKVw";
 
     @BeforeAll
     public static void setUp() {

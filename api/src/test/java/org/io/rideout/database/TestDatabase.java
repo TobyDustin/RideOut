@@ -11,7 +11,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
 import org.io.rideout.PasswordManager;
 import org.io.rideout.model.*;
-import org.io.rideout.resource.AuthenticateResource;
 
 import java.util.ArrayList;
 import java.util.Date;
