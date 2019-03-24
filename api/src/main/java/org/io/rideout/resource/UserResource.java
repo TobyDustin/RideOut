@@ -85,6 +85,11 @@ public class UserResource {
         return new VehicleResource(uid);
     }
 
+    @Path("{uid}/riderinfo")
+    public RiderInformationResource getRiderInformationResource(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("uid") ObjectId uid) {
+        return new RiderInformationResource(uid);
+    }
+
     // UPDATE user
     @PUT
     @Secured
