@@ -1,6 +1,8 @@
 package org.io.rideout;
 
 import org.io.rideout.exception.AppValidationException;
+import org.io.rideout.model.FilterBean;
+import org.io.rideout.model.RideOut;
 import org.io.rideout.model.User;
 
 import javax.validation.ConstraintViolation;
@@ -21,6 +23,8 @@ public class BeanValidation {
 
         if (entity instanceof User) {
             errors = validateUser((User) entity);
+        } else if (entity instanceof FilterBean) {
+            errors = validateFilters((FilterBean) entity);
         }
 
         Set<ConstraintViolation<T>> violations = BeanValidation.validator.validate(entity);
@@ -46,6 +50,18 @@ public class BeanValidation {
                 if (!validateDate(user.getDateOfBirth(), 18)) {
                     result.add("Staff must be at least 18 years old");
                 }
+            }
+        }
+
+        return result;
+    }
+
+    private static ArrayList<String> validateFilters(FilterBean filters) {
+        ArrayList<String> result = new ArrayList<>();
+
+        for (String type : filters.types) {
+            if (!type.matches(RideOut.RIDE + "|" + RideOut.STAY + "|" + RideOut.TOUR)) {
+                result.add(type + " is invalid RideOut type");
             }
         }
 
