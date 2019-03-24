@@ -15,15 +15,11 @@ export class RideOutService {
     return this.http.get<RideOut[]>(`${environment.api}/rideout`);
   }
 
-  public getRideOut(rideOut: String) {
+  public getRideOut(rideOut: String) : Observable<RideOut> {
     return this.http.get<RideOut>(`${environment.api}/rideout/${rideOut}`);
   }
 
-  public getRoute(uri: string) {
-    return this.http.get<XMLDocument>(uri, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/xml'
-      })
-    });
+  public searchRideOuts(search: String) : Observable<RideOut[]> {
+    return this.http.get<RideOut[]>(`${environment.api}/rideout/s/${search}`);
   }
 }

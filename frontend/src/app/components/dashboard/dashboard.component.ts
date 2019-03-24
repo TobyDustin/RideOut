@@ -10,6 +10,7 @@ import {RideOutService} from "../../services/rideout/ride-out.service";
 export class DashboardComponent implements OnInit {
 
   rideOuts: RideOut[];
+  public search: String;
 
   constructor(private service: RideOutService) {}
 
@@ -19,6 +20,13 @@ export class DashboardComponent implements OnInit {
 
   getRideOuts() {
     this.service.getAllRideOuts()
+      .subscribe((rideOuts) => {
+        this.rideOuts = rideOuts;
+      })
+  }
+
+  searchRideOuts() {
+    this.service.searchRideOuts(this.search)
       .subscribe((rideOuts) => {
         this.rideOuts = rideOuts;
       })
