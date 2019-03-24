@@ -1,15 +1,12 @@
 package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.io.rideout.model.User;
 import org.io.rideout.model.Vehicle;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.*;

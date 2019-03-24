@@ -1,0 +1,110 @@
+version: 2.1
+executors:
+  docker:
+    environment:
+      IMAGE_NAME: solentio/rideout
+    docker:
+      - image: circleci/buildpack-deps:stretch
+
+jobs:
+
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+      - run: mvn integration-test
+
+  docker_build:
+    executor: docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker Image
+          command: docker build -t $IMAGE_NAME:${CIRCLE_BRANCH} .
+  docker_publish:
+    executor: docker
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USERNAME --password-stdin
+            docker push $IMAGE_NAME:${CIRCLE_BRANCH}
+
+  kube_deploy:
+    docker:
+      - image: marcdufresne/kubetpl-base
+    steps:
+      - run:
+          name: Create Kube config file
+          command: |
+            mkdir -p ~/.kube/
+            echo $KUBE_CONFIG | base64 -di >> ~/.kube/config
+      - run:
+          name: Patch Kubectl Deployment
+          command: |
+            kubectl patch -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}" deployment rideout
+
+  kube_deploy_dev:
+    docker:
+      - image: marcdufresne/kubetpl-base
+    steps:
+      - run:
+          name: Create Kube config file
+          command: |
+            mkdir -p ~/.kube/
+            echo $KUBE_CONFIG | base64 -di >> ~/.kube/config
+      - run:
+          name: Patch Kubectl Deployment
+          command: |
+            kubectl patch -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}}}}}" deployment rideout-dev
+
+workflows:
+  version: 2
+  build-master-dev:
+    jobs:
+      - build
+      - docker_build:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - dev
+      - docker_publish:
+          requires:
+            - docker_build
+          filters:
+            branches:
+              only:
+                - master
+                - dev
+      - kube_deploy:
+          requires:
+            - docker_publish
+          filters:
+            branches:
+              only:
+                - master
+      - kube_deploy_dev:
+          requires:
+            - docker_publish
+          filters:
+            branches:
+              only:
+                - dev
