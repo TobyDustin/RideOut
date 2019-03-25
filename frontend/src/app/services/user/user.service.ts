@@ -42,4 +42,5 @@ export class UserService {
     // TODO modify once route has been confirmed
     return this.http.put(`${environment.api}/user/${id}/riderinfo`, riderInfo)
   }
+
 }
