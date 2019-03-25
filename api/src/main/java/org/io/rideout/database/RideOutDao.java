@@ -93,9 +93,9 @@ public class RideOutDao {
 
     private String getTypeName(String type) {
         switch (type) {
-            case "ride": return RideOut.class.getName();
-            case "stay": return StayOut.class.getName();
-            case "tour": return TourOut.class.getName();
+            case RideOut.RIDE: return RideOut.class.getName();
+            case RideOut.STAY: return StayOut.class.getName();
+            case RideOut.TOUR: return TourOut.class.getName();
             default: throw new IllegalArgumentException("Unknown type name");
         }
     }
@@ -126,7 +126,7 @@ public class RideOutDao {
 
         if (filter.showOnlyUsers) {
             pipe.add(match(
-                in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().toString())))
+                in("riders", eq("_id", new ObjectId(filter.securityContext.getUserPrincipal().getName())))
             ));
         }
 

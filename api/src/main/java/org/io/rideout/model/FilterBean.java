@@ -2,6 +2,7 @@ package org.io.rideout.model;
 
 import io.swagger.v3.oas.annotations.Parameter;
 
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
@@ -20,6 +21,7 @@ public class FilterBean {
 
     @QueryParam("type")
     @Parameter(description = "Returns RideOuts of specified type")
+    @Size(max = 3)
     public List<String> types = new ArrayList<>();
 
     @Context

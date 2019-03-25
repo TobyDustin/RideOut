@@ -23,6 +23,10 @@ import java.util.Date;
 @JsonSubTypes({ @JsonSubTypes.Type(value = StayOut.class) })
 public class RideOut {
 
+    public static final String RIDE = "ride";
+    public static final String STAY = "stay";
+    public static final String TOUR = "tour";
+
     @BsonId
     @NotNull
     @JsonSerialize(using = ObjectIdJsonSerializer.class)

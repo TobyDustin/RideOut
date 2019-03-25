@@ -48,6 +48,7 @@ public class RideOutResource {
             }
     )
     public ArrayList<RideOut> getAllRideOuts(@BeanParam FilterBean filters) {
+        BeanValidation.validate(filters);
         return rideoutDao.getAll(filters);
     }
 
@@ -99,7 +100,8 @@ public class RideOutResource {
             }
     )
     public ArrayList<RideOut> getRideOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("ride");
+        filters.types = Collections.singletonList(RideOut.RIDE);
+        BeanValidation.validate(filters);
         return rideoutDao.getAll(filters);
     }
 
@@ -119,7 +121,8 @@ public class RideOutResource {
             }
     )
     public ArrayList<StayOut> getStayOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("stay");
+        filters.types = Collections.singletonList(RideOut.STAY);
+        BeanValidation.validate(filters);
         ArrayList<StayOut> result = new ArrayList<>();
 
         for (RideOut ride : rideoutDao.getAll(filters)) {
@@ -145,7 +148,8 @@ public class RideOutResource {
             }
     )
     public ArrayList<TourOut> getTourOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("tour");
+        filters.types = Collections.singletonList(RideOut.TOUR);
+        BeanValidation.validate(filters);
         ArrayList<TourOut> result = new ArrayList<>();
 
         for (RideOut ride : rideoutDao.getAll(filters)) {
@@ -172,6 +176,7 @@ public class RideOutResource {
             }
     )
     public ArrayList<RideOut> search(@Parameter(description = "Search query") @PathParam("name") String name, @BeanParam FilterBean filters) {
+        BeanValidation.validate(filters);
         return rideoutDao.search(name, filters);
     }
 
