@@ -10,7 +10,7 @@ import {RideOutService} from "../../services/rideout/ride-out.service";
 export class DashboardComponent implements OnInit {
 
   public rideOuts: RideOut[];
-  public search: String;
+  public search: String = "";
   public selectedFilters = [];
   public filters = [
     {
