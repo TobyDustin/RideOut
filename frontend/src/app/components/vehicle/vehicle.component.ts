@@ -14,7 +14,7 @@ import {ContentObserver} from "@angular/cdk/observers";
 export class VehicleComponent implements OnInit {
 
   public vehicles: Observable<Vehicle[]>;
-  public displayedColumns = ["make", "model", "power", "registration", "isChecked"];
+  public displayedColumns = ["make", "model", "power", "registration", "checked"];
 
   constructor(private service: UserService, private dialog: MatDialog) { }
 
