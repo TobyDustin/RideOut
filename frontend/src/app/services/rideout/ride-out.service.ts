@@ -28,6 +28,10 @@ export class RideOutService {
       params = params.append('type', type)
     });
     console.log(params);
-    return this.http.get<RideOut[]>(`${environment.api}/rideout/s/${search}`, {params});
+    if (search == "") {
+      return this.http.get<RideOut[]>(`${environment.api}/rideout`, {params});
+    } else {
+      return this.http.get<RideOut[]>(`${environment.api}/rideout/s/${search}`, {params});
+    }
   }
 }
