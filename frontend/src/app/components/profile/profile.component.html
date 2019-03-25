@@ -16,21 +16,16 @@
 
       <h3>Emergency Info:</h3>
       <p>Emergency Contact Number: {{ user.riderInformation.emergencyContactNumber }}</p>
-      <button
-        mat-raised-button
-        color="primary">
-        Update Rider Info
-      </button>
     </div>
     <!-- If rider info does NOT exist-->
     <div *ngIf="!profileComplete()">
       <p>You must provide additional information before you can join a Ride Out!</p>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="openDialog()">
-        Add Rider Info
-      </button>
     </div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openDialog()">
+      Add Rider Info
+    </button>
   </div>
 </app-nav>

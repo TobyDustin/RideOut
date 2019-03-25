@@ -25,7 +25,6 @@ export class AddRiderInfoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.riderInfo);
     this.initializeMissingValues();
   }
 
