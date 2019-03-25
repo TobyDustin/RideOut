@@ -18,3 +18,7 @@
   width: available;
   object-fit: cover;
 }
+
+.search > mat-form-field {
+  margin: 10px;
+}
