@@ -126,7 +126,7 @@ public class UserResourceIT {
                 .get("api/user/{id}")
                 .then()
                 .assertThat()
-                .statusCode(401);
+                .statusCode(403);
     }
 
     @Test
@@ -306,7 +306,7 @@ public class UserResourceIT {
                 .post("api/user")
                 .then()
                 .assertThat()
-                .statusCode(401);
+                .statusCode(403);
     }
 
     @Test
