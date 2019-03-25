@@ -1,6 +1,6 @@
 package org.io.rideout;
 
-import org.io.rideout.exception.AppValidationException;
+import org.io.rideout.exception.ValidationException;
 import org.io.rideout.model.User;
 
 import javax.validation.ConstraintViolation;
@@ -30,7 +30,7 @@ public class BeanValidation {
         }
 
         if (!errors.isEmpty()) {
-            throw new AppValidationException(errors);
+            throw new ValidationException(errors);
         }
     }
 
