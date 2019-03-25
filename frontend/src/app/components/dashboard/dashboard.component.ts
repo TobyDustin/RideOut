@@ -9,16 +9,50 @@ import {RideOutService} from "../../services/rideout/ride-out.service";
 })
 export class DashboardComponent implements OnInit {
 
-  rideOuts: RideOut[];
+  public rideOuts: RideOut[];
+  public search: String = "";
+  public selectedFilters = [];
+  public filters = [
+    {
+      name: 'Attending Only',
+      value: 'attending'
+    },
+    {
+      name: 'Available Only',
+      value: 'available'
+    }
+  ];
+  public selectedTypes = [];
+  public types = [
+    {
+      name: 'Ride Outs',
+      value: 'ride'
+    },
+    {
+      name: 'Stay Outs',
+      value: 'stay'
+    },
+    {
+      name: 'Tour Outs',
+      value: 'tour'
+    }
+  ];
 
   constructor(private service: RideOutService) {}
 
   ngOnInit(): void {
-    this.getRideOuts()
+    this.getRideOuts();
   }
 
   getRideOuts() {
     this.service.getAllRideOuts()
+      .subscribe((rideOuts) => {
+        this.rideOuts = rideOuts;
+      })
+  }
+
+  searchRideOuts() {
+    this.service.searchRideOuts(this.search, this.selectedFilters, this.selectedTypes)
       .subscribe((rideOuts) => {
         this.rideOuts = rideOuts;
       })
