@@ -25,7 +25,7 @@ export class RideOutService {
       params = params.append(filter, 'true');
     });
     types.forEach((type) => {
-      params = params.append('type', type)
+      params = params.append('type', type);
     });
     console.log(params);
     if (search == "") {
