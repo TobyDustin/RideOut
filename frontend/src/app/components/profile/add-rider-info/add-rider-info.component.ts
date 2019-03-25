@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {MatDialogRef, MatSnackBar} from "@angular/material";
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef, MatSnackBar} from "@angular/material";
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user/user.service";
 import {RiderInformation} from "../../../models/rider";
@@ -11,7 +11,6 @@ import {RiderInformation} from "../../../models/rider";
 })
 export class AddRiderInfoComponent implements OnInit {
 
-  public riderInfo: RiderInformation;
   public licenseCategories = [
     "A",
     "A1",
@@ -21,10 +20,22 @@ export class AddRiderInfoComponent implements OnInit {
   constructor(
     private ref: MatDialogRef<any>,
     private snackBar: MatSnackBar,
-    private service: UserService
+    private service: UserService,
+    @Inject(MAT_DIALOG_DATA) public riderInfo
   ) { }
 
   ngOnInit() {
+    console.log(this.riderInfo);
+    this.initializeMissingValues();
+  }
+
+  initializeMissingValues() {
+    if (this.riderInfo.license == null) {
+      this.riderInfo.license = "";
+    }
+    if (this.riderInfo.emergencyContactNumber == null) {
+      this.riderInfo.emergencyContactNumber = "";
+    }
   }
 
   updateRiderInfo() {

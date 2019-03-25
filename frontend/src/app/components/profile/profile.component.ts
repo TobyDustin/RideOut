@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {User} from "../../models/user";
 import {UserService} from "../../services/user/user.service";
 import {MatDialog} from "@angular/material";
 import {AddRiderInfoComponent} from "./add-rider-info/add-rider-info.component";
+import {RiderInformation} from "../../models/rider";
+import {Observable} from "rxjs";
+import {User} from "../../models/user";
 
 @Component({
   selector: 'app-profile',
@@ -19,21 +21,29 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.service.getUser().subscribe((user: User) => {
+    this.getUser();
+  }
+
+  getUser() {
+    this.service.getUser().subscribe((user) => {
       this.user = user;
     });
   }
 
   profileComplete(): boolean {
     return (
-      this.user.riderInformation.isInsured != null &&
       this.user.riderInformation.license != null &&
       this.user.riderInformation.emergencyContactNumber != null
     );
   }
 
   openDialog() {
-    let dialogRef = this.dialog.open(AddRiderInfoComponent);
+    let dialogRef = this.dialog.open(AddRiderInfoComponent, {
+      data: this.user.riderInformation
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.getUser();
+    });
   }
 
 }

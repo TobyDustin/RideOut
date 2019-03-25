@@ -32,15 +32,19 @@ export class UserService {
     return this.http.post(`${environment.api}/user/${id}/vehicle`, vehicle);
   }
 
-  getUser() {
+  getUser() : Observable<User> {
     const id = this.auth.getId();
-    return this.http.get(`${environment.api}/user/${id}`);
+    return this.http.get<User>(`${environment.api}/user/${id}`);
+  }
+
+  getUserInfo() : Observable<RiderInformation> {
+    const id = this.auth.getId();
+    return this.http.get<RiderInformation>(`${environment.api}/user/${id}/riderinfo`);
   }
 
   updateRiderInfo(riderInfo: RiderInformation) {
     const id = this.auth.getId();
-    // TODO modify once route has been confirmed
-    return this.http.put(`${environment.api}/user/${id}/riderinfo`, riderInfo)
+    return this.http.post(`${environment.api}/user/${id}/riderinfo`, riderInfo);
   }
 
 }
