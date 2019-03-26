@@ -45,6 +45,10 @@ export class AuthService {
     return jwt_decode(this.getToken()).sub;
   }
 
+  getRole() {
+    return jwt_decode(this.getToken()).role;
+  }
+
   getToken() {
       return localStorage.getItem('access_token');
   }
