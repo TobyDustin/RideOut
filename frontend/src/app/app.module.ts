@@ -19,6 +19,8 @@ import { AgmCoreModule } from '@agm/core';
 import {environment} from "../environments/environment";
 import { VehicleComponent } from './components/vehicle/vehicle.component';
 import { AddVehicleComponent } from './components/vehicle/add-vehicle/add-vehicle.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { AddRiderInfoComponent } from './components/profile/add-rider-info/add-rider-info.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -34,7 +36,10 @@ export function tokenGetter() {
     LandingComponent,
     OverviewComponent,
     VehicleComponent,
-    AddVehicleComponent
+    AddVehicleComponent,
+    OverviewComponent,
+    ProfileComponent,
+    AddRiderInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -52,9 +57,10 @@ export function tokenGetter() {
     })
   ],
   entryComponents: [
-    AddVehicleComponent
+    AddVehicleComponent,
+    AddRiderInfoComponent
   ],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

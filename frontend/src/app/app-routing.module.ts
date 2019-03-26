@@ -8,9 +8,12 @@ import {RegistrationComponent} from "./components/registration/registration.comp
 import {LandingComponent} from "./components/landing/landing.component";
 import {OverviewComponent} from "./components/overview/overview.component";
 import {VehicleComponent} from "./components/vehicle/vehicle.component";
+import {ProfileComponent} from "./components/profile/profile.component";
 
 const routes: Routes = [
-  { path: '', component: LandingComponent },
+  {
+    path: '',
+    component: LandingComponent},
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -24,6 +27,11 @@ const routes: Routes = [
   {
     path: 'vehicle',
     component: VehicleComponent,
+    canActivate: [UserGuard]
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
     canActivate: [UserGuard]
   },
   {
