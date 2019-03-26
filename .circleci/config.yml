@@ -93,11 +93,6 @@ workflows:
       - docker_build:
           requires:
             - build
-          filters:
-            branches:
-              only:
-                - master
-                - dev
       - kube_deploy:
           requires:
             - docker_build
