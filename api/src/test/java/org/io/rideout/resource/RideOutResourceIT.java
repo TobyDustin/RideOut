@@ -24,6 +24,7 @@ public class RideOutResourceIT {
 
     private static HttpServer server;
     private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzZlYzM3OGIxYTA1MjI3OWRiYmY3MTAiLCJyb2xlIjoicmlkZXIiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.3T3CyGggttRBsC7iFHcV6gqhdTlzLLoT1cRaVdVivyjOejWT49gaNZd-Gf6MlT0BKq6ptwArb-77tXdVSAOKVw";
+    private String staffToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1YzZlYzM3OGIxYTA1MjI3OWRiYmY3MTEiLCJpc3MiOiJyaWRlb3V0IiwidXNlcm5hbWUiOiJqc21pdGgifQ.utEc47HzLcndvRVDo5nFkNSU3N1GhqyqVkICYVx5N4MByQ8khELeO39iX5dSPP4awLH1-XyHbSZoZ3bThksUQQ";
 
     @BeforeAll
     public static void setUp() {
@@ -144,7 +145,7 @@ public class RideOutResourceIT {
         String rid = new ObjectId().toHexString();
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -234,7 +235,7 @@ public class RideOutResourceIT {
         String rid = new ObjectId().toHexString();
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .pathParam("id", id)
                 .pathParam("rid", rid)
                 .when()
@@ -260,7 +261,7 @@ public class RideOutResourceIT {
         );
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .when()
                 .with()
                 .header(new Header("Content-Type", "application/json"))
@@ -276,7 +277,7 @@ public class RideOutResourceIT {
         String id = TestDatabase.DELETE_RIDEOUT.toHexString();
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .pathParam("id", id)
                 .when()
                 .delete("api/rideout/{id}")
@@ -299,7 +300,7 @@ public class RideOutResourceIT {
         );
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .with()
                 .header(new Header("Content-Type", "application/json"))
                 .body(rideOut)
@@ -325,7 +326,7 @@ public class RideOutResourceIT {
         );
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .with()
                 .contentType(ContentType.JSON)
                 .body(rideOut)
@@ -349,7 +350,7 @@ public class RideOutResourceIT {
         );
 
         given()
-                .header(new Header("Authorization", "Bearer " + token))
+                .header(new Header("Authorization", "Bearer " + staffToken))
                 .with()
                 .contentType(ContentType.JSON)
                 .body(rideOut)

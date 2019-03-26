@@ -13,10 +13,13 @@ import org.io.rideout.BeanValidation;
 import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
+import org.io.rideout.exception.UnauthorizedException;
 import org.io.rideout.model.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -208,7 +211,9 @@ public class RideOutResource {
                     )
             ))
     )
-    public RideOut updateRideOut(RideOut rideOut) {
+    public RideOut updateRideOut(RideOut rideOut, @Context SecurityContext securityContext) {
+        if (!securityContext.isUserInRole(User.STAFF)) throw new UnauthorizedException();
+
         BeanValidation.validate(rideOut);
         RideOut result = rideoutDao.update(rideOut);
 
@@ -248,7 +253,9 @@ public class RideOutResource {
                     )
             ))
     )
-    public RideOut addRideOut(RideOut rideOut) {
+    public RideOut addRideOut(RideOut rideOut, @Context SecurityContext securityContext) {
+        if (!securityContext.isUserInRole(User.STAFF)) throw new UnauthorizedException();
+
         rideOut.setId(new ObjectId());
         BeanValidation.validate(rideOut);
 
@@ -278,7 +285,10 @@ public class RideOutResource {
                     @ApiResponse(responseCode = "404", description = "RideOut not found")
             }
     )
-    public RideOut deleteRideOut(@Parameter(description = "ID to be deleted", schema = @Schema(type = "string")) @PathParam("id") ObjectId id) {
+    public RideOut deleteRideOut(@Parameter(description = "ID to be deleted", schema = @Schema(type = "string")) @PathParam("id") ObjectId id,
+                                 @Context SecurityContext securityContext) {
+        if (!securityContext.isUserInRole(User.STAFF)) throw new UnauthorizedException();
+
         RideOut result = rideoutDao.delete(id);
 
         if (result != null) return result;
@@ -309,7 +319,15 @@ public class RideOutResource {
             }
     )
     public RideOut addRider(@Parameter(description = "RideOut ID", schema = @Schema(type = "string")) @PathParam("rideOutId") ObjectId rideOutId,
-                            @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId) {
+                            @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId,
+                            @Context SecurityContext securityContext) {
+        if (!securityContext.isUserInRole(User.STAFF)) {
+            if (securityContext.isUserInRole(User.RIDER) &&
+                    !riderId.equals(new ObjectId(securityContext.getUserPrincipal().getName()))) {
+                throw new UnauthorizedException();
+            }
+        }
+
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
@@ -343,7 +361,15 @@ public class RideOutResource {
             }
     )
     public RideOut removeRider(@Parameter(description = "RideOut ID", schema = @Schema(type = "string")) @PathParam("rideOutId") ObjectId rideOutId,
-                               @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId) {
+                               @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId,
+                               @Context SecurityContext securityContext) {
+        if (!securityContext.isUserInRole(User.STAFF)) {
+            if (securityContext.isUserInRole(User.RIDER) &&
+                    !riderId.equals(new ObjectId(securityContext.getUserPrincipal().getName()))) {
+                throw new UnauthorizedException();
+            }
+        }
+
         User rider = userDao.getById(riderId);
         if (rider == null) throw new NotFoundException("Rider not found");
 
