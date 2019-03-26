@@ -1,0 +1,31 @@
+<app-nav>
+  <div
+    class="profile"
+    *ngIf="user">
+    <h3>Personal Info:</h3>
+    <p>Username: {{ user.username }}</p>
+    <p>Name: {{ user.firstName }}  {{ user.lastName }}</p>
+    <p>Date of Birth: {{ user.dateOfBirth | date }}</p>
+    <p>Contact Number: {{ user.contactNumber  || "" }}</p>
+
+    <h3>Rider Info:</h3>
+    <!-- If rider info exists -->
+    <div *ngIf="profileComplete()">
+      <p>Insured: {{ user.riderInformation.isInsured ? "Yes" : "No" }}</p>
+      <p>License: {{ user.riderInformation.license }}</p>
+
+      <h3>Emergency Info:</h3>
+      <p>Emergency Contact Number: {{ user.riderInformation.emergencyContactNumber }}</p>
+    </div>
+    <!-- If rider info does NOT exist-->
+    <div *ngIf="!profileComplete()">
+      <p>You must provide additional information before you can join a Ride Out!</p>
+    </div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openDialog()">
+      Add Rider Info
+    </button>
+  </div>
+</app-nav>

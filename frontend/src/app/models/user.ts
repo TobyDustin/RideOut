@@ -9,5 +9,5 @@ export class User {
   lastName: string;
   dateOfBirth: string;
   contactNumber: string;
-  riderInfomation: RiderInformation;
+  riderInformation: RiderInformation;
 }

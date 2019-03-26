@@ -31,11 +31,15 @@ jobs:
       - run:
           name: Save WAR file
           command: |
-            mkdir -p ~/rideout
-            find . -type f -regex ".*/target/.*war" -exec cp {} ~/rideout/ \;
+            mkdir -p ~/project/rideout
+            find . -type f -regex ".*/target/.*war" -exec cp {} ~/project/rideout/ \;
           when: always
       - store_artifacts:
-          path: ~/rideout
+          path: ~/project/rideout
+      - persist_to_workspace:
+          root: .
+          paths:
+            - rideout
   docker_build:
     environment:
       IMAGE_NAME: solentio/rideout
@@ -43,12 +47,13 @@ jobs:
       - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - attach_workspace:
+          at: .
+      - setup_remote_docker
       - run:
           name: Build Docker Image
           command: |
-            docker build -t $IMAGE_NAME:$(echo ${CIRCLE_BRANCH} | tr '/' '_') .
+            docker build -t $IMAGE_NAME:$(echo ${CIRCLE_BRANCH} | tr '/' '_') -f Dockerfile.circleci .
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
