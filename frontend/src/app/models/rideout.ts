@@ -11,7 +11,7 @@ export class RideOut {
   maxRiders: number;
   leadRider: User;
   route: string;
-  isPublished: boolean;
+  published: boolean;
   minCancellationDate: Date;
   checkpoints: Checkpoint[];
   riders: User[];
