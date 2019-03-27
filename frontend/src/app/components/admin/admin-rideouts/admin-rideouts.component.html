@@ -39,12 +39,16 @@
 
       <ng-container matColumnDef="travelBookings">
         <th mat-header-cell *matHeaderCellDef> Travel </th>
-        <td mat-cell *matCellDef="let rideOut"> {{ rideOut.travelBookings?.length || 0 }} </td>
+        <td mat-cell *matCellDef="let rideOut">
+          {{ (rideOut.rideoutType == "Tour") ? (rideOut.travelBookings?.length || 0) : "-" }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="accommodationBookings">
         <th mat-header-cell *matHeaderCellDef> Accommodation </th>
-        <td mat-cell *matCellDef="let rideOut"> {{ rideOut.accommodationBookings?.length || 0 }} </td>
+        <td mat-cell *matCellDef="let rideOut">
+          {{ (rideOut.rideoutType == "Stay" || rideOut.rideoutType == "Tour") ? (rideOut.accommodationBookings?.length || 0) : "-" }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="restaurant">
