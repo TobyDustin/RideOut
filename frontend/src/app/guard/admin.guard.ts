@@ -17,7 +17,7 @@ export class AdminGuard implements CanActivate {
     if (this.auth.isLoggedIn() && this.auth.getRole() == "staff") {
       return true;
     }
-    return this.router.parseUrl('/login');
+    return this.router.parseUrl('/dashboard');
   }
   
 }
