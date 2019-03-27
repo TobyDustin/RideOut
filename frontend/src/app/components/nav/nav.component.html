@@ -8,6 +8,7 @@
       <a mat-list-item routerLink="/dashboard">Dashboard</a>
       <a mat-list-item routerLink="/vehicle">Vehicles</a>
       <a mat-list-item routerLink="/profile">Profile</a>
+      <a *ngIf="service.getRole() == 'staff'" mat-list-item routerLink="/admin">Admin</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
