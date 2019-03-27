@@ -6,6 +6,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
@@ -78,6 +79,11 @@ public class TestDatabase {
         insertDummyUsers(database.getCollection(Database.USER_COLLECTION, User.class));
         insertDummyRideOuts(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class));
         linkRidersToVehicles(database.getCollection(Database.USER_COLLECTION, User.class));
+
+        linkRiderToRideout(
+                database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class),
+                REMOVE_RIDER_RIDEOUT, GET_RIDER, GET_VEHICLE
+        );
     }
 
     private static void insertDummyRideOuts(MongoCollection<RideOut> collection) {
@@ -119,12 +125,18 @@ public class TestDatabase {
         linkRiderToVehicle(collection, DELETE_RIDER, GET_VEHICLE);
     }
 
-    private static void linkRiderToVehicle( MongoCollection<User> collection, ObjectId uid, ObjectId... vids) {
+    private static void linkRiderToVehicle(MongoCollection<User> collection, ObjectId uid, ObjectId... vids) {
         for (ObjectId vid : vids) {
             collection.updateOne(eq("_id", uid), combine(
                     addToSet("riderInformation.vehicles", vid))
             );
         }
+    }
+
+    private static void linkRiderToRideout(MongoCollection<RideOut> collection, ObjectId rid, ObjectId uid, ObjectId vid) {
+        collection.updateOne(eq("_id", rid),
+                addToSet("riders", new Document().append("rider", uid).append("vehicle", vid))
+        );
     }
 
     private static User getDummyRider(ObjectId uid) {
@@ -183,10 +195,6 @@ public class TestDatabase {
                 new Date(100)
 
         );
-
-        if (id.equals(REMOVE_RIDER_RIDEOUT)) {
-            dummy.getRiders().add(new SimpleUser(GET_RIDER, null, null, null));
-        }
 
         return dummy;
     }

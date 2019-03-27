@@ -70,17 +70,23 @@ public class RideOutDao {
         return collection.findOneAndDelete(eq("_id", id));
     }
 
-    public RideOut addRider(ObjectId id, SimpleUser rider) {
+    public RideOut addRider(ObjectId id, SimpleUser rider, Vehicle vehicle) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", id), addToSet("riders", new Document().append("_id", rider.getId())));
+        UpdateResult result = collection.updateOne(
+                eq("_id", id),
+                addToSet("riders", new Document()
+                        .append("rider", rider.getId())
+                        .append("vehicle", vehicle.getId())
+                )
+        );
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
 
     public RideOut removeRider(ObjectId id, SimpleUser rider) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", id), pull("riders", eq("_id", rider.getId())));
+        UpdateResult result = collection.updateOne(eq("_id", id), pull("riders", eq("rider", rider.getId())));
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
 

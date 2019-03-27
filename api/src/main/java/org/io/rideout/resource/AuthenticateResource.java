@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 @OpenAPIDefinition(
         info = @Info(
                 description = "A RideOut API documentation",
-                version = "0.2",
+                version = "0.3",
                 title = "RideOut"
         ),
         servers = {

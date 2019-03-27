@@ -23,8 +23,7 @@ public class VehicleDao {
     public ArrayList<Vehicle> getAll(ObjectId userId) {
         User user = UserDao.getInstance().getById(userId);
 
-        if (user == null) return null;
-        else if (user.getRiderInformation() == null) return new ArrayList<>();
+        if (user == null || user.getRiderInformation() == null) return new ArrayList<>();
         return user.getRiderInformation().getVehicles();
     }
 
