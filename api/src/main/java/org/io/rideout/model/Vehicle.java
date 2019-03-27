@@ -77,7 +77,7 @@ public class Vehicle {
         this.registration = registration;
     }
 
-    public Boolean getChecked() {
+    public Boolean isChecked() {
         return isChecked;
     }
 

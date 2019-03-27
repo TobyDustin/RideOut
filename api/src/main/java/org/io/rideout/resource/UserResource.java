@@ -198,7 +198,7 @@ public class UserResource {
     )
     public Vehicle updateVehicle(@Parameter(description = "User ID", schema = @Schema(type = "string")) @PathParam("uid") ObjectId uid, Vehicle vehicle) {
         BeanValidation.validate(vehicle);
-        Vehicle result = vehicleDao.update(uid, vehicle);
+        Vehicle result = vehicleDao.update(vehicle);
 
         if (result != null) return result;
         throw new NotFoundException();
