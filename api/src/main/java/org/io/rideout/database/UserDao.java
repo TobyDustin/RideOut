@@ -9,8 +9,13 @@ import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
+import static com.mongodb.client.model.Aggregates.lookup;
+import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.*;
 
@@ -25,23 +30,34 @@ public class UserDao {
 
     public ArrayList<User> getAll() {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+        List<Bson> pipe = Collections.singletonList(
+                lookup(Database.VEHICLE_COLLECTION, "riderInformation.vehicles", "_id", "riderInformation.vehicles")
+        );
 
         ArrayList<User> result = new ArrayList<>();
-        collection.find(User.class).forEach((Consumer<User>) result::add);
+        collection.aggregate(pipe).forEach((Consumer<User>) result::add);
         return result;
     }
 
     public User getById(ObjectId id) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+        List<Bson> pipe = Arrays.asList(
+                match(eq("_id", id)),
+                lookup(Database.VEHICLE_COLLECTION, "riderInformation.vehicles", "_id", "riderInformation.vehicles")
+        );
 
-        return collection.find(eq("_id", id)).first();
+        return collection.aggregate(pipe).first();
     }
 
     public User getByUsername(String username) {
         username = username.toLowerCase();
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+        List<Bson> pipe = Arrays.asList(
+                match(eq("username", username)),
+                lookup(Database.VEHICLE_COLLECTION, "riderInformation.vehicles", "_id", "riderInformation.vehicles")
+        );
 
-        return collection.find(eq("username", username)).first();
+        return collection.aggregate(pipe).first();
     }
 
     public User insert(User user) {

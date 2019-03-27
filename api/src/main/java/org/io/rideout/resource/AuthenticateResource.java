@@ -74,7 +74,7 @@ public class AuthenticateResource {
             String token = issueToken(user);
             return Response.ok(new Token(token)).build();
         } else {
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 
