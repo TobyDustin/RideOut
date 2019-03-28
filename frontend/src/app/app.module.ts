@@ -21,6 +21,8 @@ import { VehicleComponent } from './components/vehicle/vehicle.component';
 import { AddVehicleComponent } from './components/vehicle/add-vehicle/add-vehicle.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { AddRiderInfoComponent } from './components/profile/add-rider-info/add-rider-info.component';
+import { AdminRideoutsComponent } from './components/admin/admin-rideouts/admin-rideouts.component';
+import { AdminNavComponent } from './components/admin/admin-nav/admin-nav.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -39,7 +41,9 @@ export function tokenGetter() {
     AddVehicleComponent,
     OverviewComponent,
     ProfileComponent,
-    AddRiderInfoComponent
+    AddRiderInfoComponent,
+    AdminRideoutsComponent,
+    AdminNavComponent
   ],
   imports: [
     BrowserModule,
