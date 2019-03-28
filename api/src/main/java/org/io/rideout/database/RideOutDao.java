@@ -35,7 +35,7 @@ public class RideOutDao {
 
     public RideOut getById(ObjectId id) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-        return collection.aggregate(getPipe()).first();
+        return collection.aggregate(getPipe(id)).first();
     }
 
     public ArrayList<RideOut> search(String name, FilterBean filters) {
@@ -113,12 +113,21 @@ public class RideOutDao {
     }
 
     private ArrayList<Bson> getPipe() {
-        return getPipe(null, null);
+        return getPipe(null, null, null);
+    }
+
+    private ArrayList<Bson> getPipe(ObjectId id) {
+        return getPipe(id, null, null);
     }
 
     private ArrayList<Bson> getPipe(String name, FilterBean filter) {
+        return getPipe(null, name, filter);
+    }
+
+    private ArrayList<Bson> getPipe(ObjectId id, String name, FilterBean filter) {
         ArrayList<Bson> pipe = new ArrayList<>();
 
+        if (id != null) pipe.add(match(eq("_id", id)));
         if (name != null) pipe.add(match(regex("name", name, "i")));
         if (filter != null) pipe.addAll(getFilterPipe(filter));
 
