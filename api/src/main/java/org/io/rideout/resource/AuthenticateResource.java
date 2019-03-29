@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 @OpenAPIDefinition(
         info = @Info(
                 description = "A RideOut API documentation",
-                version = "0.2",
+                version = "0.3",
                 title = "RideOut"
         ),
         servers = {
@@ -74,7 +74,7 @@ public class AuthenticateResource {
             String token = issueToken(user);
             return Response.ok(new Token(token)).build();
         } else {
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 

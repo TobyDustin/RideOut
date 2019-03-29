@@ -23,6 +23,7 @@ public class Database {
     final static String TEST_DATABASE = "test";
     final static String USER_COLLECTION = "users";
     final static String RIDEOUT_COLLECTION = "rideouts";
+    final static String VEHICLE_COLLECTION = "vehicles";
 
     private static Database ourInstance = new Database();
     private MongoDatabase database;

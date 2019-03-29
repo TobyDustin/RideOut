@@ -6,6 +6,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
@@ -15,6 +16,9 @@ import org.io.rideout.model.*;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.addToSet;
+import static com.mongodb.client.model.Updates.combine;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -67,11 +71,19 @@ public class TestDatabase {
     public static void tearDown() {
         Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION).drop();
         Database.getInstance().getCollection(Database.USER_COLLECTION).drop();
+        Database.getInstance().getCollection(Database.VEHICLE_COLLECTION).drop();
     }
 
     private static void insertDummyData(MongoDatabase database) {
+        insertDummyVehicles(database.getCollection(Database.VEHICLE_COLLECTION, Vehicle.class));
         insertDummyUsers(database.getCollection(Database.USER_COLLECTION, User.class));
         insertDummyRideOuts(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class));
+        linkRidersToVehicles(database.getCollection(Database.USER_COLLECTION, User.class));
+
+        linkRiderToRideout(
+                database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class),
+                REMOVE_RIDER_RIDEOUT, GET_RIDER, GET_VEHICLE
+        );
     }
 
     private static void insertDummyRideOuts(MongoCollection<RideOut> collection) {
@@ -89,16 +101,45 @@ public class TestDatabase {
 
     private static void insertDummyUsers(MongoCollection<User> collection) {
         ArrayList<User> users = new ArrayList<>();
-        users.add(getDummyRider(GET_RIDER, GET_VEHICLE)); // GET RIDER
+        users.add(getDummyRider(GET_RIDER)); // GET RIDER
         users.add(getDummyStaff(GET_STAFF)); // GET STAFF
-        users.add(getDummyRider(VEHICLE_RIDER, GET_VEHICLE, PUT_VEHICLE, DELETE_VEHICLE)); // VEHICLE RIDER
+        users.add(getDummyRider(VEHICLE_RIDER)); // VEHICLE RIDER
         users.add(getDummyStaff(PUT_STAFF)); // PUT STAFF
-        users.add(getDummyRider(DELETE_RIDER, GET_VEHICLE)); // DELETE RIDER
+        users.add(getDummyRider(DELETE_RIDER)); // DELETE RIDER
 
         collection.insertMany(users);
     }
 
-    private static User getDummyRider(ObjectId uid, ObjectId... vids) {
+    private static void insertDummyVehicles(MongoCollection<Vehicle> collection) {
+        ArrayList<Vehicle> vehicles = new ArrayList<>();
+        vehicles.add(getDummyVehicle(GET_VEHICLE));
+        vehicles.add(getDummyVehicle(PUT_VEHICLE));
+        vehicles.add(getDummyVehicle(DELETE_VEHICLE));
+
+        collection.insertMany(vehicles);
+    }
+
+    private static void linkRidersToVehicles(MongoCollection<User> collection) {
+        linkRiderToVehicle(collection, GET_RIDER, GET_VEHICLE);
+        linkRiderToVehicle(collection, VEHICLE_RIDER, GET_VEHICLE, PUT_VEHICLE, DELETE_VEHICLE);
+        linkRiderToVehicle(collection, DELETE_RIDER, GET_VEHICLE);
+    }
+
+    private static void linkRiderToVehicle(MongoCollection<User> collection, ObjectId uid, ObjectId... vids) {
+        for (ObjectId vid : vids) {
+            collection.updateOne(eq("_id", uid), combine(
+                    addToSet("riderInformation.vehicles", vid))
+            );
+        }
+    }
+
+    private static void linkRiderToRideout(MongoCollection<RideOut> collection, ObjectId rid, ObjectId uid, ObjectId vid) {
+        collection.updateOne(eq("_id", rid),
+                addToSet("riders", new Document().append("rider", uid).append("vehicle", vid))
+        );
+    }
+
+    private static User getDummyRider(ObjectId uid) {
         User dummy = new User(
                 uid,
                 "jsmith",
@@ -114,11 +155,18 @@ public class TestDatabase {
                         "A"
                 )
         );
-        for (ObjectId vid : vids) {
-            dummy.getRiderInformation().addVehicle(new Vehicle(vid, "Honda", vid.equals(PUT_VEHICLE) ? "Bear" : "Monkey", 125, "REG123"));
-        }
 
         return dummy;
+    }
+
+    private static Vehicle getDummyVehicle(ObjectId vehicleId) {
+        return new Vehicle(
+                vehicleId,
+          "Honda",
+                vehicleId.equals(PUT_VEHICLE) ? "Bear" : "Monkey",
+                125,
+                "REG123"
+        );
     }
 
     private static User getDummyStaff(ObjectId id) {
@@ -147,10 +195,6 @@ public class TestDatabase {
                 new Date(100)
 
         );
-
-        if (id.equals(REMOVE_RIDER_RIDEOUT)) {
-            dummy.getRiders().add(new SimpleUser(GET_RIDER, null, null, null));
-        }
 
         return dummy;
     }

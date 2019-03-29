@@ -22,6 +22,7 @@ public class SimpleUser {
     private String username;
     private String firstName;
     private String lastName;
+    private Vehicle vehicle;
 
     public SimpleUser() {}
 
@@ -62,5 +63,13 @@ public class SimpleUser {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 }

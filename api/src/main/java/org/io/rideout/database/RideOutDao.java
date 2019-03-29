@@ -1,7 +1,9 @@
 package org.io.rideout.database;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Field;
+import com.mongodb.client.model.UnwindOptions;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -10,13 +12,14 @@ import org.io.rideout.model.*;
 
 import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
+import static com.mongodb.client.model.Accumulators.first;
 import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.exclude;
 import static com.mongodb.client.model.Updates.*;
+import static java.util.Arrays.asList;
 
 public class RideOutDao {
     private static RideOutDao ourInstance = new RideOutDao();
@@ -32,23 +35,13 @@ public class RideOutDao {
 
     public RideOut getById(ObjectId id) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-        List<Bson> pipe = Arrays.asList(
-                match(eq("_id", id)),
-                lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders")
-        );
-
-        return collection.aggregate(pipe).first();
+        return collection.aggregate(getPipe(id)).first();
     }
 
     public ArrayList<RideOut> search(String name, FilterBean filters) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-
         ArrayList<RideOut> result = new ArrayList<>();
-        ArrayList<Bson> pipe = getFilterPipe(filters);
-        if (name != null) pipe.add(match(regex("name", name, "i")));
-        pipe.add(lookup(Database.USER_COLLECTION, "riders._id", "_id", "riders"));
-
-        collection.aggregate(pipe).forEach((Consumer<RideOut>) result::add);
+        collection.aggregate(getPipe(name, filters)).forEach((Consumer<RideOut>) result::add);
 
         return result;
     }
@@ -77,17 +70,23 @@ public class RideOutDao {
         return collection.findOneAndDelete(eq("_id", id));
     }
 
-    public RideOut addRider(ObjectId id, SimpleUser rider) {
+    public RideOut addRider(ObjectId id, SimpleUser rider, Vehicle vehicle) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", id), addToSet("riders", new Document().append("_id", rider.getId())));
+        UpdateResult result = collection.updateOne(
+                eq("_id", id),
+                addToSet("riders", new Document()
+                        .append("rider", rider.getId())
+                        .append("vehicle", vehicle.getId())
+                )
+        );
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
 
     public RideOut removeRider(ObjectId id, SimpleUser rider) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", id), pull("riders", eq("_id", rider.getId())));
+        UpdateResult result = collection.updateOne(eq("_id", id), pull("riders", eq("rider", rider.getId())));
         return result.getModifiedCount() == 1 ? getById(id) : null;
     }
 
@@ -113,13 +112,66 @@ public class RideOutDao {
         );
     }
 
+    private ArrayList<Bson> getPipe() {
+        return getPipe(null, null, null);
+    }
+
+    private ArrayList<Bson> getPipe(ObjectId id) {
+        return getPipe(id, null, null);
+    }
+
+    private ArrayList<Bson> getPipe(String name, FilterBean filter) {
+        return getPipe(null, name, filter);
+    }
+
+    private ArrayList<Bson> getPipe(ObjectId id, String name, FilterBean filter) {
+        ArrayList<Bson> pipe = new ArrayList<>();
+
+        if (id != null) pipe.add(match(eq("_id", id)));
+        if (name != null) pipe.add(match(regex("name", name, "i")));
+        if (filter != null) pipe.addAll(getFilterPipe(filter));
+
+        UnwindOptions unwindOptions = new UnwindOptions();
+        unwindOptions.preserveNullAndEmptyArrays(true);
+
+        pipe.addAll(asList(
+                unwind("$riders", unwindOptions),
+                addFields(new Field<>("vehicle", "$riders.vehicle")),
+                lookup("users", "riders.rider", "_id", "rider"),
+                unwind("$rider", unwindOptions),
+                project(exclude("riders", "rider.riderInformation", "rider.password")),
+                lookup("vehicles", "vehicle", "_id", "vehicle"),
+                unwind("$vehicle", unwindOptions),
+                addFields(new Field<>("rider.vehicle", "$vehicle")),
+                project(exclude("vehicle")),
+                group("$_id",
+                        first("_t", "$_t"),
+                        first("name", "$name"),
+                        first("dateStart", "$dateStart"),
+                        first("dateEnd", "$dateEnd"),
+                        first("maxRiders", "$maxRiders"),
+                        first("leadRider", "$leadRider"),
+                        first("route", "$route"),
+                        first("isPublished", "$isPublished"),
+                        first("minCancellationDate", "$minCancellationDate"),
+                        first("checkpoints", "$checkpoints"),
+                        Accumulators.addToSet("riders", "$rider"),
+                        first("accommodationList", "$accommodationList"),
+                        first("restaurantList", "$restaurantList"),
+                        first("travelBookings", "$travelBookings")
+                )
+        ));
+
+        return pipe;
+    }
+
     private ArrayList<Bson> getFilterPipe(FilterBean filter) {
         ArrayList<Bson> pipe = new ArrayList<>();
 
         if (filter.showOnlyVacant) {
             pipe.add(addFields(
                     new Field<>("count", new Document("$size", "$riders")),
-                    new Field<>("full", new Document("$cmp", Arrays.asList("$maxRiders", "$count")))
+                    new Field<>("full", new Document("$cmp", asList("$maxRiders", "$count")))
             ));
             pipe.add(match(eq("full", 1)));
         }
