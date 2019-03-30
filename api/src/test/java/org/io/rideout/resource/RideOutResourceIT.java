@@ -266,7 +266,7 @@ public class RideOutResourceIT {
                 new Date(100),
                 new Date(100),
                 15,
-                "54321",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(100)
         );
@@ -305,7 +305,7 @@ public class RideOutResourceIT {
                 new Date(100),
                 new Date(100),
                 15,
-                "54321",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(100)
         );
@@ -331,7 +331,7 @@ public class RideOutResourceIT {
             new Date(100),
             new Date(100),
             15,
-            "54321",
+            null,
             "",
             new Date(100)
         );
@@ -355,7 +355,7 @@ public class RideOutResourceIT {
                 new Date(100),
                 new Date(100),
                 15,
-                "54321",
+                null,
                 "",
                 new Date(100)
         );

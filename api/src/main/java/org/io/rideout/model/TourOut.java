@@ -19,7 +19,7 @@ public class TourOut extends StayOut {
         super();
     }
 
-    public TourOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, String leadRider, String route, Date minCancellationDate) {
+    public TourOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, SimpleUser leadRider, String route, Date minCancellationDate) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
     }
 

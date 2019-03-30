@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.addToSet;
-import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.*;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -79,6 +78,8 @@ public class TestDatabase {
         insertDummyUsers(database.getCollection(Database.USER_COLLECTION, User.class));
         insertDummyRideOuts(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class));
         linkRidersToVehicles(database.getCollection(Database.USER_COLLECTION, User.class));
+        addLeadToRideout(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class), GET_STAFF, GET_VEHICLE,
+                GET_RIDEOUT, GET_STAYOUT, GET_TOUROUT, ADD_RIDER_RIDEOUT, REMOVE_RIDER_RIDEOUT, PUT_RIDEOUT, DELETE_RIDEOUT);
 
         linkRiderToRideout(
                 database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class),
@@ -139,6 +140,15 @@ public class TestDatabase {
         );
     }
 
+    private static void addLeadToRideout(MongoCollection<RideOut> collection, ObjectId uid, ObjectId vid, ObjectId... rids) {
+        for (ObjectId rid : rids) {
+            collection.updateOne(eq("_id", rid), combine(
+                    set("leadRider.staff", uid),
+                    set("leadRider.vehicle", vid)
+            ));
+        }
+    }
+
     private static User getDummyRider(ObjectId uid) {
         User dummy = new User(
                 uid,
@@ -160,13 +170,15 @@ public class TestDatabase {
     }
 
     private static Vehicle getDummyVehicle(ObjectId vehicleId) {
-        return new Vehicle(
+        Vehicle vehicle = new Vehicle(
                 vehicleId,
           "Honda",
                 vehicleId.equals(PUT_VEHICLE) ? "Bear" : "Monkey",
                 125,
                 "REG123"
         );
+        vehicle.setChecked(true);
+        return vehicle;
     }
 
     private static User getDummyStaff(ObjectId id) {
@@ -190,7 +202,7 @@ public class TestDatabase {
                 new Date(100),
                 new Date(100),
                 id.equals(PUT_RIDEOUT) ? 30 : 15,
-                "12345",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(100)
 
@@ -206,7 +218,7 @@ public class TestDatabase {
                 new Date(200),
                 new Date(200),
                 10,
-                "1234",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(200)
         );
@@ -224,7 +236,7 @@ public class TestDatabase {
                 new Date(300),
                 new Date(300),
                 5,
-                "2345",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(300)
         );

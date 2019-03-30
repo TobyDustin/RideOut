@@ -25,6 +25,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("ALL")
 @Path("rideout")
 @Secured
 @SecurityRequirement(
@@ -351,6 +352,8 @@ public class RideOutResource {
             throw new ValidationException(new ArrayList<>(Collections.singletonList("Rider information must not be null")));
         if (!rider.getRiderInformation().getVehicles().contains(vehicle))
             throw new ValidationException(new ArrayList<>(Collections.singletonList("Rider must own the selected vehicle")));
+        if (!vehicle.isChecked())
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Vehicle must be checked by staff")));
 
         RideOut result = rideoutDao.addRider(rideOutId, rider.simplify(), vehicle);
 
@@ -395,6 +398,60 @@ public class RideOutResource {
         if (rider == null) throw new NotFoundException("Rider not found");
 
         RideOut result = rideoutDao.removeRider(rideOutId, rider.simplify());
+
+        if (result != null) return result;
+        throw new NotFoundException("Rideout not found");
+    }
+
+    @POST
+    @Path("{rideOutId}/lead")@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(
+            summary = "Updates lead rider",
+            tags = {"user", "rideout"},
+            description = "Updates lead rider for give Rideout",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "RideOut", content = @Content(
+                            schema = @Schema(
+                                    type = "object",
+                                    oneOf = {
+                                            RideOut.class,
+                                            StayOut.class,
+                                            TourOut.class
+                                    }
+                            )
+                    )),
+                    @ApiResponse(responseCode = "401", description = "User unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Rider or RideOut not found")
+            },
+            requestBody = @RequestBody(description = "User and Vehicle IDs", content = @Content(
+                    schema = @Schema(
+                            implementation = UserVehiclePair.class
+                    )
+            ))
+    )
+    public RideOut updateLeadRider(@Parameter(description = "RideOut ID", schema = @Schema(type = "string")) @PathParam("rideOutId") ObjectId rideOutId,
+                                   UserVehiclePair pair,
+                                   @Context SecurityContext securityContext) {
+        if (!securityContext.isUserInRole(User.STAFF)) {
+            throw new UnauthorizedException();
+        }
+
+        User rider = userDao.getById(pair.getUserId());
+        Vehicle vehicle = vehicleDao.getById(pair.getUserId(), pair.getVehicleId());
+
+        if (rider == null) throw new NotFoundException("Rider not found");
+        if (vehicle == null) throw new NotFoundException("Vehicle not found");
+        if (!rider.getRole().equals(User.STAFF))
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Lead rider must be staff")));
+        if (rider.getRiderInformation() == null)
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Rider information must not be null")));
+        if (!rider.getRiderInformation().getVehicles().contains(vehicle))
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Rider must own the selected vehicle")));
+        if (!vehicle.isChecked())
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Vehicle must be checked by staff")));
+
+        RideOut result = rideoutDao.updateLeadRider(rideOutId, rider.simplify(), vehicle);
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
