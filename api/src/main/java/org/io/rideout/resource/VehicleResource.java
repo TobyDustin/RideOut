@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bson.types.ObjectId;
 import org.io.rideout.BeanValidation;
 import org.io.rideout.authentication.Secured;
-import org.io.rideout.database.UserDao;
 import org.io.rideout.database.VehicleDao;
 import org.io.rideout.model.Vehicle;
 
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 
 public class VehicleResource {
 
-    private UserDao userDao = UserDao.getInstance();
     private VehicleDao vehicleDao = VehicleDao.getInstance();
     private ObjectId userId;
 
@@ -109,7 +107,7 @@ public class VehicleResource {
     )
     public Vehicle updateVehicle(Vehicle vehicle) {
         BeanValidation.validate(vehicle);
-        Vehicle result = vehicleDao.update(userId, vehicle);
+        Vehicle result = vehicleDao.update(vehicle);
 
         if (result != null) return result;
         throw new NotFoundException();

@@ -2,8 +2,8 @@
 
 Master:
 
-[![Build Status](https://travis-ci.com/TobyDustin/RideOut.svg?token=9xckRN24zwbaQpMNtb19&branch=master)](https://travis-ci.com/TobyDustin/RideOut)
+[![CircleCI](https://circleci.com/gh/TobyDustin/RideOut/tree/master.svg?style=svg&circle-token=7b066152465add8155303f224ca0f4c0df2153da)](https://circleci.com/gh/TobyDustin/RideOut/tree/master)
 
 Dev:
 
-[![Build Status](https://travis-ci.com/TobyDustin/RideOut.svg?token=9xckRN24zwbaQpMNtb19&branch=dev)](https://travis-ci.com/TobyDustin/RideOut)
+[![CircleCI](https://circleci.com/gh/TobyDustin/RideOut/tree/dev.svg?style=svg&circle-token=7b066152465add8155303f224ca0f4c0df2153da)](https://circleci.com/gh/TobyDustin/RideOut/tree/dev)

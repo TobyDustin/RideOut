@@ -36,9 +36,11 @@
           <td mat-cell *matCellDef="let vehicle"> {{ vehicle.registration }} </td>
         </ng-container>
 
-        <ng-container matColumnDef="isChecked">
+        <ng-container matColumnDef="checked">
           <th mat-header-cell *matHeaderCellDef> Checked by Staff </th>
-          <td mat-cell *matCellDef="let vehicle"> {{ vehicle.isChecked }} </td>
+          <td mat-cell *matCellDef="let vehicle">
+            <mat-icon *ngIf="vehicle.checked" style="color: #0caf27">check_circle</mat-icon>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

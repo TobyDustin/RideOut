@@ -4,5 +4,5 @@ export class Vehicle {
   model: string;
   power: number;
   registration: string;
-  isChecked: boolean;
+  checked: boolean;
 }

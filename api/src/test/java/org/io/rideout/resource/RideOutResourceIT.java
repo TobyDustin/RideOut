@@ -9,10 +9,12 @@ import org.io.rideout.database.TestDatabase;
 import org.io.rideout.model.RideOut;
 import org.io.rideout.model.StayOut;
 import org.io.rideout.model.TourOut;
+import org.io.rideout.model.UserVehiclePair;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
 import static io.restassured.RestAssured.given;
@@ -110,14 +112,17 @@ public class RideOutResourceIT {
     @Test
     public void testAddUserSuccess() {
         String id = TestDatabase.ADD_RIDER_RIDEOUT.toHexString();
-        String rid = TestDatabase.GET_RIDER.toHexString();
+        UserVehiclePair pair = new UserVehiclePair();
+        pair.setUserId(TestDatabase.GET_RIDER);
+        pair.setVehicleId(TestDatabase.GET_VEHICLE);
 
         given()
                 .header(new Header("Authorization", "Bearer " + token))
+                .contentType(MediaType.APPLICATION_JSON)
                 .pathParam("id", id)
-                .pathParam("rid", rid)
+                .body(pair)
                 .when()
-                .put("api/rideout/{id}/rider/{rid}")
+                .put("api/rideout/{id}/rider/")
                 .then()
                 .assertThat()
                 .statusCode(200);
@@ -126,14 +131,17 @@ public class RideOutResourceIT {
     @Test
     public void testAddUserRideOutNotFound() {
         String id = new ObjectId().toHexString();
-        String rid = TestDatabase.GET_RIDER.toHexString();
+        UserVehiclePair pair = new UserVehiclePair();
+        pair.setUserId(TestDatabase.GET_RIDER);
+        pair.setVehicleId(TestDatabase.GET_VEHICLE);
 
         given()
                 .header(new Header("Authorization", "Bearer " + token))
+                .contentType(MediaType.APPLICATION_JSON)
                 .pathParam("id", id)
-                .pathParam("rid", rid)
+                .body(pair)
                 .when()
-                .put("api/rideout/{id}/rider/{rid}")
+                .put("api/rideout/{id}/rider")
                 .then()
                 .assertThat()
                 .statusCode(404);
@@ -142,14 +150,17 @@ public class RideOutResourceIT {
     @Test
     public void testAddUserNotFound() {
         String id = TestDatabase.ADD_RIDER_RIDEOUT.toHexString();
-        String rid = new ObjectId().toHexString();
+        UserVehiclePair pair = new UserVehiclePair();
+        pair.setUserId(new ObjectId());
+        pair.setVehicleId(new ObjectId());
 
         given()
                 .header(new Header("Authorization", "Bearer " + staffToken))
+                .contentType(MediaType.APPLICATION_JSON)
                 .pathParam("id", id)
-                .pathParam("rid", rid)
+                .body(pair)
                 .when()
-                .put("api/rideout/{id}/rider/{rid}")
+                .put("api/rideout/{id}/rider")
                 .then()
                 .assertThat()
                 .statusCode(404);

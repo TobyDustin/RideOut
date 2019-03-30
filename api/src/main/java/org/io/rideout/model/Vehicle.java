@@ -77,11 +77,20 @@ public class Vehicle {
         this.registration = registration;
     }
 
-    public Boolean getChecked() {
+    public Boolean isChecked() {
         return isChecked;
     }
 
     public void setChecked(Boolean checked) {
         isChecked = checked;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (!Vehicle.class.isAssignableFrom(other.getClass())) return false;
+
+        final Vehicle vehicle = (Vehicle) other;
+        return this.getId().equals(vehicle.getId());
     }
 }

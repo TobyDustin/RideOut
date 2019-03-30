@@ -13,7 +13,9 @@ import org.io.rideout.BeanValidation;
 import org.io.rideout.authentication.Secured;
 import org.io.rideout.database.RideOutDao;
 import org.io.rideout.database.UserDao;
+import org.io.rideout.database.VehicleDao;
 import org.io.rideout.exception.UnauthorizedException;
+import org.io.rideout.exception.ValidationException;
 import org.io.rideout.model.*;
 
 import javax.ws.rs.*;
@@ -32,6 +34,7 @@ public class RideOutResource {
 
     private RideOutDao rideoutDao = RideOutDao.getInstance();
     private UserDao userDao = UserDao.getInstance();
+    private VehicleDao vehicleDao = VehicleDao.getInstance();
 
     // GET all ride outs
     @GET
@@ -51,6 +54,7 @@ public class RideOutResource {
             }
     )
     public ArrayList<RideOut> getAllRideOuts(@BeanParam FilterBean filters) {
+        BeanValidation.validate(filters);
         return rideoutDao.getAll(filters);
     }
 
@@ -102,7 +106,8 @@ public class RideOutResource {
             }
     )
     public ArrayList<RideOut> getRideOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("ride");
+        filters.types = Collections.singletonList(RideOut.RIDE);
+        BeanValidation.validate(filters);
         return rideoutDao.getAll(filters);
     }
 
@@ -122,7 +127,8 @@ public class RideOutResource {
             }
     )
     public ArrayList<StayOut> getStayOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("stay");
+        filters.types = Collections.singletonList(RideOut.STAY);
+        BeanValidation.validate(filters);
         ArrayList<StayOut> result = new ArrayList<>();
 
         for (RideOut ride : rideoutDao.getAll(filters)) {
@@ -148,7 +154,8 @@ public class RideOutResource {
             }
     )
     public ArrayList<TourOut> getTourOuts(@BeanParam FilterBean filters) {
-        filters.types = Collections.singletonList("tour");
+        filters.types = Collections.singletonList(RideOut.TOUR);
+        BeanValidation.validate(filters);
         ArrayList<TourOut> result = new ArrayList<>();
 
         for (RideOut ride : rideoutDao.getAll(filters)) {
@@ -175,6 +182,7 @@ public class RideOutResource {
             }
     )
     public ArrayList<RideOut> search(@Parameter(description = "Search query") @PathParam("name") String name, @BeanParam FilterBean filters) {
+        BeanValidation.validate(filters);
         return rideoutDao.search(name, filters);
     }
 
@@ -297,7 +305,8 @@ public class RideOutResource {
 
     // ADD rider to ride out
     @PUT
-    @Path("{rideOutId}/rider/{riderId}")
+    @Path("{rideOutId}/rider")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
             summary = "Add rider to RideOut",
@@ -316,22 +325,34 @@ public class RideOutResource {
                     )),
                     @ApiResponse(responseCode = "401", description = "User unauthorized"),
                     @ApiResponse(responseCode = "404", description = "Rider or RideOut not found")
-            }
+            },
+            requestBody = @RequestBody(description = "User and Vehicle IDs", content = @Content(
+                    schema = @Schema(
+                            implementation = UserVehiclePair.class
+                    )
+            ))
     )
     public RideOut addRider(@Parameter(description = "RideOut ID", schema = @Schema(type = "string")) @PathParam("rideOutId") ObjectId rideOutId,
-                            @Parameter(description = "Rider ID", schema = @Schema(type = "string")) @PathParam("riderId") ObjectId riderId,
+                            UserVehiclePair pair,
                             @Context SecurityContext securityContext) {
         if (!securityContext.isUserInRole(User.STAFF)) {
             if (securityContext.isUserInRole(User.RIDER) &&
-                    !riderId.equals(new ObjectId(securityContext.getUserPrincipal().getName()))) {
+                    !pair.getUserId().equals(new ObjectId(securityContext.getUserPrincipal().getName()))) {
                 throw new UnauthorizedException();
             }
         }
 
-        User rider = userDao.getById(riderId);
-        if (rider == null) throw new NotFoundException("Rider not found");
+        User rider = userDao.getById(pair.getUserId());
+        Vehicle vehicle = vehicleDao.getById(pair.getUserId(), pair.getVehicleId());
 
-        RideOut result = rideoutDao.addRider(rideOutId, rider.simplify());
+        if (rider == null) throw new NotFoundException("Rider not found");
+        if (vehicle == null) throw new NotFoundException("Vehicle not found");
+        if (rider.getRiderInformation() == null)
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Rider information must not be null")));
+        if (!rider.getRiderInformation().getVehicles().contains(vehicle))
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Rider must own the selected vehicle")));
+
+        RideOut result = rideoutDao.addRider(rideOutId, rider.simplify(), vehicle);
 
         if (result != null) return result;
         throw new NotFoundException("Rideout not found");
