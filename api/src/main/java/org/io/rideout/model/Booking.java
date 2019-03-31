@@ -63,4 +63,12 @@ public class Booking {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
