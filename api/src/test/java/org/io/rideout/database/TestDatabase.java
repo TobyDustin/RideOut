@@ -47,6 +47,10 @@ public class TestDatabase {
     public static final ObjectId BOOKING_2 = new ObjectId("5c6ed0717f47612dd4cd1b11");
     public static final ObjectId BOOKING_3 = new ObjectId("5c6ed0717f47612dd4cd1b12");
 
+    public static final ObjectId GET_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734943");
+    public static final ObjectId PUT_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734944");
+    public static final ObjectId DELETE_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734945");
+
     private TestDatabase() { }
 
     public static void setUp() {
@@ -207,6 +211,18 @@ public class TestDatabase {
                 new Date(100)
 
         );
+
+        if (id.equals(GET_RIDEOUT)) {
+            dummy.getCheckpoints().add(new Checkpoint(
+                GET_CHECKPOINT, "Get", 10.4, 45d, "Get Checkpoint"
+            ));
+            dummy.getCheckpoints().add(new Checkpoint(
+                    PUT_CHECKPOINT, "Put", 10.4, 45d, "Put Checkpoint"
+            ));
+            dummy.getCheckpoints().add(new Checkpoint(
+                    DELETE_CHECKPOINT, "Delete", 10.4, 45d, "Delete Checkpoint"
+            ));
+        }
 
         return dummy;
     }

@@ -37,6 +37,11 @@ public class RideOutResource {
     private UserDao userDao = UserDao.getInstance();
     private VehicleDao vehicleDao = VehicleDao.getInstance();
 
+    @Path("{id}/checkpoint")
+    public CheckpointResource getCheckpointResource(@Parameter(description = "Rideout ID") @PathParam("id") ObjectId id) {
+        return new CheckpointResource(id);
+    }
+
     // GET all ride outs
     @GET
     @Produces(MediaType.APPLICATION_JSON)

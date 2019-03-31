@@ -48,13 +48,7 @@ public class CheckpointDao {
     public Checkpoint insert(ObjectId rideoutId, Checkpoint checkpoint) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", rideoutId), addToSet("checkpoints", combine(
-                set("_id", checkpoint.getId()),
-                set("name", checkpoint.getName()),
-                set("lat", checkpoint.getLat()),
-                set("lon", checkpoint.getLon()),
-                set("description", checkpoint.getDescription())
-        )));
+        UpdateResult result = collection.updateOne(eq("_id", rideoutId), addToSet("checkpoints", checkpoint));
         return result.getModifiedCount() == 1 ? getById(rideoutId, checkpoint.getId()) : null;
     }
 
