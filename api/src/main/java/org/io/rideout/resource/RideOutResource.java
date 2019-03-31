@@ -42,6 +42,11 @@ public class RideOutResource {
         return new CheckpointResource(id);
     }
 
+    @Path("{id}/booking")
+    public BookingResource getBookingResource(@Parameter(description = "Rideout ID") @PathParam("id") ObjectId id) {
+        return new BookingResource(id);
+    }
+
     // GET all ride outs
     @GET
     @Produces(MediaType.APPLICATION_JSON)

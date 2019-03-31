@@ -23,6 +23,8 @@ public class Booking {
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     @Schema(type = "string")
     private ObjectId id;
+
+    @NotNull
     private String name;
     private String reference;
 
@@ -32,7 +34,7 @@ public class Booking {
 
     public Booking() {}
 
-    public Booking(ObjectId id, String name, String reference) {
+    public Booking(ObjectId id, String name, String reference, String type) {
         super();
 
         this.id = id;

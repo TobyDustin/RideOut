@@ -14,6 +14,7 @@ import org.io.rideout.PasswordManager;
 import org.io.rideout.model.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -50,6 +51,10 @@ public class TestDatabase {
     public static final ObjectId GET_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734943");
     public static final ObjectId PUT_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734944");
     public static final ObjectId DELETE_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734945");
+
+    public static final ObjectId GET_BOOKING = new ObjectId("5ca0a6ae4b2a4a37b017c6a5");
+    public static final ObjectId PUT_BOOKING = new ObjectId("5ca0a6ae4b2a4a37b017c6a6");
+    public static final ObjectId DELETE_BOOKING = new ObjectId("5ca0a6ae4b2a4a37b017c6a7");
 
     private TestDatabase() { }
 
@@ -222,6 +227,10 @@ public class TestDatabase {
             dummy.getCheckpoints().add(new Checkpoint(
                     DELETE_CHECKPOINT, "Delete", 10.4, 45d, "Delete Checkpoint"
             ));
+
+            dummy.getRestaurantList().addAll(Arrays.asList(
+                    getDummyBooking(GET_BOOKING), getDummyBooking(PUT_BOOKING), getDummyBooking(DELETE_BOOKING))
+            );
         }
 
         return dummy;
@@ -238,8 +247,8 @@ public class TestDatabase {
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(200)
         );
-        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE");
-        Booking restaurant = new Booking(BOOKING_2, "KFC", "");
+        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE", Booking.ACCOMMODATION);
+        Booking restaurant = new Booking(BOOKING_2, "KFC", "", Booking.RESTAURANT);
         dummy.addAccommodation(accommodation);
         dummy.addRestaurant(restaurant);
         return dummy;
@@ -256,12 +265,16 @@ public class TestDatabase {
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(300)
         );
-        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE");
-        Booking restaurant = new Booking(BOOKING_2, "KFC", "");
-        Booking travel = new Booking(BOOKING_3, "Condor Ferries", "QWERTY");
+        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE", Booking.ACCOMMODATION);
+        Booking restaurant = new Booking(BOOKING_2, "KFC", "", Booking.RESTAURANT);
+        Booking travel = new Booking(BOOKING_3, "Condor Ferries", "QWERTY", Booking.TRAVEL);
         dummy.addAccommodation(accommodation);
         dummy.addRestaurant(restaurant);
         dummy.addTravelBooking(travel);
         return dummy;
+    }
+
+    private static Booking getDummyBooking(ObjectId id) {
+        return new Booking(id, "Test", "Test Booking", Booking.RESTAURANT);
     }
 }

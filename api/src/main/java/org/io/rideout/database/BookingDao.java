@@ -33,13 +33,13 @@ public class BookingDao {
 
         if (rideout == null) return null;
 
-        if (rideout.getClass().isAssignableFrom(TourOut.class)) {
+        if (rideout instanceof TourOut) {
             TourOut tour = (TourOut) rideout;
 
             result.addAll(tour.getRestaurantList());
             result.addAll(tour.getAccommodationList());
             result.addAll(tour.getTravelBookings());
-        } else if (rideout.getClass().isAssignableFrom(StayOut.class)) {
+        } else if (rideout instanceof StayOut) {
             StayOut stay = (StayOut) rideout;
 
             result.addAll(stay.getRestaurantList());
@@ -74,14 +74,14 @@ public class BookingDao {
                 break;
 
             case Booking.ACCOMMODATION:
-                if (rideout.getClass().isAssignableFrom(StayOut.class)) {
+                if (rideout instanceof StayOut) {
                     StayOut stay = (StayOut) rideout;
                     result.addAll(stay.getAccommodationList());
                 }
                 break;
 
             case Booking.TRAVEL:
-                if (rideout.getClass().isAssignableFrom(TourOut.class)) {
+                if (rideout instanceof TourOut) {
                     TourOut tour = (TourOut) rideout;
                     result.addAll(tour.getTravelBookings());
                 }
@@ -94,12 +94,7 @@ public class BookingDao {
     public Booking insert(ObjectId rideoutId, Booking booking) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        UpdateResult result = collection.updateOne(eq("_id", rideoutId), addToSet(getArrayName(booking.getType()), combine(
-                set("_id", booking.getId()),
-                set("type", booking.getType()),
-                set("name", booking.getName()),
-                set("reference", booking.getReference())
-        )));
+        UpdateResult result = collection.updateOne(eq("_id", rideoutId), addToSet(getArrayName(booking.getType()), booking));
         return result.getModifiedCount() == 1 ? getById(rideoutId, booking.getId()) : null;
     }
 
@@ -107,7 +102,7 @@ public class BookingDao {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
         UpdateResult result = collection.updateOne(and(
-                eq("_id", rideoutId), eq(getArrayName(booking.getType() + "._id"), booking.getId())
+                eq("_id", rideoutId), eq(getArrayName(booking.getType()) + "._id", booking.getId())
         ), getUpdateBson(booking));
         return result.getModifiedCount() == 1 ? getById(rideoutId, booking.getId()) : null;
     }
