@@ -5,6 +5,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.io.rideout.exception.ValidationException;
 import org.io.rideout.model.RiderInformation;
 import org.io.rideout.model.User;
 
@@ -62,6 +63,11 @@ public class UserDao {
 
     public User insert(User user) {
         MongoCollection<User> collection = Database.getInstance().getCollection(Database.USER_COLLECTION, User.class);
+
+        User test = getByUsername(user.getUsername());
+        if (test != null) {
+            throw new ValidationException(new ArrayList<>(Collections.singletonList("Username is already taken")));
+        }
 
         ObjectId id = user.getId();
         user.setUsername(user.getUsername().toLowerCase());
