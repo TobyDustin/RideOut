@@ -14,11 +14,11 @@ import org.io.rideout.PasswordManager;
 import org.io.rideout.model.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.addToSet;
-import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.*;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -47,6 +47,14 @@ public class TestDatabase {
     public static final ObjectId BOOKING_1 = new ObjectId("5c6ed0717f47612dd4cd1b10");
     public static final ObjectId BOOKING_2 = new ObjectId("5c6ed0717f47612dd4cd1b11");
     public static final ObjectId BOOKING_3 = new ObjectId("5c6ed0717f47612dd4cd1b12");
+
+    public static final ObjectId GET_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734943");
+    public static final ObjectId PUT_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734944");
+    public static final ObjectId DELETE_CHECKPOINT = new ObjectId("5ca099a58b3f9211ab734945");
+
+    public static final ObjectId GET_BOOKING = new ObjectId("5ca0a6ae4b2a4a37b017c6a5");
+    public static final ObjectId PUT_BOOKING = new ObjectId("5ca0a6ae4b2a4a37b017c6a6");
+    public static final ObjectId DELETE_BOOKING = new ObjectId("5ca0a6ae4b2a4a37b017c6a7");
 
     private TestDatabase() { }
 
@@ -79,6 +87,8 @@ public class TestDatabase {
         insertDummyUsers(database.getCollection(Database.USER_COLLECTION, User.class));
         insertDummyRideOuts(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class));
         linkRidersToVehicles(database.getCollection(Database.USER_COLLECTION, User.class));
+        addLeadToRideout(database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class), GET_STAFF, GET_VEHICLE,
+                GET_RIDEOUT, GET_STAYOUT, GET_TOUROUT, ADD_RIDER_RIDEOUT, REMOVE_RIDER_RIDEOUT, PUT_RIDEOUT, DELETE_RIDEOUT);
 
         linkRiderToRideout(
                 database.getCollection(Database.RIDEOUT_COLLECTION, RideOut.class),
@@ -139,6 +149,15 @@ public class TestDatabase {
         );
     }
 
+    private static void addLeadToRideout(MongoCollection<RideOut> collection, ObjectId uid, ObjectId vid, ObjectId... rids) {
+        for (ObjectId rid : rids) {
+            collection.updateOne(eq("_id", rid), combine(
+                    set("leadRider.staff", uid),
+                    set("leadRider.vehicle", vid)
+            ));
+        }
+    }
+
     private static User getDummyRider(ObjectId uid) {
         User dummy = new User(
                 uid,
@@ -160,13 +179,15 @@ public class TestDatabase {
     }
 
     private static Vehicle getDummyVehicle(ObjectId vehicleId) {
-        return new Vehicle(
+        Vehicle vehicle = new Vehicle(
                 vehicleId,
           "Honda",
                 vehicleId.equals(PUT_VEHICLE) ? "Bear" : "Monkey",
                 125,
                 "REG123"
         );
+        vehicle.setChecked(true);
+        return vehicle;
     }
 
     private static User getDummyStaff(ObjectId id) {
@@ -190,11 +211,27 @@ public class TestDatabase {
                 new Date(100),
                 new Date(100),
                 id.equals(PUT_RIDEOUT) ? 30 : 15,
-                "54321",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(100)
 
         );
+
+        if (id.equals(GET_RIDEOUT)) {
+            dummy.getCheckpoints().add(new Checkpoint(
+                GET_CHECKPOINT, "Get", 10.4, 45d, "Get Checkpoint"
+            ));
+            dummy.getCheckpoints().add(new Checkpoint(
+                    PUT_CHECKPOINT, "Put", 10.4, 45d, "Put Checkpoint"
+            ));
+            dummy.getCheckpoints().add(new Checkpoint(
+                    DELETE_CHECKPOINT, "Delete", 10.4, 45d, "Delete Checkpoint"
+            ));
+
+            dummy.getRestaurantList().addAll(Arrays.asList(
+                    getDummyBooking(GET_BOOKING), getDummyBooking(PUT_BOOKING), getDummyBooking(DELETE_BOOKING))
+            );
+        }
 
         return dummy;
     }
@@ -206,12 +243,12 @@ public class TestDatabase {
                 new Date(200),
                 new Date(200),
                 10,
-                "1234",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(200)
         );
-        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE");
-        Booking restaurant = new Booking(BOOKING_2, "KFC", "");
+        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE", Booking.ACCOMMODATION);
+        Booking restaurant = new Booking(BOOKING_2, "KFC", "", Booking.RESTAURANT);
         dummy.addAccommodation(accommodation);
         dummy.addRestaurant(restaurant);
         return dummy;
@@ -224,16 +261,20 @@ public class TestDatabase {
                 new Date(300),
                 new Date(300),
                 5,
-                "2345",
+                null,
                 "https://www.walkhighlands.co.uk/skye/profiles/marsco.gpx",
                 new Date(300)
         );
-        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE");
-        Booking restaurant = new Booking(BOOKING_2, "KFC", "");
-        Booking travel = new Booking(BOOKING_3, "Condor Ferries", "QWERTY");
+        Booking accommodation = new Booking(BOOKING_1, "Marriot Hotel", "ABCDE", Booking.ACCOMMODATION);
+        Booking restaurant = new Booking(BOOKING_2, "KFC", "", Booking.RESTAURANT);
+        Booking travel = new Booking(BOOKING_3, "Condor Ferries", "QWERTY", Booking.TRAVEL);
         dummy.addAccommodation(accommodation);
         dummy.addRestaurant(restaurant);
         dummy.addTravelBooking(travel);
         return dummy;
+    }
+
+    private static Booking getDummyBooking(ObjectId id) {
+        return new Booking(id, "Test", "Test Booking", Booking.RESTAURANT);
     }
 }

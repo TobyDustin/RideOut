@@ -37,19 +37,21 @@ public class RideOut {
     @NotNull
     @Length(min = 5)
     private String name;
+    private String description;
     private Date dateStart;
     private Date dateEnd;
     private int maxRiders;
-    private String leadRider;
+    private SimpleUser leadRider;
     private String route;
     private boolean isPublished = false;
     private Date minCancellationDate;
     private ArrayList<Checkpoint> checkpoints = new ArrayList<>();
     private ArrayList<SimpleUser> riders = new ArrayList<>();
+    private ArrayList<Booking> restaurantList = new ArrayList<>();
 
     public RideOut() {}
 
-    public RideOut(ObjectId id,String name,Date dateStart,Date dateEnd,int maxRiders,String leadRider, String route, Date minCancellationDate) {
+    public RideOut(ObjectId id,String name,Date dateStart,Date dateEnd,int maxRiders,SimpleUser leadRider, String route, Date minCancellationDate) {
         this.id = id;
         this.name = name;
         this.dateStart = dateStart;
@@ -104,11 +106,11 @@ public class RideOut {
         this.maxRiders = maxRiders;
     }
 
-    public String getLeadRider() {
+    public SimpleUser getLeadRider() {
         return leadRider;
     }
 
-    public void setLeadRider(String leadRider) {
+    public void setLeadRider(SimpleUser leadRider) {
         this.leadRider = leadRider;
     }
 
@@ -150,5 +152,17 @@ public class RideOut {
 
     public void setRiders(ArrayList<SimpleUser> riders) {
         this.riders = riders;
+    }
+
+    public ArrayList<Booking> getRestaurantList() {
+        return restaurantList;
+    }
+
+    public void setRestaurantList(ArrayList<Booking> restaurantList) {
+        this.restaurantList = restaurantList;
+    }
+
+    public void addRestaurant(Booking restaurant) {
+        this.restaurantList.add(restaurant);
     }
 }

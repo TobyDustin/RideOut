@@ -51,6 +51,7 @@ public class RideOutDao {
         ObjectId id = rideout.getId();
         rideout.setId(id);
         rideout.getRiders().clear();
+        rideout.setLeadRider(null);
 
         collection.insertOne(rideout);
         return getById(id);
@@ -67,7 +68,8 @@ public class RideOutDao {
     public RideOut delete(ObjectId id) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
 
-        return collection.findOneAndDelete(eq("_id", id));
+        RideOut rideout = getById(id);
+        return collection.deleteOne(eq("_id", id)).getDeletedCount() == 1 ? rideout : null;
     }
 
     public RideOut addRider(ObjectId id, SimpleUser rider, Vehicle vehicle) {
@@ -78,6 +80,19 @@ public class RideOutDao {
                 addToSet("riders", new Document()
                         .append("rider", rider.getId())
                         .append("vehicle", vehicle.getId())
+                )
+        );
+        return result.getModifiedCount() == 1 ? getById(id) : null;
+    }
+
+    public RideOut updateLeadRider(ObjectId id, SimpleUser lead, Vehicle vehicle) {
+        MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
+
+        UpdateResult result = collection.updateOne(
+                eq("_id", id),
+                combine(
+                        set("leadRider.staff", lead.getId()),
+                        set("leadRider.vehicle", vehicle.getId())
                 )
         );
         return result.getModifiedCount() == 1 ? getById(id) : null;
@@ -105,7 +120,6 @@ public class RideOutDao {
                 set("dateStart", rideout.getDateStart()),
                 set("dateEnd", rideout.getDateEnd()),
                 set("maxRiders", rideout.getMaxRiders()),
-                set("leadRider", rideout.getLeadRider()),
                 set("route", rideout.getRoute()),
                 set("isPublished", rideout.isPublished()),
                 set("minCancellationDate", rideout.getMinCancellationDate())
@@ -135,6 +149,12 @@ public class RideOutDao {
         unwindOptions.preserveNullAndEmptyArrays(true);
 
         pipe.addAll(asList(
+                addFields(new Field<>("leadVehicle", "$leadRider.vehicle")),
+                lookup(Database.USER_COLLECTION, "leadRider.staff", "_id", "leadRider"),
+                unwind("$leadRider", unwindOptions),
+                lookup(Database.VEHICLE_COLLECTION, "leadVehicle", "_id", "leadRider.vehicle"),
+                unwind("$leadRider.vehicle", unwindOptions),
+                project(exclude("leadRider.riderInformation", "leadRider.password")),
                 unwind("$riders", unwindOptions),
                 addFields(new Field<>("vehicle", "$riders.vehicle")),
                 lookup("users", "riders.rider", "_id", "rider"),
@@ -143,7 +163,7 @@ public class RideOutDao {
                 lookup("vehicles", "vehicle", "_id", "vehicle"),
                 unwind("$vehicle", unwindOptions),
                 addFields(new Field<>("rider.vehicle", "$vehicle")),
-                project(exclude("vehicle")),
+                project(exclude("vehicle", "leadVehicle")),
                 group("$_id",
                         first("_t", "$_t"),
                         first("name", "$name"),

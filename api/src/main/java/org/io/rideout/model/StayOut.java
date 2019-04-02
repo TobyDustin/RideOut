@@ -16,13 +16,12 @@ import java.util.Date;
 public class StayOut extends RideOut {
 
     private ArrayList<Booking> accommodationList = new ArrayList<>();
-    private ArrayList<Booking> restaurantList = new ArrayList<>();
 
     public StayOut() {
         super();
     }
 
-    public StayOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, String leadRider, String route, Date minCancellationDate) {
+    public StayOut(ObjectId id, String name, Date dateStart, Date dateEnd, int maxRiders, SimpleUser leadRider, String route, Date minCancellationDate) {
         super(id, name, dateStart, dateEnd, maxRiders, leadRider, route, minCancellationDate);
     }
 
@@ -32,18 +31,6 @@ public class StayOut extends RideOut {
 
     public void setAccommodationList(ArrayList<Booking> accommodationList) {
         this.accommodationList = accommodationList;
-    }
-
-    public ArrayList<Booking> getRestaurantList() {
-        return restaurantList;
-    }
-
-    public void setRestaurantList(ArrayList<Booking> restaurantList) {
-        this.restaurantList = restaurantList;
-    }
-
-    public void addRestaurant(Booking restaurant) {
-        this.restaurantList.add(restaurant);
     }
 
     public void addAccommodation(Booking accommodation) {

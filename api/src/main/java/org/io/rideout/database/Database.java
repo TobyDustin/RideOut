@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-public class Database {
+class Database {
 
     final static String RIDEOUT_DATABASE = "rideout";
     final static String TEST_DATABASE = "test";
@@ -28,7 +28,7 @@ public class Database {
     private static Database ourInstance = new Database();
     private MongoDatabase database;
 
-    public static Database getInstance() {
+    static Database getInstance() {
         return ourInstance;
     }
 

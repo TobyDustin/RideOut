@@ -5,9 +5,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ValidationExceptionMapper implements ExceptionMapper<AppValidationException> {
+public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {
     @Override
-    public Response toResponse(AppValidationException e) {
+    public Response toResponse(ValidationException e) {
         return Response.status(400).entity(e.getErrors()).build();
     }
 }

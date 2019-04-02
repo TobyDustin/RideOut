@@ -1,6 +1,6 @@
 package org.io.rideout;
 
-import org.io.rideout.exception.AppValidationException;
+import org.io.rideout.exception.ValidationException;
 import org.io.rideout.model.FilterBean;
 import org.io.rideout.model.RideOut;
 import org.io.rideout.model.User;
@@ -34,7 +34,7 @@ public class BeanValidation {
         }
 
         if (!errors.isEmpty()) {
-            throw new AppValidationException(errors);
+            throw new ValidationException(errors);
         }
     }
 

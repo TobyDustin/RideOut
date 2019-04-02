@@ -9,8 +9,13 @@ import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class Booking {
+
+    public final static String RESTAURANT = "restaurant";
+    public final static String ACCOMMODATION = "accommodation";
+    public final static String TRAVEL = "travel";
 
     @BsonId
     @NotNull
@@ -18,12 +23,18 @@ public class Booking {
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     @Schema(type = "string")
     private ObjectId id;
+
+    @NotNull
     private String name;
     private String reference;
 
+    @NotNull
+    @Pattern(regexp = (RESTAURANT + "|" + ACCOMMODATION + "|" + TRAVEL))
+    private String type = RESTAURANT;
+
     public Booking() {}
 
-    public Booking(ObjectId id, String name, String reference) {
+    public Booking(ObjectId id, String name, String reference, String type) {
         super();
 
         this.id = id;
@@ -53,5 +64,13 @@ public class Booking {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

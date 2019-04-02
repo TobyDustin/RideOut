@@ -8,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.io.rideout.helpers.ObjectIdJsonDeserializer;
 import org.io.rideout.helpers.ObjectIdJsonSerializer;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Checkpoint {
@@ -18,8 +20,19 @@ public class Checkpoint {
     @JsonDeserialize(using = ObjectIdJsonDeserializer.class)
     @Schema(type = "string")
     private ObjectId id;
+
+    @NotNull
     private String name;
+
+    @NotNull
+    @Max(value = 90)
+    @Min(value = -90)
     private double lat;
+
+
+    @NotNull
+    @Max(value = 180)
+    @Min(value = -180)
     private double lon;
     private String description;
 
