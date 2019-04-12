@@ -99,7 +99,7 @@
         id="lead_rider"
         required
         [(ngModel)]="rideOut.leadRider">
-        <mat-option *ngFor="let user of leadRiders" [value]="user.id">
+        <mat-option *ngFor="let user of leadRiders" [value]="user">
           {{ user.username }}
         </mat-option>
       </mat-select>
