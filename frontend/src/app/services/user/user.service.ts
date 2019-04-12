@@ -47,4 +47,8 @@ export class UserService {
     return this.http.post(`${environment.api}/user/${id}/riderinfo`, riderInfo);
   }
 
+  getAllUsers() : Observable<User[]> {
+    return this.http.get<User[]>(`${environment.api}/user`);
+  }
+
 }

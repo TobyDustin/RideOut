@@ -23,6 +23,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { AddRiderInfoComponent } from './components/profile/add-rider-info/add-rider-info.component';
 import { AdminRideoutsComponent } from './components/admin/admin-rideouts/admin-rideouts.component';
 import { AdminNavComponent } from './components/admin/admin-nav/admin-nav.component';
+import { AddRideoutComponent } from './components/admin/admin-rideouts/add-rideout/add-rideout.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -43,7 +44,8 @@ export function tokenGetter() {
     ProfileComponent,
     AddRiderInfoComponent,
     AdminRideoutsComponent,
-    AdminNavComponent
+    AdminNavComponent,
+    AddRideoutComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +64,8 @@ export function tokenGetter() {
   ],
   entryComponents: [
     AddVehicleComponent,
-    AddRiderInfoComponent
+    AddRiderInfoComponent,
+    AddRideoutComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

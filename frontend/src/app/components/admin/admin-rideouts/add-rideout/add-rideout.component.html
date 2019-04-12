@@ -1,0 +1,312 @@
+<h2 mat-dialog-title>Add Rideout</h2>
+<div mat-dialog-content>
+<!--  TYPE -->
+  <p>
+    <mat-form-field
+      appearance="outline">
+      <mat-label>
+        <label for="type">
+          Type
+        </label>
+      </mat-label>
+      <mat-select
+        id="type"
+        [(ngModel)]="rideOut.rideoutType"
+        required>
+        <mat-option *ngFor="let type of types" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </p>
+<!-- NAME -->
+  <p>
+    <mat-form-field
+      appearance="outline">
+      <mat-label>
+        <label for="name">
+          Name
+        </label>
+      </mat-label>
+      <input
+        id="name"
+        matInput
+        required
+        [(ngModel)]="rideOut.name">
+    </mat-form-field>
+  </p>
+<!-- START -->
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="start">
+          Start
+        </label>
+      </mat-label>
+      <input
+        id="start"
+        matInput
+        [matDatepicker]="startDatePicker"
+        required
+        [(ngModel)]="rideOut.dateStart">
+      <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #startDatePicker></mat-datepicker>
+    </mat-form-field>
+  </p>
+<!--  END -->
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="end">
+          End
+        </label>
+      </mat-label>
+      <input
+        id="end"
+        matInput
+        [matDatepicker]="endDatePicker"
+        required
+        [(ngModel)]="rideOut.dateEnd">
+      <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #endDatePicker></mat-datepicker>
+    </mat-form-field>
+  </p>
+<!--  MAX RIDERS -->
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="max_riders">
+          Rider Spaces
+        </label>
+      </mat-label>
+      <input
+        id="max_riders"
+        matInput
+        required
+        type="number"
+        [(ngModel)]="rideOut.maxRiders">
+    </mat-form-field>
+  </p>
+<!--  LEAD RIDER -->
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="lead_rider">
+          Lead Rider
+        </label>
+      </mat-label>
+      <mat-select
+        id="lead_rider"
+        required
+        [(ngModel)]="rideOut.leadRider">
+        <mat-option *ngFor="let user of leadRiders" [value]="user.id">
+          {{ user.username }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </p>
+<!--  ROUTE -->
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="route">
+          Route (Google MyMaps ID)
+        </label>
+      </mat-label>
+      <input
+        id="route"
+        matInput
+        [(ngModel)]="rideOut.route">
+    </mat-form-field>
+  </p>
+<!--  CHECKPOINTS -->
+  <p>Checkpoints</p>
+  <div *ngFor="let checkpoint of rideOut.checkpoints">
+    {{ checkpoint.name }} {{ checkpoint.lat }} {{ checkpoint.lon }}
+  </div>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="checkpoint-name">
+          Name
+        </label>
+      </mat-label>
+      <input
+        id="checkpoint-name"
+        matInput
+        [(ngModel)]="checkpoint.name">
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="checkpoint-lat">
+          Latitude
+        </label>
+      </mat-label>
+      <input
+        id="checkpoint-lat"
+        matInput
+        [(ngModel)]="checkpoint.lat">
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="checkpoint-lon">
+          Longitude
+        </label>
+      </mat-label>
+      <input
+        id="checkpoint-lon"
+        matInput
+        [(ngModel)]="checkpoint.lon">
+    </mat-form-field>
+  </p>
+  <p>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addCheckpoint()">
+      Add
+    </button>
+  </p>
+<!--  RESTAURANT BOOKINGS -->
+  <p>Restaurant Bookings</p>
+  <div *ngFor="let booking of rideOut.restaurantBookings">
+    {{ booking.name }} {{ booking.reference }}
+  </div>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="r-booking-name">
+          Name
+        </label>
+      </mat-label>
+      <input
+        id="r-booking-name"
+        matInput
+        [(ngModel)]="restaurant.name">
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        <label for="r-booking-ref">
+          Booking Reference
+        </label>
+      </mat-label>
+      <input
+        id="r-booking-ref"
+        matInput
+        [(ngModel)]="restaurant.reference">
+    </mat-form-field>
+  </p>
+  <p>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addRestaurant()">
+      Add
+    </button>
+  </p>
+<!--  ACCOMMODATION BOOKINGS -->
+  <div *ngIf="rideOut.rideoutType == 'Stay' || rideOut.rideoutType == 'Tour'">
+    <p>Accommodation Bookings</p>
+    <div *ngFor="let booking of rideOut.accommodationBookings">
+      {{ booking.name }} {{ booking.reference }}
+    </div>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>
+          <label for="a-booking-name">
+            Name
+          </label>
+        </mat-label>
+        <input
+          id="a-booking-name"
+          matInput
+          [(ngModel)]="accommodation.name">
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>
+          <label for="a-booking-ref">
+            Booking Reference
+          </label>
+        </mat-label>
+        <input
+          id="a-booking-ref"
+          matInput
+          [(ngModel)]="accommodation.reference">
+      </mat-form-field>
+    </p>
+    <p>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="addAccommodation()">
+        Add
+      </button>
+    </p>
+  </div>
+<!--  TRAVEL BOOKINGS -->
+  <div *ngIf="rideOut.rideoutType == 'Tour'">
+    <p>Travel Bookings</p>
+    <div *ngFor="let booking of rideOut.travelBookings">
+      {{ booking.name }} {{ booking.reference }}
+    </div>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>
+          <label for="t-booking-name">
+            Name
+          </label>
+        </mat-label>
+        <input
+          id="t-booking-name"
+          matInput
+          [(ngModel)]="travel.name">
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>
+          <label for="t-booking-ref">
+            Booking Reference
+          </label>
+        </mat-label>
+        <input
+          id="t-booking-ref"
+          matInput
+          [(ngModel)]="travel.reference">
+      </mat-form-field>
+    </p>
+    <p>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="addTravel()">
+        Add
+      </button>
+    </p>
+  </div>
+</div>
+<div
+  mat-dialog-actions
+  class="flex-container">
+  <button
+    mat-raised-button
+    color="warn"
+    (click)="close()">
+    Cancel
+  </button>
+  <div class="spacer"></div>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="createRideOut()">
+    Add
+  </button>
+</div>
