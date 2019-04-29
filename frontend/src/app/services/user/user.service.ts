@@ -12,7 +12,10 @@ import {RiderInformation} from "../../models/rider";
 })
 export class UserService {
 
-  constructor(private http: HttpClient, private auth: AuthService) { }
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService
+  ) { }
 
   register(user: User) {
     return this.http.post(`${environment.api}/user`,
@@ -45,6 +48,21 @@ export class UserService {
   updateRiderInfo(riderInfo: RiderInformation) {
     const id = this.auth.getId();
     return this.http.post(`${environment.api}/user/${id}/riderinfo`, riderInfo);
+  }
+
+  getAllUsers() : Observable<User[]> {
+    return this.http.get<User[]>(`${environment.api}/user`);
+  }
+
+
+  joinRideOut(rideOutID: string, vehicleID: string) {
+    const userID = this.auth.getId();
+    return this.http.put(`${environment.api}/rideout/${rideOutID}/rider`,
+      {
+        'userId': userID,
+        'vehicleId': vehicleID
+      }
+    );
   }
 
 }

@@ -1,4 +1,4 @@
-.rideouts {
+.users {
   text-align: center;
   padding: 15px;
 }
@@ -6,9 +6,4 @@
 .table {
   text-align: start;
   width: 100%;
-}
-
-.control {
-  text-align: end;
-  margin: 5px;
 }

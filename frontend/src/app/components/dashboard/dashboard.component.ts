@@ -11,7 +11,7 @@ import {Checkpoint} from "../../models/checkpoint";
 export class DashboardComponent implements OnInit {
 
   public rideOuts: RideOut[];
-  public search: String = "";
+  public search: string = "";
   public selectedFilters = [];
   public filters = [
     {

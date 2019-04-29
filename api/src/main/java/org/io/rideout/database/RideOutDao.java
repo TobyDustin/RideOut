@@ -35,13 +35,25 @@ public class RideOutDao {
 
     public RideOut getById(ObjectId id) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
-        return collection.aggregate(getPipe(id)).first();
+        RideOut result = collection.aggregate(getPipe(id)).first();
+
+        if (result != null && result.getRiders().size() == 1 && result.getRiders().get(0).getId() == null) {
+            result.setRiders(new ArrayList<>());
+        }
+
+        return result;
     }
 
     public ArrayList<RideOut> search(String name, FilterBean filters) {
         MongoCollection<RideOut> collection = Database.getInstance().getCollection(Database.RIDEOUT_COLLECTION, RideOut.class);
         ArrayList<RideOut> result = new ArrayList<>();
         collection.aggregate(getPipe(name, filters)).forEach((Consumer<RideOut>) result::add);
+
+        for (RideOut ride : result) {
+            if (ride.getRiders().size() == 1 && ride.getRiders().get(0).getId() == null) {
+                ride.setRiders(new ArrayList<>());
+            }
+        }
 
         return result;
     }

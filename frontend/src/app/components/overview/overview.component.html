@@ -27,7 +27,7 @@
           <div class="mat-subheading-1"> End: {{ rideOut.dateEnd | date }} </div>
         </div>
         <div class="flex-container">
-          <div class="mat-subheading-1"> Lead Rider: {{ rideOut.leadRider }} </div>
+          <div class="mat-subheading-1"> Lead Rider: {{ rideOut.leadRider.username }} </div>
           <div class="spacer"></div>
           <div class="mat-subheading-1"> Checkpoints: {{ rideOut.checkpoints.length }} </div>
         </div>
@@ -36,7 +36,8 @@
           <div class="spacer"></div>
           <button
             mat-flat-button
-            color="primary">
+            color="primary"
+            (click)="openDialog()">
             Join
           </button>
         </div>
