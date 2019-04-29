@@ -52,6 +52,8 @@ export class UserService {
 
   getAllUsers() : Observable<User[]> {
     return this.http.get<User[]>(`${environment.api}/user`);
+  }
+
   joinRideOut(rideOutID: string, vehicleID: string) {
     const userID = this.auth.getId();
     return this.http.put(`${environment.api}/rideout/${rideOutID}/rider`,
