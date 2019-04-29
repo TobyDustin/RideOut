@@ -11,6 +11,7 @@ import {VehicleComponent} from "./components/vehicle/vehicle.component";
 import {ProfileComponent} from "./components/profile/profile.component";
 import {AdminGuard} from "./guard/admin.guard";
 import {AdminRideoutsComponent} from "./components/admin/admin-rideouts/admin-rideouts.component";
+import {AdminUsersComponent} from "./components/admin/admin-users/admin-users.component";
 
 const routes: Routes = [
   {
@@ -42,6 +43,10 @@ const routes: Routes = [
       {
         path: '',
         component: AdminRideoutsComponent
+      },
+      {
+        path: 'users',
+        component: AdminUsersComponent
       }
     ],
     canActivate: [AdminGuard]

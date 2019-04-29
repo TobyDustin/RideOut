@@ -23,6 +23,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { AddRiderInfoComponent } from './components/profile/add-rider-info/add-rider-info.component';
 import { AdminRideoutsComponent } from './components/admin/admin-rideouts/admin-rideouts.component';
 import { AdminNavComponent } from './components/admin/admin-nav/admin-nav.component';
+import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { AddRideoutComponent } from './components/admin/admin-rideouts/add-rideout/add-rideout.component';
 import { JoinOverviewComponent } from './components/overview/join-overview/join-overview.component';
 
@@ -46,6 +47,7 @@ export function tokenGetter() {
     AddRiderInfoComponent,
     AdminRideoutsComponent,
     AdminNavComponent,
+    AdminUsersComponent,
     AddRideoutComponent,
     JoinOverviewComponent
   ],
