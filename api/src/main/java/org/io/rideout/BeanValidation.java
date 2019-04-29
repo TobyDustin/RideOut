@@ -1,5 +1,8 @@
 package org.io.rideout;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import org.io.rideout.exception.ValidationException;
 import org.io.rideout.model.FilterBean;
 import org.io.rideout.model.RideOut;
@@ -15,6 +18,7 @@ import java.util.Set;
 
 public class BeanValidation {
     private static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private static PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
     private BeanValidation() {}
 
@@ -51,6 +55,20 @@ public class BeanValidation {
                     result.add("Staff must be at least 18 years old");
                 }
             }
+        }
+
+        try {
+            if (!phoneUtil.isValidNumber(phoneUtil.parse(user.getContactNumber(), "GB"))) {
+                result.add("Contact number is invalid");
+            }
+
+            if (user.getRiderInformation() != null) {
+                if (!phoneUtil.isValidNumber(phoneUtil.parse(user.getRiderInformation().getEmergencyContactNumber(), "GB"))) {
+                    result.add("Emergency number is invalid");
+                }
+            }
+        } catch (NumberParseException e) {
+            result.add(e.getMessage());
         }
 
         return result;
