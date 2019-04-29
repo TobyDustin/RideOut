@@ -5,6 +5,7 @@ import {RideOutService} from "../../services/rideout/ride-out.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {AddVehicleComponent} from "../vehicle/add-vehicle/add-vehicle.component";
 import {MatDialog} from "@angular/material";
+import {JoinOverviewComponent} from "./join-overview/join-overview.component";
 
 @Component({
   selector: 'app-overview',
@@ -41,7 +42,7 @@ export class OverviewComponent implements OnInit {
   }
 
   openDialog() {
-    let dialogRef = this.dialog.open(AddVehicleComponent, {
+    let dialogRef = this.dialog.open(JoinOverviewComponent, {
       data: { rideOut: this.rideOut }
     });
   }
