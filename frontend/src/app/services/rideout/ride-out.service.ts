@@ -15,11 +15,11 @@ export class RideOutService {
     return this.http.get<RideOut[]>(`${environment.api}/rideout`);
   }
 
-  public getRideOut(rideOut: String) : Observable<RideOut> {
+  public getRideOut(rideOut: string) : Observable<RideOut> {
     return this.http.get<RideOut>(`${environment.api}/rideout/${rideOut}`);
   }
 
-  public searchRideOuts(search: String, filters: Array<string>, types: Array<string>) : Observable<RideOut[]> {
+  public searchRideOuts(search: string, filters: Array<string>, types: Array<string>) : Observable<RideOut[]> {
     let params = new HttpParams();
     filters.forEach((filter) => {
       params = params.append(filter, 'true');
@@ -34,4 +34,9 @@ export class RideOutService {
       return this.http.get<RideOut[]>(`${environment.api}/rideout/s/${search}`, {params});
     }
   }
+
+  public createRideOut(rideOut: RideOut) {
+    return this.http.post<RideOut>(`${environment.api}/rideout`, rideOut);
+  }
+
 }

@@ -31,7 +31,7 @@ export class OverviewComponent implements OnInit {
     this.getRideOut(rideOutId);
   }
 
-  getRideOut(rideOutId: String) {
+  getRideOut(rideOutId: string) {
     this.service.getRideOut(rideOutId).subscribe((rideOut) => {
       this.rideOut = rideOut;
     })
