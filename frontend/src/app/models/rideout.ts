@@ -1,6 +1,7 @@
 import {Checkpoint} from "./checkpoint";
 import {Booking} from "./booking";
 import {User} from "./user";
+import {Vehicle} from "./vehicle";
 
 export class RideOut {
   id: string;
@@ -14,7 +15,12 @@ export class RideOut {
   published: boolean;
   minCancellationDate: Date;
   checkpoints: Checkpoint[];
-  riders: User[];
+  riders: [{
+    id: string,
+    firstName: string,
+    lastName: string,
+    vehicle: Vehicle
+  }];
   travelBookings: Booking[];
   accommodationBookings: Booking[];
   restaurantBookings: Booking[];

@@ -3,13 +3,17 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {Observable} from "rxjs";
 import {RideOut} from "../../models/rideout";
+import {AuthService} from "../auth/auth.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RideOutService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService
+  ) { }
 
   public getAllRideOuts() : Observable<RideOut[]> {
     return this.http.get<RideOut[]>(`${environment.api}/rideout`);

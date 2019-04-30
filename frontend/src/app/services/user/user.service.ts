@@ -54,7 +54,6 @@ export class UserService {
     return this.http.get<User[]>(`${environment.api}/user`);
   }
 
-
   joinRideOut(rideOutID: string, vehicleID: string) {
     const userID = this.auth.getId();
     return this.http.put(`${environment.api}/rideout/${rideOutID}/rider`,
@@ -63,6 +62,11 @@ export class UserService {
         'vehicleId': vehicleID
       }
     );
+  }
+
+  leaveRideOut(rideOutID: string) {
+    const userID = this.auth.getId();
+    return this.http.delete(`${environment.api}/rideout/${rideOutID}/rider/${userID}`);
   }
 
 }
